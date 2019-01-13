@@ -1,0 +1,17 @@
+{
+  "toomanycrashes.gui.getLink": "Obtenir un lien",
+  "toomanycrashes.gui.failed": "[Échoué]",
+  "toomanycrashes.gui.keepPlaying": "Continuer à jouer",
+  "toomanycrashes.crashscreen.title": "Minecraft a crashé!",
+  "toomanycrashes.crashscreen.summary": "Minecraft a rencontré un problème et a crashé.",
+  "toomanycrashes.crashscreen.paragraph1.line1": "Ces mod(s) ont été identifiés comme des causes potentielles:",
+  "toomanycrashes.crashscreen.unknownCause": "Cause inconnue",
+  "toomanycrashes.crashscreen.identificationErrored": "[Problème dans l'identification, raportez à TooManyCrashes]",
+  "toomanycrashes.crashscreen.paragraph2.line1": "Cliquez n'importe quel mod dans la liste pour aller a leur page",
+  "toomanycrashes.crashscreen.paragraph2.line2": "pour du support. Un raport a été génére et se trouve ici (cliquez):",
+  "toomanycrashes.crashscreen.reportSaveFailed": "[Erreur durant la sauvegarde, voir le log]",
+  "toomanycrashes.crashscreen.paragraph3.line1": "Cliquez le bouton « Obtenir un lien » pour l'ouvrir dans votre",
+  "toomanycrashes.crashscreen.paragraph3.line2": "navigateur web. Vous êtez encouragé de l'envoyer à l'auteur du",
+  "toomanycrashes.crashscreen.paragraph3.line3": "mod pour l'aider à résoudre le problême. Vu que TooManyCrashes est",
+  "toomanycrashes.crashscreen.paragraph3.line4": "installé, vous pouvez continuer a jouer malgré le crash."
+}

@@ -1,0 +1,22 @@
+{
+  "package": "org.dimdev.toomanycrashes.mixins",
+  "required": true,
+  "refmap": "mixins.toomanycrashes.refmap.json",
+  "target": "@env(DEFAULT)",
+  "minVersion": "0.6",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "MixinCrashReport",
+    "MixinCrashReportSection",
+    "MixinCrashReportSection$MixinElement",
+    "MixinEntity",
+    "MixinIntegratedServer",
+    "MixinTileEntity"
+  ],
+  "client": [
+    "client.MixinBufferBuilder",
+    "client.MixinKeyboard",
+    "client.MixinMain",
+    "client.MixinMinecraftClient"
+  ]
+}

@@ -1,0 +1,61 @@
+buildscript {
+    repositories {
+        jcenter()
+        maven { url = 'https://maven.fabricmc.net/' }
+    }
+    dependencies {
+        classpath "com.github.jengelman.gradle.plugins:shadow:2.0.4"
+        classpath "net.fabricmc:fabric-loom:0.2.0-SNAPSHOT"
+    }
+}
+
+apply plugin: "java"
+apply plugin: "com.github.johnrengelman.shadow"
+apply plugin: net.fabricmc.loom.LoomGradlePlugin
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+    minecraft "com.mojang:minecraft:19w02a"
+    mappings "net.fabricmc:yarn:19w02a.20"
+    modCompile "net.fabricmc:fabric-loader:0.3.2.93"
+    modCompile "net.fabricmc:fabric:0.1.4.71"
+}
+
+def travisBuildNumber = System.getenv("TRAVIS_BUILD_NUMBER")
+def versionSuffix = travisBuildNumber != null ? travisBuildNumber : "SNAPSHOT"
+
+version "1.0-$versionSuffix"
+group "org.dimdev.toomanycrashes"
+archivesBaseName = "TooManyCrashes"
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+jar {
+    classifier "thin"
+}
+
+shadowJar {
+    classifier ""
+}
+
+processResources {
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version
+    }
+
+    inputs.property "version", project.version
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier "sources"
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives jar
+    archives shadowJar
+    archives sourcesJar
+}

@@ -1,0 +1,8 @@
+{
+  "id": "toomanycrashes",
+  "name": "TooManyCrashes",
+  "version": "1.0",
+  "mixins": {
+    "common": "mixins.toomanycrashes.json"
+  }
+}
