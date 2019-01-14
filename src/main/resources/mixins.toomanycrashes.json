@@ -1,7 +1,7 @@
 {
   "package": "org.dimdev.toomanycrashes.mixins",
   "required": true,
-  "refmap": "mixins.toomanycrashes.refmap.json",
+  "refmap": "TooManyCrashes-refmap.json",
   "target": "@env(DEFAULT)",
   "minVersion": "0.6",
   "compatibilityLevel": "JAVA_8",

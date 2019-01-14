@@ -1,51 +1,27 @@
 package org.dimdev.toomanycrashes;
 
-import java.io.File;
+import net.fabricmc.tinyremapper.TinyUtils;
+
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
+import java.io.InputStreamReader;
 import java.util.*;
 
 public final class StacktraceDeobfuscator {
-    private static final String MAPPINGS_URL = "https://gist.githubusercontent.com/Runemoro/cc6ad843f5403b870214ae34baaa4b60/raw/c7be9a0d5be49eaa365f915fd6326c1ddd419bbd/yarn-mappings.csv";
-    private static final boolean DEBUG_IN_DEV = false; // Makes this deobf -> obf for testing in dev. Don't forget to set to false when done!
-    private static HashMap<String, String> mappings = null;
+    public static final String MAPPINGS = "mappings/mappings.tiny";
+    private static Map<String, String> mappings = null;
 
-    /**
-     * If the file does not exits, downloads latest method mappings and saves them to it.
-     * Initializes a HashMap between obfuscated and deobfuscated names from that file.
-     */
-    public static void init(File mappingsFile) {
-        if (mappings != null) return;
-
-        // Download the file if necessary
-        if (!mappingsFile.exists()) {
-            try {
-                try (InputStream is = new URL(MAPPINGS_URL).openStream()) {
-                    Files.copy(is, mappingsFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        // Read the mapping
-        HashMap<String, String> mappings = new HashMap<>();
-        try (Scanner scanner = new Scanner(mappingsFile)) {
-            scanner.nextLine(); // Skip CSV header
-            while (scanner.hasNext()) {
-                String[] mappingLine = scanner.nextLine().split(",");
-                String obfName = mappingLine[0];
-                String deobfName = mappingLine[1];
-
-                if (!DEBUG_IN_DEV) {
-                    mappings.put(obfName, deobfName);
-                } else {
-                    mappings.put(deobfName, obfName);
-                }
-            }
+    public static void init() {
+        Map<String, String> mappings = new HashMap<>();
+        try (BufferedReader mappingReader = new BufferedReader(new InputStreamReader(StacktraceDeobfuscator.class.getClassLoader().getResourceAsStream(MAPPINGS)))) {
+            TinyUtils.read(
+                    mappingReader,
+                    "intermediary",
+                    "named",
+                    (key, value) -> mappings.put(key.replace('/', '.'), value.replace('/', '.')),
+                    (intermediary, named) -> mappings.put(intermediary.name, named.name),
+                    (intermediary, named) -> mappings.put(intermediary.name, named.name)
+            );
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -71,18 +47,35 @@ public final class StacktraceDeobfuscator {
 
         int index = 0;
         for (StackTraceElement el : stackTrace) {
+            String remappedClass = mappings.get(el.getClassName());
+            String remappedMethod = mappings.get(el.getMethodName());
             stackTrace[index++] = new StackTraceElement(
-                    mappings.getOrDefault(el.getClassName(), el.getClassName()),
-                    mappings.getOrDefault(el.getMethodName(), el.getMethodName()),
-                    el.getFileName(),
+                    remappedClass != null ? remappedClass : el.getClassName(),
+                    remappedMethod != null ? remappedMethod : el.getMethodName(),
+                    remappedClass != null ? getFileName(remappedClass) : el.getFileName(),
                     el.getLineNumber()
             );
         }
         return stackTrace;
     }
 
+    public static String getFileName(String className) {
+        String remappedFile = className;
+        int lastDot = className.lastIndexOf('.');
+        if (lastDot != -1) {
+            remappedFile = remappedFile.substring(lastDot + 1);
+        }
+
+        int firstDollar = className.indexOf('$');
+        if (firstDollar != -1) {
+            remappedFile = remappedFile.substring(0, firstDollar);
+        }
+
+        return remappedFile;
+    }
+
     public static void main(String[] args) {
-        init(new File("mappings.csv"));
+        init();
         for (Map.Entry<String, String> entry : mappings.entrySet()) {
             System.out.println(entry.getKey() + " <=> " + entry.getValue());
         }

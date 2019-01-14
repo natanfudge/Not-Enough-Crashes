@@ -1,14 +1,15 @@
 package org.dimdev.toomanycrashes;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import net.fabricmc.loader.FabricLoader;
 
 import java.io.*;
 
 public class ModConfig {
-    public static final File CONFIG_FILE = new File(FabricLoader.INSTANCE.getConfigDirectory(), "toomanycrashes.json");
-    public static final Gson GSON = new Gson();
-    private static ModConfig instance = new ModConfig();
+    private static final File CONFIG_FILE = new File(FabricLoader.INSTANCE.getConfigDirectory(), "toomanycrashes.json");
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    private static ModConfig instance = null;
 
     public String hasteURL = "https://paste.dimdev.org";
     public boolean disableReturnToMainMenu = false;
@@ -28,10 +29,10 @@ public class ModConfig {
 
         instance = new ModConfig();
 
-        try {
-            GSON.toJson(instance, new FileWriter(CONFIG_FILE));
+        try (FileWriter writer = new FileWriter(CONFIG_FILE)) {
+            GSON.toJson(instance, writer);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
 
         return instance;

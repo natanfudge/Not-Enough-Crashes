@@ -1,11 +1,9 @@
 package org.dimdev.toomanycrashes;
 
-import net.fabricmc.loader.FabricLoader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.dimdev.utils.SSLUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.KeyStore;
@@ -15,7 +13,6 @@ import java.security.cert.CertificateException;
 
 public class TooManyCrashes {
     private static final Logger LOGGER = LogManager.getLogger("TooManyCrashes");
-    private static final long MAPPINGS_CACHE_DURATION = 2 * 24 * 60 * 60 * 1000;
 
     public static void init() {
         ModConfig.instance();
@@ -35,20 +32,11 @@ public class TooManyCrashes {
     }
 
     private static void initStacktraceDeobfuscator() {
-        File modDir = new File(FabricLoader.INSTANCE.getConfigDirectory(), "toomanycrashes");
-        modDir.mkdirs();
-
         LOGGER.info("Initializing StacktraceDeobfuscator");
         try {
-            File mappings = new File(modDir, "mappings-" + System.currentTimeMillis() / MAPPINGS_CACHE_DURATION + ".csv");
-            if (mappings.exists()) {
-                LOGGER.info("Found mappings: " + mappings.getName());
-            } else {
-                LOGGER.info("Downloading latest mappings to: " + mappings.getName());
-            }
-            StacktraceDeobfuscator.init(mappings);
+            StacktraceDeobfuscator.init();
         } catch (Exception e) {
-            LOGGER.error("Failed to get mappings!", e);
+            LOGGER.error("Failed to load mappings!", e);
         }
         LOGGER.info("Done initializing StacktraceDeobfuscator");
 
