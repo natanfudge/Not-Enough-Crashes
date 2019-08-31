@@ -1,11 +1,23 @@
 package org.dimdev.utils;
 
-import javax.net.ssl.*;
-import java.io.*;
-import java.security.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
+
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
 
 public final class SSLUtils {
 
@@ -16,8 +28,12 @@ public final class SSLUtils {
 
             SSLContext sslContext = SSLContext.getInstance("TLS");
             sslContext.init(null, new X509TrustManager[]{new X509TrustManager() {
-                @Override public void checkClientTrusted(X509Certificate[] chain, String authType) {}
-                @Override public void checkServerTrusted(X509Certificate[] chain, String authType) {}
+                @Override public void checkClientTrusted(X509Certificate[] chain, String authType) {
+                }
+
+                @Override public void checkServerTrusted(X509Certificate[] chain, String authType) {
+                }
+
                 @Override public X509Certificate[] getAcceptedIssuers() {
                     return new X509Certificate[0];
                 }

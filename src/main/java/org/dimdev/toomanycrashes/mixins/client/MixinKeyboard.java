@@ -3,7 +3,7 @@ package org.dimdev.toomanycrashes.mixins.client;
 import com.google.common.util.concurrent.ListenableFutureTask;
 import net.minecraft.client.Keyboard;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.GlfwUtil;
 import net.minecraft.util.crash.CrashException;
 import net.minecraft.util.crash.CrashReport;
@@ -15,6 +15,7 @@ import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(Keyboard.class)
 public abstract class MixinKeyboard {
+
     @Shadow @Final private MinecraftClient client;
     @Shadow private long debugCrashStartTime;
 
@@ -38,11 +39,11 @@ public abstract class MixinKeyboard {
             //       a world.
             debugCrashStartTime = -1;
 
-            if (Gui.isControlPressed()) {
+            if (Screen.hasControlDown()) {
                 GlfwUtil.method_15973();
-            } else if (Gui.isShiftPressed()) {
-                if (Gui.isAltPressed()) {
-                    if (client.method_1496()) {
+            } else if (Screen.hasShiftDown()) {
+                if (Screen.hasAltDown()) {
+                    if (client.isIntegratedServerRunning()) {
                         client.getServer().execute(() -> {
                             throw new CrashException(new CrashReport("Manually triggered server-side scheduled task exception", new Throwable()));
                         });
@@ -53,8 +54,8 @@ public abstract class MixinKeyboard {
                     }));
                 }
             } else {
-                if (Gui.isAltPressed()) {
-                    if (client.method_1496()) {
+                if (Screen.hasAltDown()) {
+                    if (client.isIntegratedServerRunning()) {
                         ((PatchedIntegratedServer) client.getServer()).setCrashNextTick();
                     }
                 } else {

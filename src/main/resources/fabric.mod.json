@@ -1,8 +1,20 @@
 {
-  "id": "toomanycrashes",
-  "name": "TooManyCrashes",
-  "version": "1.0",
-  "mixins": {
-    "common": "mixins.toomanycrashes.json"
-  }
+    "schemaVersion": 1,
+    "id": "toomanycrashes",
+    "name": "TooManyCrashes",
+    "description": "A port of VanillaFix's crash improvement features to Fabric",
+    "version": "${version}",
+    "contact": {
+        "issues": "https://github.com/liachmodded/TooManyCrashes/issues",
+        "sources": "https://github.com/liachmodded/TooManyCrashes"
+    },
+    "icon": "assets/toomanycrashes/icon.png",
+    "mixins": [
+        "mixins.toomanycrashes.json"
+    ],
+    "entrypoints": {
+        "main": [
+            "org.dimdev.toomanycrashes.TooManyCrashes"
+        ]
+    }
 }

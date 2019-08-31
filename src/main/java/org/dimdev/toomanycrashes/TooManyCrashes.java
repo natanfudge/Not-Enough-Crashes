@@ -1,5 +1,6 @@
 package org.dimdev.toomanycrashes;
 
+import net.fabricmc.api.ModInitializer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.dimdev.utils.SSLUtils;
@@ -11,16 +12,18 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 
-public class TooManyCrashes {
+public class TooManyCrashes implements ModInitializer {
+
     private static final Logger LOGGER = LogManager.getLogger("TooManyCrashes");
 
-    public static void init() {
+    @Override
+    public void onInitialize() {
         ModConfig.instance();
         trustIdenTrust();
-        initStacktraceDeobfuscator();
+        //initStacktraceDeobfuscator();
     }
 
-    private static void trustIdenTrust() {
+    private void trustIdenTrust() {
         // Trust the "IdenTrust DST Root CA X3" certificate (used by Let's Encrypt, which is used by paste.dimdev.org)
         try (InputStream keyStoreInputStream = TooManyCrashes.class.getResourceAsStream("/dst_root_ca_x3.jks")) {
             KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
@@ -31,7 +34,7 @@ public class TooManyCrashes {
         }
     }
 
-    private static void initStacktraceDeobfuscator() {
+    private void initStacktraceDeobfuscator() {
         LOGGER.info("Initializing StacktraceDeobfuscator");
         try {
             StacktraceDeobfuscator.init();

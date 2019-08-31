@@ -1,13 +1,15 @@
 package org.dimdev.toomanycrashes;
 
-import net.fabricmc.loader.ModInfo;
+import net.fabricmc.loader.api.metadata.ModMetadata;
 
 import java.util.Set;
 
 public interface PatchedCrashReport {
-    Set<ModInfo> getSuspectedMods();
+
+    Set<ModMetadata> getSuspectedMods();
 
     interface Element {
+
         String invokeGetName();
 
         String invokeGetDetail();

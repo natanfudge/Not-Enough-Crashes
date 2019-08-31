@@ -11,6 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(IntegratedServer.class)
 public class MixinIntegratedServer implements PatchedIntegratedServer {
+
     private boolean crashNextTick = false;
 
     @Override
@@ -18,7 +19,7 @@ public class MixinIntegratedServer implements PatchedIntegratedServer {
         crashNextTick = true;
     }
 
-    @Inject(method = "method_3748", at = @At("HEAD"))
+    @Inject(method = "tick(Ljava/util/function/BooleanSupplier;)V", at = @At("HEAD"))
     private void beforeTick(CallbackInfo ci) {
         if (crashNextTick) {
             throw new CrashException(new CrashReport("Manually triggered server-side debug crash", new Throwable()));

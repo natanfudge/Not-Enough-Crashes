@@ -1,5 +1,6 @@
 package org.dimdev.toomanycrashes;
 
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.crash.CrashReport;
 import org.apache.logging.log4j.LogManager;
@@ -10,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public final class CrashUtils {
+
     private static final Logger LOGGER = LogManager.getLogger("TMC");
     private static boolean isClient;
 
@@ -26,10 +28,10 @@ public final class CrashUtils {
             if (report.getFile() == null) {
                 String reportName = "crash-";
                 reportName += new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss").format(new Date());
-                reportName += MinecraftClient.getInstance().isMainThread() ? "-client" : "-server";
+                reportName += isClient && MinecraftClient.getInstance().isOnThread() ? "-client" : "-server";
                 reportName += ".txt";
 
-                File reportsDir = isClient ? new File(MinecraftClient.getInstance().runDirectory, "crash-reports") : new File("crash-reports");
+                File reportsDir = new File(FabricLoader.getInstance().getGameDirectory(), "crash-reports");
                 File reportFile = new File(reportsDir, reportName);
 
                 report.writeToFile(reportFile);
@@ -38,7 +40,8 @@ public final class CrashUtils {
             LOGGER.fatal("Failed saving report", e);
         }
 
-        LOGGER.fatal("Minecraft ran into a problem! " + (report.getFile() != null ? "Report saved to: " + report.getFile() : "Crash report could not be saved.") + "\n" +
-                     report.asString());
+        LOGGER.fatal("Minecraft ran into a problem! " + (report.getFile() != null ? "Report saved to: " + report.getFile() :
+                "Crash report could not be saved.") + "\n" +
+                report.asString());
     }
 }

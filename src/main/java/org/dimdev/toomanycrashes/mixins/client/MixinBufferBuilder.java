@@ -10,7 +10,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(BufferBuilder.class)
 public abstract class MixinBufferBuilder implements StateManager.IResettable {
+
     @Shadow private boolean building;
+
     @Shadow public abstract void end();
 
     @Inject(method = "<init>", at = @At("RETURN"))

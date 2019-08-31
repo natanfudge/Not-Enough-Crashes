@@ -12,11 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DeobfuscatingRewritePolicy implements RewritePolicy {
-    @Override
-    public LogEvent rewrite(LogEvent source) {
-        if (source.getThrown() != null) StacktraceDeobfuscator.deobfuscateThrowable(source.getThrown());
-        return source;
-    }
 
     /** Modifies the log4j config to add the policy **/
     public static void install() {
@@ -42,5 +37,13 @@ public class DeobfuscatingRewritePolicy implements RewritePolicy {
 
         // Add the new appender
         loggerConfig.addAppender(rewriteAppender, null, null);
+    }
+
+    @Override
+    public LogEvent rewrite(LogEvent source) {
+        if (source.getThrown() != null) {
+            StacktraceDeobfuscator.deobfuscateThrowable(source.getThrown());
+        }
+        return source;
     }
 }

@@ -12,6 +12,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
 public final class HasteUpload {
+
     public static String uploadToHaste(String baseUrl, String extension, String str) throws IOException {
         byte[] bytes = str.getBytes(StandardCharsets.UTF_8);
 

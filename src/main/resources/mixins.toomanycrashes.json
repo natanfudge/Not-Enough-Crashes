@@ -8,7 +8,7 @@
   "mixins": [
     "MixinCrashReport",
     "MixinCrashReportSection",
-    "MixinCrashReportSection$MixinElement",
+    "CrashReportSectionElementMixin",
     "MixinEntity",
     "MixinIntegratedServer",
     "MixinTileEntity"
@@ -16,7 +16,7 @@
   "client": [
     "client.MixinBufferBuilder",
     "client.MixinKeyboard",
-    "client.MixinMain",
-    "client.MixinMinecraftClient"
+    "client.MixinMinecraftClient",
+    "client.ClientMainMixin"
   ]
 }

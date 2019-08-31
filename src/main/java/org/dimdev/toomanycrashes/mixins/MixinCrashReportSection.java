@@ -12,40 +12,23 @@ import java.util.List;
 
 @Mixin(CrashReportSection.class)
 public class MixinCrashReportSection {
+
     @Shadow @Final private String title;
     @Shadow @Final private List<?> elements;
     @Shadow private StackTraceElement[] stackTrace;
-
-    @Mixin(targets = "net.minecraft.util.crash.CrashReportSection$Element")
-    public static abstract class MixinElement implements PatchedCrashReport.Element {
-        @Shadow
-        public abstract String getName();
-
-        @Shadow
-        public abstract String getDetail();
-
-        @Override
-        public String invokeGetName() {
-            return getName();
-        }
-
-        @Override
-        public String invokeGetDetail() {
-            return getDetail();
-        }
-    }
 
     /**
      * @reason Disable stack trace pruning
      */
     @Overwrite
-    public void method_580(int size) {}
+    public void method_580(int size) {
+    }
 
     /**
      * @reason Disable stack trace pruning, deobfuscate stack trace
      */
     @Overwrite
-    public int method_579(int prune) {
+    public int trimStackTrace(int prune) {
         stackTrace = StacktraceDeobfuscator.deobfuscateStacktrace(Thread.currentThread().getStackTrace());
         return stackTrace.length;
     }
@@ -62,8 +45,8 @@ public class MixinCrashReportSection {
             String sectionIndent = "  ";
 
             builder.append(sectionIndent)
-                   .append(element.invokeGetName())
-                   .append(": ");
+                    .append(element.invokeGetName())
+                    .append(": ");
 
             StringBuilder indent = new StringBuilder(sectionIndent + "  ");
             for (char ignored : element.invokeGetName().toCharArray()) {
@@ -72,9 +55,13 @@ public class MixinCrashReportSection {
 
             boolean first = true;
             for (String line : element.invokeGetDetail().trim().split("\n")) {
-                if (!first) builder.append("\n").append(indent);
+                if (!first) {
+                    builder.append("\n").append(indent);
+                }
                 first = false;
-                if (line.startsWith("\t")) line = line.substring(1);
+                if (line.startsWith("\t")) {
+                    line = line.substring(1);
+                }
                 builder.append(line.replace("\t", ""));
             }
 

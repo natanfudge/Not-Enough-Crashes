@@ -1,27 +1,31 @@
 package org.dimdev.toomanycrashes;
 
-import net.fabricmc.tinyremapper.TinyUtils;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.Collections;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.Map;
 
 public final class StacktraceDeobfuscator {
+
     public static final String MAPPINGS = "mappings/mappings.tiny";
     private static Map<String, String> mappings = null;
 
     public static void init() {
         Map<String, String> mappings = new HashMap<>();
-        try (BufferedReader mappingReader = new BufferedReader(new InputStreamReader(StacktraceDeobfuscator.class.getClassLoader().getResourceAsStream(MAPPINGS)))) {
-            TinyUtils.read(
-                    mappingReader,
-                    "intermediary",
-                    "named",
-                    (key, value) -> mappings.put(key.replace('/', '.'), value.replace('/', '.')),
-                    (intermediary, named) -> mappings.put(intermediary.name, named.name),
-                    (intermediary, named) -> mappings.put(intermediary.name, named.name)
-            );
+        try (BufferedReader mappingReader = new BufferedReader(
+                new InputStreamReader(StacktraceDeobfuscator.class.getClassLoader().getResourceAsStream(MAPPINGS)))) {
+            //            TinyUtils.read(
+            //                    mappingReader,
+            //                    "intermediary",
+            //                    "named",
+            //                    (key, value) -> mappings.put(key.replace('/', '.'), value.replace('/', '.')),
+            //                    (intermediary, named) -> mappings.put(intermediary.name, named.name),
+            //                    (intermediary, named) -> mappings.put(intermediary.name, named.name)
+            //            ); todo no more named
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -35,7 +39,9 @@ public final class StacktraceDeobfuscator {
         while (!queue.isEmpty()) {
             t = queue.remove();
             t.setStackTrace(deobfuscateStacktrace(t.getStackTrace()));
-            if (t.getCause() != null) queue.add(t.getCause());
+            if (t.getCause() != null) {
+                queue.add(t.getCause());
+            }
             Collections.addAll(queue, t.getSuppressed());
         }
     }

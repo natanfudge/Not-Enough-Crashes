@@ -11,13 +11,6 @@ import java.util.Set;
  * registered here.
  */
 public class StateManager {
-    public interface IResettable {
-        default void register() {
-            resettableRefs.add(new WeakReference<>(this));
-        }
-
-        void resetState();
-    }
 
     // Use WeakReference to allow garbage collection, preventing memory leaks
     private static Set<WeakReference<IResettable>> resettableRefs = new HashSet<>();
@@ -32,5 +25,14 @@ public class StateManager {
                 iterator.remove();
             }
         }
+    }
+
+    public interface IResettable {
+
+        default void register() {
+            resettableRefs.add(new WeakReference<>(this));
+        }
+
+        void resetState();
     }
 }

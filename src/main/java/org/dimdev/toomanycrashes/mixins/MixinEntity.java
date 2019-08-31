@@ -10,6 +10,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = Entity.class, priority = 10000)
 public class MixinEntity {
+
     private boolean noNBT = false;
 
     @Inject(method = "populateCrashReport", at = @At("TAIL"))
