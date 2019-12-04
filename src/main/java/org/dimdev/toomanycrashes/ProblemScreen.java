@@ -8,7 +8,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.text.LiteralText;
-import net.minecraft.util.SystemUtil;
+import net.minecraft.util.Util;
 import net.minecraft.util.crash.CrashReport;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -55,7 +55,7 @@ public abstract class ProblemScreen extends Screen {
                         uriField.set(ProblemScreen.this, new URI(hasteLink));
                         minecraft.openScreen(new ConfirmChatLinkScreen(b -> {
                             if (b) {
-                                SystemUtil.getOperatingSystem().open(hasteLink);
+                                Util.getOperatingSystem().open(hasteLink);
                             }
 
                             this.minecraft.openScreen(this);
@@ -73,7 +73,7 @@ public abstract class ProblemScreen extends Screen {
         if (x >= xLeft && x <= xRight && y >= yTop && y <= yBottom) {
             File file = report.getFile();
             if (file != null) {
-                SystemUtil.getOperatingSystem().open(file);
+                Util.getOperatingSystem().open(file);
             }
         }
         return super.mouseClicked(x, y, int_1);

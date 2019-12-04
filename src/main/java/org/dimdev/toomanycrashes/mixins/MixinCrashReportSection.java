@@ -21,17 +21,18 @@ public class MixinCrashReportSection {
      * @reason Disable stack trace pruning
      */
     @Overwrite
-    public void method_580(int size) {
+    public void trimStackTraceEnd(int size) {
     }
 
-    /**
-     * @reason Disable stack trace pruning, deobfuscate stack trace
-     */
-    @Overwrite
-    public int trimStackTrace(int prune) {
-        stackTrace = StacktraceDeobfuscator.deobfuscateStacktrace(Thread.currentThread().getStackTrace());
-        return stackTrace.length;
-    }
+    //TODO
+//    /**
+//     * @reason Disable stack trace pruning, deobfuscate stack trace
+//     */
+//    @Overwrite
+//    public int trimStackTrace(int prune) {
+//        stackTrace = StacktraceDeobfuscator.deobfuscateStacktrace(Thread.currentThread().getStackTrace());
+//        return stackTrace.length;
+//    }
 
     /**
      * @reason Improve crash report formatting

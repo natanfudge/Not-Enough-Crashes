@@ -11,9 +11,9 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(Main.class)
 public class ClientMainMixin {
 
-    @Redirect(method = "main([Ljava/lang/String;)V",
+    @Redirect(method = "main",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;printCrashReport(Lnet/minecraft/util/crash/CrashReport;)V"))
-    private static void redirectPrintCrash(MinecraftClient client, CrashReport crashReport) {
-        ((PatchedClient) client).displayInitErrorScreen(crashReport);
+    private static void redirectPrintCrash(CrashReport crashReport) {
+        ((PatchedClient) MinecraftClient.getInstance()).displayInitErrorScreen(crashReport);
     }
 }

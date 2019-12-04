@@ -1,10 +1,5 @@
 package org.dimdev.toomanycrashes;
 
-import net.fabricmc.api.ModInitializer;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.dimdev.utils.SSLUtils;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.KeyStore;
@@ -12,14 +7,35 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.dimdev.toomanycrashes.test.TestBlock;
+import org.dimdev.utils.SSLUtils;
+
+import net.minecraft.block.Block;
+import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
+
+import net.fabricmc.api.ModInitializer;
+
 public class TooManyCrashes implements ModInitializer {
 
     private static final Logger LOGGER = LogManager.getLogger("TooManyCrashes");
+    public static final Block EXAMPLE_BLOCK = new TestBlock();
 
     @Override
     public void onInitialize() {
         ModConfig.instance();
         trustIdenTrust();
+
+        Registry.register(Registry.BLOCK, new Identifier("tutorial", "example_block"), EXAMPLE_BLOCK);
+        Registry.register(Registry.ITEM, new Identifier("tutorial", "example_block"),
+                        new BlockItem(EXAMPLE_BLOCK, new Item.Settings().group(ItemGroup.MISC)));
+
+//        throw new NullPointerException();
         //initStacktraceDeobfuscator();
     }
 

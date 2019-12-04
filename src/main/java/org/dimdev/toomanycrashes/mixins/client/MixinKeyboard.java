@@ -40,7 +40,7 @@ public abstract class MixinKeyboard {
             debugCrashStartTime = -1;
 
             if (Screen.hasControlDown()) {
-                GlfwUtil.method_15973();
+                GlfwUtil.makeJvmCrash();
             } else if (Screen.hasShiftDown()) {
                 if (Screen.hasAltDown()) {
                     if (client.isIntegratedServerRunning()) {
