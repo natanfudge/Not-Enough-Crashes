@@ -15,6 +15,7 @@
     "client.MixinBufferBuilder",
     "client.MixinKeyboard",
     "client.MixinMinecraftClient",
-    "client.ClientMainMixin"
+    "client.ClientMainMixin",
+    "client.SplashScreenMixin"
   ]
 }

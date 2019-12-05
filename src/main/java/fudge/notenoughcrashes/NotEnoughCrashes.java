@@ -22,7 +22,8 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 import net.fabricmc.api.ModInitializer;
-
+//TODO: icon
+//TODO: disable the startup crash screen in dev
 public class NotEnoughCrashes implements ModInitializer {
 
     public static final String NAME = "Not Enough Crashes";
@@ -41,7 +42,7 @@ public class NotEnoughCrashes implements ModInitializer {
 
 //        "Render thread"@1 in group "main":RUNNING
 
-//        throw new TestException();
+        throw new TestException();
 
 //        initStacktraceDeobfuscator();
     }

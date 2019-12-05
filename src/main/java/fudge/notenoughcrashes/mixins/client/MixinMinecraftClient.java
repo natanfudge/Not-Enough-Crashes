@@ -115,8 +115,6 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
     @Shadow
     public InGameHud inGameHud;
     @Shadow
-    public Screen currentScreen;
-    @Shadow
     public TextureManager textureManager;
     @Shadow
     public TextRenderer textRenderer;
@@ -134,8 +132,6 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
     volatile boolean running;
     @Shadow
     private CrashReport crashReport;
-    @Shadow
-    private int attackCooldown;
     @Shadow
     private Framebuffer framebuffer;
     @Shadow
@@ -337,7 +333,6 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
 
         try {
 
-//            GlUtil.resetStateWithoutContext();
 
             //TODO: skip a lot of the initialization to not give the impression the game loaded correctly
             completeInitializationForGUIPreScreen();
@@ -345,7 +340,6 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
             openScreen(new InitErrorScreen(report));
             completeInitializationForGUIPostScreen();
 
-//            runGUILoop(new InitErrorScreen(report));
         } catch (Throwable t) {
             LOGGER.error("An uncaught exception occured while displaying the init error screen, making normal report instead", t);
             printCrashReport(report);
@@ -370,6 +364,7 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
         GLFW.glfwGetError(pointerBuffer);
     }
 
+    //TODO: somehow skip
     private void completeInitializationForGUIPreScreen() {
         // At some point earlier something triggers a GL error so we need to ignore it so minecraft doesn't crash
         ignoreAGlfwError();
@@ -441,6 +436,7 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
             this.window.setPhase("Post startup");
             this.blockColorMap = BlockColors.create();
             this.itemColorMap = ItemColors.create(this.blockColorMap);
+            // Baking models takes a while
             this.bakedModelManager = new BakedModelManager(this.textureManager, this.blockColorMap, this.options.mipmapLevels);
             this.resourceManager.registerListener(this.bakedModelManager);
             this.itemRenderer = new ItemRenderer(this.textureManager, this.bakedModelManager, this.itemColorMap);
@@ -478,6 +474,7 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
     }
 
     private void completeInitializationForGUIPostScreen() {
+        SplashScreenMixin.setLogo(new Identifier("notenoughcrashes", "textures/game_crashed.png"));
         SplashScreen.init(getThis());
         getThis().setOverlay(new SplashScreen(getThis(), this.resourceManager.beginInitialMonitoredReload(Util.getServerWorkerExecutor(), this, COMPLETED_UNIT_FUTURE), (optional) -> {
             Util.ifPresentOrElse(optional, (throwable) -> {
@@ -546,64 +543,6 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
         }
     }
 
-//    private void runGUILoop(Screen screen) {
-//        openScreen(screen);
-//
-//        while (running && currentScreen != null && !(currentScreen instanceof TitleScreen)) {
-//            window.setPhase("Not Enough Crashes GUI Loop");
-//            if (GLX._shouldClose(window)) {
-//                stop();
-//            }
-//
-//            attackCooldown = 10000;
-//            currentScreen.tick();
-//
-//            mouse.updateMouse();
-//
-//            RenderSystem.pushMatrix();
-//            RenderSystem.clear(16640, IS_SYSTEM_MAC);
-//            framebuffer.beginWrite(true);
-//            RenderSystem.enableTexture();
-//
-//            RenderSystem.viewport(0, 0, window.getWidth(), window.getHeight());
-//            RenderSystem.matrixMode(5889);
-//            RenderSystem.loadIdentity();
-//            RenderSystem.matrixMode(5888);
-//            RenderSystem.loadIdentity();
-//
-//            RenderSystem.clear(256, IS_SYSTEM_MAC);
-//
-//            unknownMethodOfImportantGl();
-//
-//            currentScreen.render(
-//                            (int) (mouse.getX() * window.getScaledWidth() / window.getWidth()),
-//                            (int) (mouse.getY() * window.getScaledHeight() / window.getHeight()),
-//                            0
-//            );
-//
-//            framebuffer.endWrite();
-//            RenderSystem.popMatrix();
-//            RenderSystem.pushMatrix();
-//            framebuffer.draw(window.getWidth(), window.getHeight());
-//            RenderSystem.popMatrix();
-//            RenderSystem.pushMatrix();
-//            unknownMethodOfImportantGl();
-//            RenderSystem.popMatrix();
-//            window.setFullscreen();
-//            Thread.yield();
-//        }
-//    }
-
-    private void unknownMethodOfImportantGl() {
-        RenderSystem.clear(256, IS_SYSTEM_MAC);
-        RenderSystem.matrixMode(5889);
-        RenderSystem.loadIdentity();
-        RenderSystem.ortho(0.0D, this.window.getFramebufferWidth(), this.window.getFramebufferHeight(), 0.0D, 1000.0D, 3000.0D);
-        RenderSystem.matrixMode(5888);
-        RenderSystem.loadIdentity();
-        RenderSystem.translatef(0.0F, 0.0F, -2000.0F);
-    }
-
     public void displayCrashScreen(CrashReport report) {
         try {
             if (crashedDuringStartup) throw new IllegalStateException("Could not initialize startup crash screen");
@@ -616,7 +555,6 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
             inGameHud.getChatHud().clear(true);
 
             // Display the crash screen
-//            runGUILoop(new CrashScreen(report));
             openScreen(new CrashScreen(report));
         } catch (Throwable t) {
             // The crash screen has crashed. Report it normally instead.

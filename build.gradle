@@ -14,7 +14,7 @@ dependencies {
 }
 
 
-version "1.0.1"
+version mod_version
 group "lettuce.fudge.notenoughcrashes"
 archivesBaseName = "NotEnoughCrashes"
 
