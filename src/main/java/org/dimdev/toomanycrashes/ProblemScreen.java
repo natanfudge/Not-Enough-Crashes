@@ -21,6 +21,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Environment(EnvType.CLIENT)
 public abstract class ProblemScreen extends Screen {
@@ -59,7 +60,7 @@ public abstract class ProblemScreen extends Screen {
                             }
 
                             this.minecraft.openScreen(this);
-                        }, hasteLink, false));
+                        }, hasteLink, true));
                     } catch (Throwable e) {
                         LOGGER.error("Exception when crash menu button clicked:", e);
                         buttonWidget.setMessage(I18n.translate("toomanycrashes.gui.failed"));
@@ -84,9 +85,20 @@ public abstract class ProblemScreen extends Screen {
         return false;
     }
 
+
+    private static final String MINECRAFT_ID = "minecraft";
+    private static final String LOADER_ID = "fabricloader";
+
+
     protected String getModListString() {
         if (modListString == null) {
-            Set<ModMetadata> suspectedMods = ((PatchedCrashReport) report).getSuspectedMods();
+            //TODO: seperate minecraft and fabric loader because they always exist
+            // If it's only fabric-loader and/or minecraft - show them as the suspected
+            // If there's something else - show it as the suspected mods and note it can be fabric-loader or minecraft.
+            //TODO also need to take care to not NPE here
+            Set<ModMetadata> suspectedMods = ((PatchedCrashReport) report).getSuspectedMods()
+                            .stream().filter(mod -> !mod.getId().equals(MINECRAFT_ID) && !mod.getId().equals(LOADER_ID))
+                            .collect(Collectors.toSet());
             if (suspectedMods == null) {
                 return modListString = I18n.translate("toomanycrashes.crashscreen.identificationErrored");
             }

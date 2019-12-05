@@ -1,27 +1,42 @@
 package org.dimdev.utils;
 
-import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.ModContainer;
-import net.fabricmc.loader.api.metadata.ModMetadata;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.security.CodeSource;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.ModContainer;
+import net.fabricmc.loader.api.metadata.ModMetadata;
 
 public final class ModIdentifier {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
     public static Set<ModMetadata> identifyFromStacktrace(Throwable e) {
+        Set<ModMetadata> mods = new HashSet<>();
+        // Include suppressed exceptions too
+        visitChildrenThrowables(e, throwable -> mods.addAll(identifyFromThrowable(throwable)));
+        return mods;
+    }
+
+    private static void visitChildrenThrowables(Throwable e, Consumer<Throwable> visitor) {
+        visitor.accept(e);
+        for (Throwable child : e.getSuppressed()) visitChildrenThrowables(child, visitor);
+    }
+
+    private static Set<ModMetadata> identifyFromThrowable(Throwable e) {
         Map<URI, Set<ModMetadata>> modMap = makeModMap();
 
         // Get the set of classes
@@ -53,18 +68,20 @@ public final class ModIdentifier {
         if (className.startsWith("org.spongepowered.asm.mixin.")) {
             return Collections.emptySet();
         }
-
-        // Get the URL of the class
-        URL url = ModIdentifier.class.getResource(className);
-        if (url == null) {
-            LOGGER.warn("Failed to identify mod for " + className);
-            return Collections.emptySet();
-        }
-
-        // Get the mod containing that class
         try {
+            // Get the URL of the class
+            Class<?> clazz = Class.forName(className);
+            CodeSource codeSource = clazz.getProtectionDomain().getCodeSource();
+            if (codeSource == null) return Collections.emptySet(); // Some internal native sun classes
+            URL url = clazz.getProtectionDomain().getCodeSource().getLocation();
+            if (url == null) {
+                LOGGER.warn("Failed to identify mod for " + className);
+                return Collections.emptySet();
+            }
+
+            // Get the mod containing that class
             return modMap.get(jarFromUrl(url));
-        } catch (URISyntaxException | IOException ex) {
+        } catch (URISyntaxException | IOException | ClassNotFoundException ex) {
             return Collections.emptySet(); // we cannot do it
         }
     }

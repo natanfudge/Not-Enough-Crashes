@@ -10,6 +10,7 @@ import java.security.cert.CertificateException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.dimdev.toomanycrashes.test.TestBlock;
+import org.dimdev.toomanycrashes.test.TestException;
 import org.dimdev.utils.SSLUtils;
 
 import net.minecraft.block.Block;
@@ -23,7 +24,9 @@ import net.fabricmc.api.ModInitializer;
 
 public class TooManyCrashes implements ModInitializer {
 
-    private static final Logger LOGGER = LogManager.getLogger("TooManyCrashes");
+    public static final String NAME = "Not Enough Crashes";
+
+    private static final Logger LOGGER = LogManager.getLogger(NAME);
     public static final Block EXAMPLE_BLOCK = new TestBlock();
 
     @Override
@@ -35,7 +38,10 @@ public class TooManyCrashes implements ModInitializer {
         Registry.register(Registry.ITEM, new Identifier("tutorial", "example_block"),
                         new BlockItem(EXAMPLE_BLOCK, new Item.Settings().group(ItemGroup.MISC)));
 
-//        throw new NullPointerException();
+//        "Render thread"@1 in group "main":RUNNING
+
+        throw new TestException();
+
         //initStacktraceDeobfuscator();
     }
 

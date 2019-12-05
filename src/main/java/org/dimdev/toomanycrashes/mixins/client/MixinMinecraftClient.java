@@ -1,9 +1,19 @@
 package org.dimdev.toomanycrashes.mixins.client;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.OptionalInt;
 import java.util.Queue;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import com.google.common.collect.Lists;
 import com.mojang.blaze3d.platform.GLX;
 import com.mojang.blaze3d.systems.RenderSystem;
 import org.apache.logging.log4j.Logger;
@@ -12,15 +22,23 @@ import org.dimdev.toomanycrashes.CrashUtils;
 import org.dimdev.toomanycrashes.InitErrorScreen;
 import org.dimdev.toomanycrashes.PatchedClient;
 import org.dimdev.toomanycrashes.StateManager;
+import org.dimdev.toomanycrashes.TooManyCrashes;
 import org.dimdev.utils.GlUtil;
+import org.lwjgl.PointerBuffer;
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.system.MemoryStack;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
+import net.minecraft.SharedConstants;
 import net.minecraft.client.Keyboard;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.Mouse;
+import net.minecraft.client.WindowSettings;
+import net.minecraft.client.color.block.BlockColors;
+import net.minecraft.client.color.item.ItemColors;
 import net.minecraft.client.font.FontManager;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gl.Framebuffer;
@@ -30,26 +48,53 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.SplashScreen;
 import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.client.options.CloudRenderMode;
 import net.minecraft.client.options.GameOptions;
-import net.minecraft.client.options.Option;
-import net.minecraft.client.render.BackgroundRenderer;
+import net.minecraft.client.options.HotbarStorage;
+import net.minecraft.client.particle.ParticleManager;
+import net.minecraft.client.render.BufferBuilderStorage;
+import net.minecraft.client.render.FirstPersonRenderer;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.RenderTickCounter;
+import net.minecraft.client.render.WorldRenderer;
+import net.minecraft.client.render.block.BlockRenderManager;
+import net.minecraft.client.render.debug.DebugRenderer;
+import net.minecraft.client.render.entity.EntityRenderDispatcher;
+import net.minecraft.client.render.item.ItemRenderer;
+import net.minecraft.client.render.model.BakedModelManager;
 import net.minecraft.client.resource.ClientResourcePackProfile;
+import net.minecraft.client.resource.FoliageColormapResourceSupplier;
+import net.minecraft.client.resource.Format4ResourcePack;
+import net.minecraft.client.resource.GrassColormapResourceSupplier;
+import net.minecraft.client.resource.SplashTextResourceSupplier;
 import net.minecraft.client.resource.language.LanguageManager;
+import net.minecraft.client.search.SearchManager;
+import net.minecraft.client.sound.MusicTracker;
 import net.minecraft.client.sound.SoundManager;
+import net.minecraft.client.texture.PaintingManager;
+import net.minecraft.client.texture.PlayerSkinProvider;
+import net.minecraft.client.texture.StatusEffectSpriteManager;
 import net.minecraft.client.texture.TextureManager;
 import net.minecraft.client.util.Window;
+import net.minecraft.client.util.WindowProvider;
+import net.minecraft.resource.DefaultResourcePack;
 import net.minecraft.resource.ReloadableResourceManager;
+import net.minecraft.resource.ReloadableResourceManagerImpl;
+import net.minecraft.resource.ResourcePack;
 import net.minecraft.resource.ResourcePackManager;
+import net.minecraft.resource.ResourcePackProfile;
+import net.minecraft.resource.ResourceType;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Unit;
 import net.minecraft.util.Util;
 import net.minecraft.util.crash.CrashException;
 import net.minecraft.util.crash.CrashReport;
 import net.minecraft.util.thread.ReentrantThreadExecutor;
+import net.minecraft.world.level.storage.LevelStorage;
+
+import net.fabricmc.fabric.impl.resource.loader.ModResourcePackUtil;
+import net.fabricmc.fabric.mixin.resource.loader.MixinFormat4ResourcePack;
 
 @Mixin(MinecraftClient.class)
 @SuppressWarnings("StaticVariableMayNotBeInitialized")
@@ -110,15 +155,73 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
     @Final
     private Queue<Runnable> renderTaskQueue;
 
-    @Final
-    @Shadow public  GameRenderer gameRenderer;
+    @Shadow
+    public GameRenderer gameRenderer;
 
-    @Shadow @Final private  RenderTickCounter renderTickCounter;
+    @Shadow
+    @Final
+    private RenderTickCounter renderTickCounter;
+    @Shadow
+    private WindowProvider windowProvider;
+
+    @Shadow
+    private Thread thread;
+
+    @Shadow
+    private BufferBuilderStorage bufferBuilders;
+
+    @Shadow
+    private HotbarStorage creativeHotbarStorage;
+
+    @Shadow
+    private PlayerSkinProvider skinProvider;
+
+    @Shadow
+    private LevelStorage levelStorage;
+
+    @Shadow
+    private SplashTextResourceSupplier splashTextLoader;
+
+    @Shadow
+    private MusicTracker musicTracker;
+
+    @Shadow
+    private BlockColors blockColorMap;
+    @Shadow
+    private ItemColors itemColorMap;
+    @Shadow
+    private BakedModelManager bakedModelManager;
+
+    @Shadow
+    private ItemRenderer itemRenderer;
+
+    @Shadow
+    private EntityRenderDispatcher entityRenderManager;
+    @Shadow
+    private FirstPersonRenderer firstPersonRenderer;
+
+    @Shadow
+    private BlockRenderManager blockRenderManager;
+
+    @Shadow
+    public ParticleManager particleManager;
+
+    @Shadow
+    private PaintingManager paintingManager;
+    @Shadow
+    @Final
+    private SearchManager searchManager;
+
+    @Shadow
+    private StatusEffectSpriteManager statusEffectSpriteManager;
+
+    @Shadow
+    public DebugRenderer debugRenderer;
 
     private int clientCrashCount = 0;
     private int serverCrashCount = 0;
-
-
+    @Shadow
+    private static CompletableFuture<Unit> COMPLETED_UNIT_FUTURE;
 
 
     public MixinMinecraftClient(String string_1) {
@@ -140,6 +243,10 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
     }
 
     @Shadow
+    private void initializeSearchableContainers() {
+    }
+
+    @Shadow
     public abstract ClientPlayNetworkHandler getNetworkHandler();
 
 
@@ -158,6 +265,25 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
     @Shadow
     public abstract void disconnect(Screen screen);
 
+    @Shadow
+    private void startTimerHackThread() {
+    }
+
+    @Shadow
+    public WorldRenderer worldRenderer;
+
+
+    @Shadow
+    public abstract void onWindowFocusChanged(boolean focused);
+
+    @Shadow
+    private void handleGlErrorByDisableVsync(int error, long description) {
+    }
+
+    @Shadow
+    private void checkGameData() {
+    }
+
     /**
      * @author runemoro
      * @reason Allows the player to choose to return to the title screen after a crash, or get
@@ -166,7 +292,7 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
     @Overwrite
     public void run() {
         while (running) {
-            if ( crashReport == null) {
+            if (crashReport == null) {
                 try {
                     render(true);
                 } catch (CrashException e) {
@@ -184,13 +310,11 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
                     addInfoToCrash(report);
                     resetGameState();
                     LOGGER.fatal("Unreported exception thrown!", e);
-                    openScreen(new CrashScreen(report));
-//                    displayCrashScreen(report);
+                    displayCrashScreen(report);
                 }
             } else {
                 serverCrashCount++;
                 addInfoToCrash(crashReport);
-                resetGameState();
                 displayCrashScreen(crashReport);
 
                 crashReport = null;
@@ -205,12 +329,21 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
 
     @Override
     public void displayInitErrorScreen(CrashReport report) {
+
+
         CrashUtils.outputReport(report);
 
         try {
-            GlUtil.resetState();
+
+//            GlUtil.resetStateWithoutContext();
+
+            //TODO: skip a lot of the initialization to not give the impression the game loaded correctly
+            completeInitializationForGUIPreScreen();
             running = true;
-            runGUILoop(new InitErrorScreen(report));
+            openScreen(new InitErrorScreen(report));
+            completeInitializationForGUIPostScreen();
+
+//            runGUILoop(new InitErrorScreen(report));
         } catch (Throwable t) {
             LOGGER.error("An uncaught exception occured while displaying the init error screen, making normal report instead", t);
             printCrashReport(report);
@@ -218,47 +351,203 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
         }
     }
 
+    private static final int DefaultWidth = 854;
+    private static final int DefaultHeight = 480;
+
+    private WindowSettings getDefaultWindowsSettings() {
+        return new WindowSettings(DefaultWidth, DefaultHeight, OptionalInt.empty(), OptionalInt.empty(), false);
+    }
+
+    private MinecraftClient getThis() {
+        return MinecraftClient.getInstance();
+    }
+
+    private void ignoreAGlfwError() {
+        MemoryStack memoryStack = MemoryStack.stackPush();
+        PointerBuffer pointerBuffer = memoryStack.mallocPointer(1);
+        GLFW.glfwGetError(pointerBuffer);
+    }
+
+    private void completeInitializationForGUIPreScreen() {
+        // At some point earlier something triggers a GL error so we need to ignore it so minecraft doesn't crash
+        ignoreAGlfwError();
+
+        this.thread = Thread.currentThread();
+        this.options = new GameOptions(getThis(), this.runDirectory);
+        this.creativeHotbarStorage = new HotbarStorage(this.runDirectory, getThis().getDataFixer());
+        this.startTimerHackThread();
+        LOGGER.info("Backend library: {}", RenderSystem.getBackendDescription());
+        WindowSettings windowSettings2 = getDefaultWindowsSettings();
+
+        Util.nanoTimeSupplier = RenderSystem.initBackendSystem();
+        this.windowProvider = new WindowProvider(getThis());
+        this.window = this.windowProvider.createWindow(windowSettings2, this.options.fullscreenResolution, "Minecraft " + SharedConstants.getGameVersion().getName());
+        getThis().onWindowFocusChanged(true);
+
+        try {
+            InputStream inputStream = getThis().getResourcePackDownloader().getPack().open(ResourceType.CLIENT_RESOURCES, new Identifier("icons/icon_16x16.png"));
+            InputStream inputStream2 = getThis().getResourcePackDownloader().getPack().open(ResourceType.CLIENT_RESOURCES, new Identifier("icons/icon_32x32.png"));
+            this.window.setIcon(inputStream, inputStream2);
+        } catch (IOException var9) {
+            LOGGER.error("Couldn't set icon", var9);
+        }
+
+        this.window.setFramerateLimit(this.options.maxFps);
+        this.mouse = new Mouse(getThis());
+        this.mouse.setup(this.window.getHandle());
+        this.keyboard = new Keyboard(getThis());
+        this.keyboard.setup(this.window.getHandle());
+        RenderSystem.initRenderer(this.options.glDebugVerbosity, false);
+        this.framebuffer = new Framebuffer(this.window.getFramebufferWidth(), this.window.getFramebufferHeight(), true, IS_SYSTEM_MAC);
+        this.framebuffer.setClearColor(0.0F, 0.0F, 0.0F, 0.0F);
+        this.resourceManager = new ReloadableResourceManagerImpl(ResourceType.CLIENT_RESOURCES, this.thread);
+        this.options.addResourcePackProfilesToManager(this.resourcePackManager);
+        this.resourcePackManager.scanPacks();
+        List<ResourcePack> list = (List)fabricInjectModResourcePacks(this.resourcePackManager.getEnabledProfiles().stream().map(ResourcePackProfile::createResourcePack),Collectors.toList());
+        Iterator var11 = list.iterator();
+
+        while (var11.hasNext()) {
+            ResourcePack resourcePack = (ResourcePack) var11.next();
+            this.resourceManager.addPack(resourcePack);
+        }
+
+        this.languageManager = new LanguageManager(this.options.language);
+        this.resourceManager.registerListener(this.languageManager);
+        this.languageManager.reloadResources(list);
+        this.textureManager = new TextureManager(this.resourceManager);
+        this.resourceManager.registerListener(this.textureManager);
+//        this.skinProvider = new PlayerSkinProvider(this.textureManager, new File(file, "skins"), getThis().getSessionService());
+        this.levelStorage = new LevelStorage(this.runDirectory.toPath().resolve("saves"), this.runDirectory.toPath().resolve("backups"),
+                        getThis().getDataFixer());
+        this.soundManager = new SoundManager(this.resourceManager, this.options);
+        this.resourceManager.registerListener(this.soundManager);
+        this.splashTextLoader = new SplashTextResourceSupplier(getThis().getSession());
+        this.resourceManager.registerListener(this.splashTextLoader);
+        this.musicTracker = new MusicTracker(getThis());
+        this.fontManager = new FontManager(this.textureManager, this.forcesUnicodeFont());
+        this.resourceManager.registerListener(this.fontManager.getResourceReloadListener());
+        TextRenderer textRenderer = this.fontManager.getTextRenderer(DEFAULT_TEXT_RENDERER_ID);
+        if (textRenderer == null) {
+            throw new IllegalStateException("Default font is null");
+        } else {
+            this.textRenderer = textRenderer;
+            this.textRenderer.setRightToLeft(this.languageManager.isRightToLeft());
+            this.resourceManager.registerListener(new GrassColormapResourceSupplier());
+            this.resourceManager.registerListener(new FoliageColormapResourceSupplier());
+            this.window.setPhase("Startup");
+            RenderSystem.setupDefaultState(0, 0, this.window.getFramebufferWidth(), this.window.getFramebufferHeight());
+            this.window.setPhase("Post startup");
+            this.blockColorMap = BlockColors.create();
+            this.itemColorMap = ItemColors.create(this.blockColorMap);
+            this.bakedModelManager = new BakedModelManager(this.textureManager, this.blockColorMap, this.options.mipmapLevels);
+            this.resourceManager.registerListener(this.bakedModelManager);
+            this.itemRenderer = new ItemRenderer(this.textureManager, this.bakedModelManager, this.itemColorMap);
+            this.entityRenderManager = new EntityRenderDispatcher(this.textureManager, this.itemRenderer, this.resourceManager, this.textRenderer, this.options);
+            this.firstPersonRenderer = new FirstPersonRenderer(getThis());
+            this.resourceManager.registerListener(this.itemRenderer);
+            this.bufferBuilders = new BufferBuilderStorage();
+            this.gameRenderer = new GameRenderer(getThis(), this.resourceManager, this.bufferBuilders);
+            this.resourceManager.registerListener(this.gameRenderer);
+            this.blockRenderManager = new BlockRenderManager(this.bakedModelManager.getBlockModels(), this.blockColorMap);
+            this.resourceManager.registerListener(this.blockRenderManager);
+            this.worldRenderer = new WorldRenderer(getThis(), this.bufferBuilders);
+            this.resourceManager.registerListener(this.worldRenderer);
+            this.initializeSearchableContainers();
+            this.resourceManager.registerListener(this.searchManager);
+            this.particleManager = new ParticleManager(getThis().world, this.textureManager);
+            this.resourceManager.registerListener(this.particleManager);
+            this.paintingManager = new PaintingManager(this.textureManager);
+            this.resourceManager.registerListener(this.paintingManager);
+            this.statusEffectSpriteManager = new StatusEffectSpriteManager(this.textureManager);
+            this.resourceManager.registerListener(this.statusEffectSpriteManager);
+            this.inGameHud = new InGameHud(getThis());
+            this.debugRenderer = new DebugRenderer(getThis());
+            RenderSystem.setErrorCallback(this::handleGlErrorByDisableVsync);
+            if (this.options.fullscreen && !this.window.isFullscreen()) {
+                this.window.toggleFullscreen();
+                this.options.fullscreen = this.window.isFullscreen();
+            }
+
+            this.window.setVsync(this.options.enableVsync);
+            this.window.setRawMouseMotion(this.options.rawMouseInput);
+            this.window.logOnGlError();
+            getThis().onResolutionChanged();
+        }
+    }
+
+    private void completeInitializationForGUIPostScreen() {
+        SplashScreen.init(getThis());
+        getThis().setOverlay(new SplashScreen(getThis(), this.resourceManager.beginInitialMonitoredReload(Util.getServerWorkerExecutor(), this, COMPLETED_UNIT_FUTURE), (optional) -> {
+            Util.ifPresentOrElse(optional, (throwable) -> {
+                if (this.resourcePackManager.getEnabledProfiles().size() > 1) {
+                    LOGGER.info("Caught error loading resourcepacks, removing all assigned resourcepacks", throwable);
+                    this.resourcePackManager.setEnabledProfiles(Collections.emptyList());
+                    this.options.resourcePacks.clear();
+                    this.options.incompatibleResourcePacks.clear();
+                    this.options.write();
+                    this.reloadResources();
+                } else {
+                    Util.method_24155(throwable);
+                }
+
+            }, () -> {
+                if (SharedConstants.isDevelopment) {
+                    this.checkGameData();
+                }
+
+            });
+        }, false));
+
+
+        RenderSystem.finishInitialization();
+
+        RenderSystem.initGameThread(false);
+        run();
+    }
+
+    private Object fabricInjectModResourcePacks(Stream<ResourcePack> stream, Collector collector) {
+        List<ResourcePack> fabricResourcePacks = stream.collect(Collectors.toList());
+        this.fabricModifyResourcePackList(fabricResourcePacks);
+        return fabricResourcePacks.stream().collect(collector);
+    }
+
+    private void fabricModifyResourcePackList(List<ResourcePack> list) {
+        List<ResourcePack> oldList = Lists.newArrayList(list);
+        list.clear();
+        boolean appended = false;
+
+        for(int i = 0; i < oldList.size(); ++i) {
+            ResourcePack pack = (ResourcePack)oldList.get(i);
+            list.add(pack);
+            boolean isDefaultResources = pack instanceof DefaultResourcePack;
+            if (!isDefaultResources && pack instanceof Format4ResourcePack) {
+                MixinFormat4ResourcePack fixer = (MixinFormat4ResourcePack)pack;
+                isDefaultResources = fixer.getParent() instanceof DefaultResourcePack;
+            }
+
+            if (isDefaultResources) {
+                ModResourcePackUtil.appendModResourcePacks(list, ResourceType.CLIENT_RESOURCES);
+                appended = true;
+            }
+        }
+
+        if (!appended) {
+            StringBuilder builder = new StringBuilder("Fabric could not find resource pack injection location!");
+            Iterator var9 = oldList.iterator();
+
+            while(var9.hasNext()) {
+                ResourcePack rp = (ResourcePack)var9.next();
+                builder.append("\n - ").append(rp.getName()).append(" (").append(rp.getClass().getName()).append(")");
+            }
+
+            throw new RuntimeException(builder.toString());
+        }
+    }
+
     private void runGUILoop(Screen screen) {
         openScreen(screen);
 
         while (running && currentScreen != null && !(currentScreen instanceof TitleScreen)) {
-//            this.window.setPhase("Pre Artificial render");
-//
-//            this.mouse.updateMouse();
-//            this.window.setPhase("Render");
-////            this.soundManager.updateListenerPosition(this.gameRenderer.getCamera());
-//            RenderSystem.pushMatrix();
-//            RenderSystem.clear(16640, IS_SYSTEM_MAC);
-//            this.framebuffer.beginWrite(true);
-//            BackgroundRenderer.method_23792();
-//            RenderSystem.enableTexture();
-//
-//            currentScreen.render(
-//                            (int) (mouse.getX() * window.getScaledWidth() / window.getWidth()),
-//                            (int) (mouse.getY() * window.getScaledHeight() / window.getHeight()),
-//                            0
-//            );
-//
-//            long startTime = Util.getMeasuringTimeNano();
-//
-//
-////            if (!this.skipGameRender) {
-//                this.gameRenderer.render(this.renderTickCounter.tickDelta, startTime, false);
-////            }
-//
-//            this.framebuffer.endWrite();
-//            RenderSystem.popMatrix();
-//            RenderSystem.pushMatrix();
-//            this.framebuffer.draw(this.window.getFramebufferWidth(), this.window.getFramebufferHeight());
-//            RenderSystem.popMatrix();
-//            this.window.setFullscreen();
-//
-//            Thread.yield();
-//            this.window.setPhase("Post Artificial render");
-
-
-
-
             window.setPhase("TooManyCrashes GUI Loop");
             if (GLX._shouldClose(window)) {
                 stop();
@@ -323,7 +612,8 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
             inGameHud.getChatHud().clear(true);
 
             // Display the crash screen
-            runGUILoop(new CrashScreen(report));
+//            runGUILoop(new CrashScreen(report));
+            openScreen(new CrashScreen(report));
         } catch (Throwable t) {
             // The crash screen has crashed. Report it normally instead.
             LOGGER.error("An uncaught exception occured while displaying the crash screen, making normal report instead", t);
@@ -360,7 +650,7 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
             if (getNetworkHandler() != null) {
                 // Fix: Close the connection to avoid receiving packets from old server
                 // when playing in another world (MC-128953)
-                getNetworkHandler().getConnection().disconnect(new LiteralText("[TooManyCrashes] Client crashed"));
+                getNetworkHandler().getConnection().disconnect(new LiteralText(String.format("[%s] Client crashed", TooManyCrashes.NAME)));
             }
 
             disconnect(new SaveLevelScreen(new TranslatableText("menu.savingLevel")));

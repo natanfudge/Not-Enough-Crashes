@@ -1,12 +1,12 @@
 {
     "schemaVersion": 1,
     "id": "toomanycrashes",
-    "name": "TooManyCrashes",
+    "name": "Not Enough Crashes",
     "description": "A port of VanillaFix's crash improvement features to Fabric",
     "version": "${version}",
     "contact": {
-        "issues": "https://github.com/liachmodded/TooManyCrashes/issues",
-        "sources": "https://github.com/liachmodded/TooManyCrashes"
+        "issues": "https://github.com/natanfudge/TooManyCrashes/issues",
+        "sources": "https://github.com/natanfudge/TooManyCrashes"
     },
     "icon": "assets/toomanycrashes/icon.png",
     "mixins": [

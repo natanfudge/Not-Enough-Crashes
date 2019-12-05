@@ -6,7 +6,7 @@
   "toomanycrashes.crashscreen.summary": "Minecraft a rencontré un problème et a crashé.",
   "toomanycrashes.crashscreen.paragraph1.line1": "Ces mod(s) ont été identifiés comme des causes potentielles:",
   "toomanycrashes.crashscreen.unknownCause": "Cause inconnue",
-  "toomanycrashes.crashscreen.identificationErrored": "[Problème dans l'identification, raportez à TooManyCrashes]",
+  "toomanycrashes.crashscreen.identificationErrored": "[Problème dans l'identification, raportez à Not Enough Crashes]",
   "toomanycrashes.crashscreen.paragraph2.line1": "Cliquez n'importe quel mod dans la liste pour aller a leur page",
   "toomanycrashes.crashscreen.paragraph2.line2": "pour du support. Un raport a été génére et se trouve ici (cliquez):",
   "toomanycrashes.crashscreen.reportSaveFailed": "[Erreur durant la sauvegarde, voir le log]",

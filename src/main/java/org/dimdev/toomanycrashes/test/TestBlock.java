@@ -10,9 +10,7 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-class TestException extends RuntimeException{
 
-}
 public class TestBlock extends Block {
 	public TestBlock() {
 		super(Settings.of(Material.ANVIL));
