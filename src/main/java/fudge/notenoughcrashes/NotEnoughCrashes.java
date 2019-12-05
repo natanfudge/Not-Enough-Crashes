@@ -7,6 +7,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 
+import fudge.notenoughcrashes.stacktrace.StacktraceDeobfuscator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import fudge.notenoughcrashes.test.TestBlock;
@@ -22,7 +23,7 @@ import net.minecraft.util.registry.Registry;
 
 import net.fabricmc.api.ModInitializer;
 
-public class TooManyCrashes implements ModInitializer {
+public class NotEnoughCrashes implements ModInitializer {
 
     public static final String NAME = "Not Enough Crashes";
 
@@ -40,14 +41,14 @@ public class TooManyCrashes implements ModInitializer {
 
 //        "Render thread"@1 in group "main":RUNNING
 
-        throw new TestException();
+//        throw new TestException();
 
-        //initStacktraceDeobfuscator();
+//        initStacktraceDeobfuscator();
     }
 
     private void trustIdenTrust() {
         // Trust the "IdenTrust DST Root CA X3" certificate (used by Let's Encrypt, which is used by paste.dimdev.org)
-        try (InputStream keyStoreInputStream = TooManyCrashes.class.getResourceAsStream("/dst_root_ca_x3.jks")) {
+        try (InputStream keyStoreInputStream = NotEnoughCrashes.class.getResourceAsStream("/dst_root_ca_x3.jks")) {
             KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
             keyStore.load(keyStoreInputStream, "password".toCharArray());
             SSLUtils.trustCertificates(keyStore);

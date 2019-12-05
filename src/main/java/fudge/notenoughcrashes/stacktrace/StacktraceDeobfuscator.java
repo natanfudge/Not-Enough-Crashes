@@ -1,4 +1,4 @@
-package fudge.notenoughcrashes;
+package fudge.notenoughcrashes.stacktrace;
 
 import java.io.BufferedReader;
 import java.io.IOException;

@@ -1,5 +1,6 @@
 package fudge.notenoughcrashes;
 
+import fudge.notenoughcrashes.stacktrace.StacktraceDeobfuscator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.Logger;

@@ -12,7 +12,7 @@ import java.io.IOException;
 
 public class ModConfig {
 
-    private static final File CONFIG_FILE = new File(FabricLoader.getInstance().getConfigDirectory(), "toomanycrashes.json");
+    private static final File CONFIG_FILE = new File(FabricLoader.getInstance().getConfigDirectory(), "notenoughcrashes.json");
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static ModConfig instance = null;
 

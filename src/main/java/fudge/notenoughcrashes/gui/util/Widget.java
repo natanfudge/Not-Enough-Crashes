@@ -1,4 +1,7 @@
 package fudge.notenoughcrashes.gui.util;
 
-interface Widget {
+public interface Widget {
+    void draw();
+
+    void onClick(double clickX, double clickY);
 }

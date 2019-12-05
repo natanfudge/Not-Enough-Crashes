@@ -14,16 +14,15 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.platform.GLX;
 import com.mojang.blaze3d.systems.RenderSystem;
-import org.apache.logging.log4j.Logger;
-import fudge.notenoughcrashes.CrashScreen;
 import fudge.notenoughcrashes.CrashUtils;
-import fudge.notenoughcrashes.InitErrorScreen;
+import fudge.notenoughcrashes.NotEnoughCrashes;
 import fudge.notenoughcrashes.PatchedClient;
 import fudge.notenoughcrashes.StateManager;
-import fudge.notenoughcrashes.TooManyCrashes;
+import fudge.notenoughcrashes.gui.CrashScreen;
+import fudge.notenoughcrashes.gui.InitErrorScreen;
 import fudge.utils.GlUtil;
+import org.apache.logging.log4j.Logger;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.system.MemoryStack;
@@ -46,7 +45,6 @@ import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.gui.screen.SaveLevelScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.SplashScreen;
-import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.options.GameOptions;
 import net.minecraft.client.options.HotbarStorage;
@@ -284,6 +282,9 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
     private void checkGameData() {
     }
 
+
+    private boolean crashedDuringStartup = false;
+
     /**
      * @author runemoro
      * @reason Allows the player to choose to return to the title screen after a crash, or get
@@ -329,6 +330,7 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
 
     @Override
     public void displayInitErrorScreen(CrashReport report) {
+        crashedDuringStartup = true;
 
 
         CrashUtils.outputReport(report);
@@ -403,7 +405,7 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
         this.resourceManager = new ReloadableResourceManagerImpl(ResourceType.CLIENT_RESOURCES, this.thread);
         this.options.addResourcePackProfilesToManager(this.resourcePackManager);
         this.resourcePackManager.scanPacks();
-        List<ResourcePack> list = (List)fabricInjectModResourcePacks(this.resourcePackManager.getEnabledProfiles().stream().map(ResourcePackProfile::createResourcePack),Collectors.toList());
+        List<ResourcePack> list = (List) fabricInjectModResourcePacks(this.resourcePackManager.getEnabledProfiles().stream().map(ResourcePackProfile::createResourcePack), Collectors.toList());
         Iterator var11 = list.iterator();
 
         while (var11.hasNext()) {
@@ -516,12 +518,12 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
         list.clear();
         boolean appended = false;
 
-        for(int i = 0; i < oldList.size(); ++i) {
-            ResourcePack pack = (ResourcePack)oldList.get(i);
+        for (int i = 0; i < oldList.size(); ++i) {
+            ResourcePack pack = (ResourcePack) oldList.get(i);
             list.add(pack);
             boolean isDefaultResources = pack instanceof DefaultResourcePack;
             if (!isDefaultResources && pack instanceof Format4ResourcePack) {
-                MixinFormat4ResourcePack fixer = (MixinFormat4ResourcePack)pack;
+                MixinFormat4ResourcePack fixer = (MixinFormat4ResourcePack) pack;
                 isDefaultResources = fixer.getParent() instanceof DefaultResourcePack;
             }
 
@@ -535,8 +537,8 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
             StringBuilder builder = new StringBuilder("Fabric could not find resource pack injection location!");
             Iterator var9 = oldList.iterator();
 
-            while(var9.hasNext()) {
-                ResourcePack rp = (ResourcePack)var9.next();
+            while (var9.hasNext()) {
+                ResourcePack rp = (ResourcePack) var9.next();
                 builder.append("\n - ").append(rp.getName()).append(" (").append(rp.getClass().getName()).append(")");
             }
 
@@ -544,53 +546,53 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
         }
     }
 
-    private void runGUILoop(Screen screen) {
-        openScreen(screen);
-
-        while (running && currentScreen != null && !(currentScreen instanceof TitleScreen)) {
-            window.setPhase("TooManyCrashes GUI Loop");
-            if (GLX._shouldClose(window)) {
-                stop();
-            }
-
-            attackCooldown = 10000;
-            currentScreen.tick();
-
-            mouse.updateMouse();
-
-            RenderSystem.pushMatrix();
-            RenderSystem.clear(16640, IS_SYSTEM_MAC);
-            framebuffer.beginWrite(true);
-            RenderSystem.enableTexture();
-
-            RenderSystem.viewport(0, 0, window.getWidth(), window.getHeight());
-            RenderSystem.matrixMode(5889);
-            RenderSystem.loadIdentity();
-            RenderSystem.matrixMode(5888);
-            RenderSystem.loadIdentity();
-
-            RenderSystem.clear(256, IS_SYSTEM_MAC);
-
-            unknownMethodOfImportantGl();
-
-            currentScreen.render(
-                            (int) (mouse.getX() * window.getScaledWidth() / window.getWidth()),
-                            (int) (mouse.getY() * window.getScaledHeight() / window.getHeight()),
-                            0
-            );
-
-            framebuffer.endWrite();
-            RenderSystem.popMatrix();
-            RenderSystem.pushMatrix();
-            framebuffer.draw(window.getWidth(), window.getHeight());
-            RenderSystem.popMatrix();
-            RenderSystem.pushMatrix();
-            unknownMethodOfImportantGl();
-            RenderSystem.popMatrix();
-            window.setFullscreen();
-            Thread.yield();
-        }
-    }
+//    private void runGUILoop(Screen screen) {
+//        openScreen(screen);
+//
+//        while (running && currentScreen != null && !(currentScreen instanceof TitleScreen)) {
+//            window.setPhase("Not Enough Crashes GUI Loop");
+//            if (GLX._shouldClose(window)) {
+//                stop();
+//            }
+//
+//            attackCooldown = 10000;
+//            currentScreen.tick();
+//
+//            mouse.updateMouse();
+//
+//            RenderSystem.pushMatrix();
+//            RenderSystem.clear(16640, IS_SYSTEM_MAC);
+//            framebuffer.beginWrite(true);
+//            RenderSystem.enableTexture();
+//
+//            RenderSystem.viewport(0, 0, window.getWidth(), window.getHeight());
+//            RenderSystem.matrixMode(5889);
+//            RenderSystem.loadIdentity();
+//            RenderSystem.matrixMode(5888);
+//            RenderSystem.loadIdentity();
+//
+//            RenderSystem.clear(256, IS_SYSTEM_MAC);
+//
+//            unknownMethodOfImportantGl();
+//
+//            currentScreen.render(
+//                            (int) (mouse.getX() * window.getScaledWidth() / window.getWidth()),
+//                            (int) (mouse.getY() * window.getScaledHeight() / window.getHeight()),
+//                            0
+//            );
+//
+//            framebuffer.endWrite();
+//            RenderSystem.popMatrix();
+//            RenderSystem.pushMatrix();
+//            framebuffer.draw(window.getWidth(), window.getHeight());
+//            RenderSystem.popMatrix();
+//            RenderSystem.pushMatrix();
+//            unknownMethodOfImportantGl();
+//            RenderSystem.popMatrix();
+//            window.setFullscreen();
+//            Thread.yield();
+//        }
+//    }
 
     private void unknownMethodOfImportantGl() {
         RenderSystem.clear(256, IS_SYSTEM_MAC);
@@ -604,6 +606,8 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
 
     public void displayCrashScreen(CrashReport report) {
         try {
+            if (crashedDuringStartup) throw new IllegalStateException("Could not initialize startup crash screen");
+
             CrashUtils.outputReport(report);
 
             // Vanilla does this when switching to main menu but not our custom crash screen
@@ -650,7 +654,7 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
             if (getNetworkHandler() != null) {
                 // Fix: Close the connection to avoid receiving packets from old server
                 // when playing in another world (MC-128953)
-                getNetworkHandler().getConnection().disconnect(new LiteralText(String.format("[%s] Client crashed", TooManyCrashes.NAME)));
+                getNetworkHandler().getConnection().disconnect(new LiteralText(String.format("[%s] Client crashed", NotEnoughCrashes.NAME)));
             }
 
             disconnect(new SaveLevelScreen(new TranslatableText("menu.savingLevel")));

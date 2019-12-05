@@ -1,14 +1,14 @@
 {
-  "toomanycrashes.gui.getLink": "Link erhalten",
-  "toomanycrashes.gui.failed": "[Fehlgeschlagen]",
-  "toomanycrashes.crashscreen.title": "Minecraft ist abgestürzt!",
-  "toomanycrashes.crashscreen.summary": "Minecraft ist ein Problem unterlaufen und ist abgestürzt.",
-  "toomanycrashes.crashscreen.paragraph1.line1": "Folgende Modifikation(en) wurde(n) als mögliche Ursache identifiziert:",
-  "toomanycrashes.crashscreen.paragraph2.line1": "Klicke auf einen beliebigen Mod in der Liste, um auf die Website zu gelangen.",
-  "toomanycrashes.crashscreen.paragraph2.line2": "Ein Bericht wurde erstellt und kann hier gefunden werden (Klick):",
-  "toomanycrashes.crashscreen.reportSaveFailed": "[FEHLER BEIM SPEICHERN, SIEHE LOG]",
-  "toomanycrashes.crashscreen.paragraph3.line1": "Klicke auf die Schaltfläche \"Link erhalten\", um ihn im Browser zu",
-  "toomanycrashes.crashscreen.paragraph3.line2": "öffnen. Du bist aufgefordert, diesen Bericht an den Modhersteller",
-  "toomanycrashes.crashscreen.paragraph3.line3": "zu senden, um ihm zu helfen, das Problem zu beheben. Da Not Enough Crashes",
-  "toomanycrashes.crashscreen.paragraph3.line4": "installiert ist, kannst du trotz des Absturzes weiterspielen."
+  "notenoughcrashes.gui.getLink": "Link erhalten",
+  "notenoughcrashes.gui.failed": "[Fehlgeschlagen]",
+  "notenoughcrashes.crashscreen.title": "Minecraft ist abgestürzt!",
+  "notenoughcrashes.crashscreen.summary": "Minecraft ist ein Problem unterlaufen und ist abgestürzt.",
+  "notenoughcrashes.crashscreen.paragraph1.line1": "Folgende Modifikation(en) wurde(n) als mögliche Ursache identifiziert:",
+  "notenoughcrashes.crashscreen.paragraph2.line1": "Klicke auf einen beliebigen Mod in der Liste, um auf die Website zu gelangen.",
+  "notenoughcrashes.crashscreen.paragraph2.line2": "Ein Bericht wurde erstellt und kann hier gefunden werden (Klick):",
+  "notenoughcrashes.crashscreen.reportSaveFailed": "[FEHLER BEIM SPEICHERN, SIEHE LOG]",
+  "notenoughcrashes.crashscreen.paragraph3.line1": "Klicke auf die Schaltfläche \"Link erhalten\", um ihn im Browser zu",
+  "notenoughcrashes.crashscreen.paragraph3.line2": "öffnen. Du bist aufgefordert, diesen Bericht an den Modhersteller",
+  "notenoughcrashes.crashscreen.paragraph3.line3": "zu senden, um ihm zu helfen, das Problem zu beheben. Da Not Enough Crashes",
+  "notenoughcrashes.crashscreen.paragraph3.line4": "installiert ist, kannst du trotz des Absturzes weiterspielen."
 }

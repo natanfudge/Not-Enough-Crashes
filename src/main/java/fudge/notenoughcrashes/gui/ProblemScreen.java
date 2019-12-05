@@ -1,16 +1,21 @@
-package fudge.notenoughcrashes;
+package fudge.notenoughcrashes.gui;
 
 import java.io.File;
 import java.lang.reflect.Field;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
+
+import fudge.notenoughcrashes.ModConfig;
+import fudge.notenoughcrashes.PatchedCrashReport;
+import fudge.notenoughcrashes.gui.util.TextWidget;
 import fudge.notenoughcrashes.gui.util.Widget;
 import fudge.utils.HasteUpload;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -18,16 +23,21 @@ import net.minecraft.client.gui.screen.ConfirmChatLinkScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.resource.language.I18n;
+import net.minecraft.text.ClickEvent;
 import net.minecraft.text.LiteralText;
+import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Util;
 import net.minecraft.util.crash.CrashReport;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.loader.api.metadata.ContactInformation;
 import net.fabricmc.loader.api.metadata.ModMetadata;
 
 @Environment(EnvType.CLIENT)
+//TODO: use proper widgets and composition over inheritance
 public abstract class ProblemScreen extends Screen {
 
     private final List<Widget> widgets = new ArrayList<>();
@@ -39,21 +49,78 @@ public abstract class ProblemScreen extends Screen {
     private static final Logger LOGGER = LogManager.getLogger();
 
 
-
     protected final CrashReport report;
     private String hasteLink = null;
-    private String modListString = null;
     protected int xLeft = Integer.MAX_VALUE;
     protected int xRight = Integer.MIN_VALUE;
     protected int yTop = Integer.MAX_VALUE;
     protected int yBottom = Integer.MIN_VALUE;
+
+
+    protected int x;
+    protected int y;
+
 
     protected ProblemScreen(CrashReport report) {
         super(new LiteralText(""));
         this.report = report;
     }
 
-    private 
+    // Earlier elements will be used first, may need to add more elements if people start using weird shit
+    private static final List<String> possibleIssuesFieldsByPriority = Arrays.asList(
+                    "issues", "sources", "homepage"
+    );
+
+    /**
+     * Loader doesn't provide us with a proper api to get a singular link to an issues page, so we need to guess.
+     */
+    private String getIssuesPage(ContactInformation contactInformation) {
+        for (String possibleField : possibleIssuesFieldsByPriority) {
+            Optional<String> value = contactInformation.get(possibleField);
+            if (value.isPresent()) return value.get();
+        }
+        return null;
+    }
+
+    private static final String MINECRAFT_ID = "minecraft";
+    private static final String LOADER_ID = "fabricloader";
+
+    private Text getSuspectedModsText() {
+        Set<ModMetadata> suspectedMods = ((PatchedCrashReport) report).getSuspectedMods();
+        if (suspectedMods == null) return new TranslatableText("notenoughcrashes.crashscreen.identificationErrored");
+        if (suspectedMods.isEmpty()) return new TranslatableText("notenoughcrashes.crashscreen.unknownCause");
+
+
+        // Minecraft exists and basically any stack trace, and loader exists in any launch,
+        // it's better not to include them in the list of mods.
+        suspectedMods.removeIf(mod -> mod.getId().equals(MINECRAFT_ID) || mod.getId().equals(LOADER_ID));
+
+        if (suspectedMods.isEmpty()) return new TranslatableText("notenoughcrashes.crashscreen.noModsErrored");
+
+        Text text = suspectedMods.stream()
+                        .sorted(Comparator.comparing(ModMetadata::getName))
+                        .map(mod -> {
+                            String issuesPage = getIssuesPage(mod.getContact());
+                            Text modText = new LiteralText(mod.getName());
+                            if (issuesPage != null) {
+                                modText.setStyle(
+                                                new Style().setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, issuesPage))
+                                );
+                            }
+                            return modText;
+
+                        })
+                        .reduce((existing, next) -> existing.append(", ").append(next))
+                        .get();
+
+        return text;
+    }
+
+    private void addSuspectedModsWidget() {
+        addWidget(new TextWidget(getSuspectedModsText(), TextWidget.CLICKABLE_TEXT_COLOR, font, width / 2, y + 29));
+    }
+
+    //FIXME: weird lag when pressing the "get link" button
 
     @Override
     public void init() {
@@ -81,11 +148,15 @@ public abstract class ProblemScreen extends Screen {
                                 buttonWidget.active = false;
                             }
                         }));
+
+        x = width / 2 - 155;
+        y = height / 4;
+        addSuspectedModsWidget();
     }
 
     @Override
     public boolean mouseClicked(double x, double y, int int_1) {
-        for (Widget widget : widgets) widget.draw();
+        for (Widget widget : widgets) widget.onClick(x, y);
         if (x >= xLeft && x <= xRight && y >= yTop && y <= yBottom) {
             File file = report.getFile();
             if (file != null) {
@@ -101,42 +172,9 @@ public abstract class ProblemScreen extends Screen {
     }
 
 
-    private static final String MINECRAFT_ID = "minecraft";
-    private static final String LOADER_ID = "fabricloader";
-
-
-    protected Text getModListString() {
-        if (modListString == null) {
-            //TODO: seperate minecraft and fabric loader because they always exist
-            // If it's only fabric-loader and/or minecraft - show them as the suspected
-            // If there's something else - show it as the suspected mods and note it can be fabric-loader or minecraft.
-            //TODO also need to take care to not NPE here
-            Set<ModMetadata> suspectedMods = ((PatchedCrashReport) report).getSuspectedMods();
-            if (suspectedMods == null) {
-                modListString = I18n.translate("notenoughcrashes.crashscreen.identificationErrored");
-            } else {
-                if (suspectedMods.isEmpty()) return I18n.translate("notenoughcrashes.crashscreen.unknownCause");
-
-                // Minecraft exists and basically any stack trace, it's better not to include it in the list of mods.
-                suspectedMods.removeIf(mod -> mod.getId().equals(MINECRAFT_ID));
-
-                List<String> modNames = suspectedMods.stream().map(ModMetadata::getName).collect(Collectors.toList());
-
-                if (modNames.isEmpty()) {
-                    modListString = I18n.translate("notenoughcrashes.crashscreen.noModsErrored");
-                } else {
-                    modListString = StringUtils.join(modNames, ", ");
-                }
-            }
-
-
-        }
-        return modListString;
-    }
-
     protected void drawFileNameString(int y) {
-        String fileNameString =
-                        report.getFile() != null ? "\u00A7n" + report.getFile().getName() : I18n.translate("notenoughcrashes.crashscreen.reportSaveFailed");
+        String fileNameString = report.getFile() != null ? "\u00A7n" + report.getFile().getName()
+                                        : I18n.translate("notenoughcrashes.crashscreen.reportSaveFailed");
         int stLen = font.getStringWidth(fileNameString);
         xLeft = width / 2 - stLen / 2;
         xRight = width / 2 + stLen / 2;

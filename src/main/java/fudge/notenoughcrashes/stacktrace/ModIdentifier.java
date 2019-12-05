@@ -1,4 +1,4 @@
-package fudge.utils;
+package fudge.notenoughcrashes.stacktrace;
 
 import java.io.IOException;
 import java.net.URI;

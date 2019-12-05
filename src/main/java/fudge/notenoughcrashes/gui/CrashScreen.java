@@ -1,16 +1,15 @@
-package fudge.notenoughcrashes;
+package fudge.notenoughcrashes.gui;
 
+import fudge.notenoughcrashes.ModConfig;
 import fudge.notenoughcrashes.gui.util.TextWidget;
-
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 
 import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.resource.language.I18n;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.crash.CrashReport;
+
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 @Environment(EnvType.CLIENT)
 public class CrashScreen extends ProblemScreen {
@@ -23,7 +22,7 @@ public class CrashScreen extends ProblemScreen {
     public void init() {
         super.init();
         ButtonWidget mainMenuButton = new ButtonWidget(width / 2 - 155, height / 4 + 120 + 12, 150, 20, I18n.translate("gui.toTitle"),
-                button -> minecraft.openScreen(new TitleScreen()));
+                        button -> minecraft.openScreen(new TitleScreen()));
 
         if (ModConfig.instance().disableReturnToMainMenu) {
             mainMenuButton.active = false;
@@ -31,8 +30,6 @@ public class CrashScreen extends ProblemScreen {
         }
 
         addButton(mainMenuButton);
-
-        addWidget(new TextWidget(new LiteralText()));
     }
 
 
@@ -48,7 +45,7 @@ public class CrashScreen extends ProblemScreen {
         drawString(font, I18n.translate("notenoughcrashes.crashscreen.summary"), x, y, textColor);
         drawString(font, I18n.translate("notenoughcrashes.crashscreen.paragraph1.line1"), x, y += 18, textColor);
 
-        drawCenteredString(font, getModListString(), width / 2, y += 11, 0xE0E000);
+        y += 11;
 
         drawString(font, I18n.translate("notenoughcrashes.crashscreen.paragraph2.line1"), x, y += 11, textColor);
         drawString(font, I18n.translate("notenoughcrashes.crashscreen.paragraph2.line2"), x, y += 9, textColor);
