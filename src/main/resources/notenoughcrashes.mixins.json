@@ -1,0 +1,22 @@
+{
+  "package": "fudge.notenoughcrashes.mixins",
+  "required": true,
+  "refmap": "TooManyCrashes-refmap.json",
+  "target": "@env(DEFAULT)",
+  "minVersion": "0.6",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "MixinCrashReport",
+    "MixinCrashReportSection",
+    "CrashReportSectionElementMixin",
+    "MixinEntity",
+    "MixinIntegratedServer",
+    "MixinTileEntity"
+  ],
+  "client": [
+    "client.MixinBufferBuilder",
+    "client.MixinKeyboard",
+    "client.MixinMinecraftClient",
+    "client.ClientMainMixin"
+  ]
+}
