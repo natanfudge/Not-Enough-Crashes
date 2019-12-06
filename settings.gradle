@@ -10,6 +10,8 @@ pluginManagement {
 
     plugins {
         id 'fabric-loom' version loom_version
+        id "com.jfrog.bintray" version bintray_gradle_version
+        id 'com.matthewprenger.cursegradle' version cursegradle_version
     }
 
 }
