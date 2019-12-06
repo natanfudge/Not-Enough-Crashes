@@ -1,4 +1,4 @@
-package fudge.utils;
+package fudge.notenoughcrashes.utils;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;

@@ -3,7 +3,7 @@ package fudge.notenoughcrashes.mixins;
 import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.util.crash.CrashException;
 import net.minecraft.util.crash.CrashReport;
-import fudge.notenoughcrashes.PatchedIntegratedServer;
+import fudge.notenoughcrashes.patches.PatchedIntegratedServer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

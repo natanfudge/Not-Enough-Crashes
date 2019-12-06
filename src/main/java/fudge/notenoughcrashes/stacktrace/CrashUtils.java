@@ -1,4 +1,4 @@
-package fudge.notenoughcrashes;
+package fudge.notenoughcrashes.stacktrace;
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;

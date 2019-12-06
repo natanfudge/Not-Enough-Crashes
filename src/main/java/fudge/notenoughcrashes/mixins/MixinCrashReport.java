@@ -5,7 +5,7 @@ import net.minecraft.util.crash.CrashReport;
 import net.minecraft.util.crash.CrashReportSection;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import fudge.notenoughcrashes.PatchedCrashReport;
+import fudge.notenoughcrashes.patches.PatchedCrashReport;
 import fudge.notenoughcrashes.stacktrace.StacktraceDeobfuscator;
 import fudge.notenoughcrashes.stacktrace.ModIdentifier;
 import org.spongepowered.asm.mixin.Final;

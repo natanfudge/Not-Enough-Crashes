@@ -12,10 +12,10 @@ import java.util.Set;
 
 
 import fudge.notenoughcrashes.ModConfig;
-import fudge.notenoughcrashes.PatchedCrashReport;
+import fudge.notenoughcrashes.patches.PatchedCrashReport;
 import fudge.notenoughcrashes.gui.util.TextWidget;
 import fudge.notenoughcrashes.gui.util.Widget;
-import fudge.utils.HasteUpload;
+import fudge.notenoughcrashes.utils.HasteUpload;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

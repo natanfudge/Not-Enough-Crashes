@@ -1,4 +1,4 @@
-package fudge.notenoughcrashes;
+package fudge.notenoughcrashes.patches;
 
 import net.fabricmc.loader.api.metadata.ModMetadata;
 

@@ -10,17 +10,21 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.common.collect.Lists;
 import com.google.common.net.UrlEscapers;
+import fudge.notenoughcrashes.ModConfig;
 import fudge.notenoughcrashes.NotEnoughCrashes;
 import org.apache.commons.io.FileUtils;
 
 import net.minecraft.MinecraftVersion;
 
+import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.mapping.reader.v2.MappingGetter;
 import net.fabricmc.mapping.reader.v2.TinyMetadata;
 import net.fabricmc.mapping.reader.v2.TinyV2Factory;
@@ -76,14 +80,16 @@ public final class StacktraceDeobfuscator {
     }
 
     public static void init() {
-        Map<String, String> mappings = new HashMap<>();
-
         if (!Files.exists(CACHED_MAPPINGS)) downloadAndCacheMappings();
+    }
 
+    private static void loadMappings() {
         if (!Files.exists(CACHED_MAPPINGS)) {
             NotEnoughCrashes.LOGGER.warn("Could not download mappings, stack trace won't be deobfuscated");
             return;
         }
+
+        Map<String, String> mappings = new HashMap<>();
 
         try (BufferedReader mappingReader = Files.newBufferedReader(CACHED_MAPPINGS)) {
             TinyV2Factory.visit(mappingReader, new TinyVisitor() {
@@ -120,43 +126,59 @@ public final class StacktraceDeobfuscator {
             NotEnoughCrashes.LOGGER.error("Could not load mappings", e);
         }
 
-
         StacktraceDeobfuscator.mappings = mappings;
     }
 
     public static void deobfuscateThrowable(Throwable t) {
         Deque<Throwable> queue = new ArrayDeque<>();
         queue.add(t);
+        boolean firstLoop = true;
         while (!queue.isEmpty()) {
             t = queue.remove();
-            t.setStackTrace(deobfuscateStacktrace(t.getStackTrace()));
+            t.setStackTrace(deobfuscateStacktrace(t.getStackTrace(), firstLoop));
             if (t.getCause() != null) {
                 queue.add(t.getCause());
             }
             Collections.addAll(queue, t.getSuppressed());
+
+            firstLoop = false;
         }
     }
 
-    public static StackTraceElement[] deobfuscateStacktrace(StackTraceElement[] stackTrace) {
-        if (mappings == null) {
-            return stackTrace;
+    // No need to insert multiple watermarks in one exception
+    public static StackTraceElement[] deobfuscateStacktrace(StackTraceElement[] stackTrace, boolean insertWatermark) {
+        if (!ModConfig.instance().deobfuscateStackTrace || FabricLoader.getInstance().isDevelopmentEnvironment()) return stackTrace;
+        if (mappings == null) loadMappings();
+        if (mappings == null) return stackTrace;
+
+        ArrayList<StackTraceElement> stackTraceList = Lists.newArrayList(stackTrace);
+        if (insertWatermark) {
+            try {
+                stackTraceList.add(0, new StackTraceElement(NotEnoughCrashes.NAME + " deobfuscated stack trace",
+                                "", YarnVersion.getLatestBuildForCurrentVersion(), -1));
+            } catch (IOException e) {
+                NotEnoughCrashes.LOGGER.error("Could not get used yarn version", e);
+                return stackTrace;
+            }
         }
 
         int index = 0;
-        for (StackTraceElement el : stackTrace) {
+
+        for (StackTraceElement el : stackTraceList) {
             String remappedClass = mappings.get(el.getClassName());
             String remappedMethod = mappings.get(el.getMethodName());
-            stackTrace[index++] = new StackTraceElement(
+            stackTraceList.set(index, new StackTraceElement(
                             remappedClass != null ? remappedClass : el.getClassName(),
                             remappedMethod != null ? remappedMethod : el.getMethodName(),
                             remappedClass != null ? getFileName(remappedClass) : el.getFileName(),
-                            el.getLineNumber()
+                            el.getLineNumber())
             );
+            index++;
         }
-        return stackTrace;
+        return stackTraceList.toArray(new StackTraceElement[] {});
     }
 
-    public static String getFileName(String className) {
+    private static String getFileName(String className) {
         String remappedFile = className;
         int lastDot = className.lastIndexOf('.');
         if (lastDot != -1) {
@@ -171,6 +193,7 @@ public final class StacktraceDeobfuscator {
         return remappedFile;
     }
 
+    // For testing
     public static void main(String[] args) {
         init();
         for (Map.Entry<String, String> entry : mappings.entrySet()) {

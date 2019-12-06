@@ -8,7 +8,7 @@
         "issues": "https://github.com/natanfudge/Not-Enough-Crashes/issues",
         "sources": "https://github.com/natanfudge/Not-Enough-Crashes"
     },
-    "icon": "assets/notenoughcrashes/icon.png",
+    "icon": "assets/notenoughcrashes/textures/game_crashed.png",
     "mixins": [
         "notenoughcrashes.mixins.json"
     ],

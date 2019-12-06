@@ -15,13 +15,13 @@ import java.util.stream.Stream;
 
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
-import fudge.notenoughcrashes.CrashUtils;
+import fudge.notenoughcrashes.stacktrace.CrashUtils;
 import fudge.notenoughcrashes.NotEnoughCrashes;
-import fudge.notenoughcrashes.PatchedClient;
+import fudge.notenoughcrashes.patches.PatchedClient;
 import fudge.notenoughcrashes.StateManager;
 import fudge.notenoughcrashes.gui.CrashScreen;
 import fudge.notenoughcrashes.gui.InitErrorScreen;
-import fudge.utils.GlUtil;
+import fudge.notenoughcrashes.utils.GlUtil;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.glfw.GLFW;
@@ -93,6 +93,7 @@ import net.minecraft.world.level.storage.LevelStorage;
 
 import net.fabricmc.fabric.impl.resource.loader.ModResourcePackUtil;
 import net.fabricmc.fabric.mixin.resource.loader.MixinFormat4ResourcePack;
+import net.fabricmc.loader.api.FabricLoader;
 
 @Mixin(MinecraftClient.class)
 @SuppressWarnings("StaticVariableMayNotBeInitialized")
@@ -330,10 +331,9 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
 
 
         CrashUtils.outputReport(report);
+        if (FabricLoader.getInstance().isDevelopmentEnvironment()) return;
 
         try {
-
-
             //TODO: skip a lot of the initialization to not give the impression the game loaded correctly
             completeInitializationForGUIPreScreen();
             running = true;

@@ -1,4 +1,4 @@
-package fudge.utils;
+package fudge.notenoughcrashes.utils;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -10,59 +10,6 @@ import org.lwjgl.opengl.GL14;
 import org.lwjgl.opengl.GL15;
 
 public class GlUtil {
-
-    // On init there is no GL state so we need to avoid making calls that rely on it
-    public static void resetStateWithoutContext(){
-        RenderSystem.bindTexture(0);
-        RenderSystem.disableTexture();
-
-        // Reset GL lighting
-        RenderSystem.disableLighting();
-        RenderSystem.disableColorMaterial();
-        RenderSystem.colorMaterial(1032, 5634);
-
-        // Reset depth
-        RenderSystem.disableDepthTest();
-        RenderSystem.depthFunc(513);
-        RenderSystem.depthMask(true);
-
-        // Reset blend mode
-        RenderSystem.disableBlend();
-        RenderSystem.blendFunc(GlStateManager.SrcFactor.ONE, GlStateManager.DstFactor.ZERO);
-        RenderSystem.blendFuncSeparate(GlStateManager.SrcFactor.ONE, GlStateManager.DstFactor.ZERO, GlStateManager.SrcFactor.ONE, GlStateManager.DstFactor.ZERO);
-        // Reset fog
-        RenderSystem.disableFog();
-        RenderSystem.fogDensity(1.0F);
-        RenderSystem.fogStart(0.0F);
-        RenderSystem.fogEnd(1.0F);
-
-        // Reset polygon offset
-        RenderSystem.polygonOffset(0.0F, 0.0F);
-        RenderSystem.disablePolygonOffset();
-
-        // Reset color logic
-        RenderSystem.disableColorLogicOp();
-        RenderSystem.logicOp(GlStateManager.LogicOp.COPY);
-
-        // Reset texgen
-        RenderSystem.clearTexGen();
-
-
-        RenderSystem.shadeModel(7425);
-        RenderSystem.disableRescaleNormal();
-        RenderSystem.colorMask(true, true, true, true);
-        RenderSystem.clearDepth(1.0D);
-//
-        RenderSystem.shadeModel(7425);
-        RenderSystem.clearDepth(1.0D);
-
-        //TODO: complete guess
-        RenderSystem.enableCull();
-//        GlStateManager.cullFace(GlStateManager.FaceSides.BACK);
-        RenderSystem.matrixMode(5889);
-        RenderSystem.loadIdentity();
-        RenderSystem.matrixMode(5888);
-    }
 
     public static void resetState() {
         //TODO: start adding stuff till it stops working

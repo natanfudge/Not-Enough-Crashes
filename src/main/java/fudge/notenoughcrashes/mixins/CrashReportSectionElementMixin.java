@@ -1,6 +1,6 @@
 package fudge.notenoughcrashes.mixins;
 
-import fudge.notenoughcrashes.PatchedCrashReport;
+import fudge.notenoughcrashes.patches.PatchedCrashReport;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 

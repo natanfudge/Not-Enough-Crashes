@@ -1,4 +1,4 @@
-package fudge.notenoughcrashes;
+package fudge.notenoughcrashes.patches;
 
 import net.minecraft.util.crash.CrashReport;
 
