@@ -2,6 +2,7 @@ package fudge.notenoughcrashes.mixins;
 
 import net.minecraft.util.crash.CrashReportSection;
 import fudge.notenoughcrashes.PatchedCrashReport;
+import fudge.notenoughcrashes.stacktrace.StacktraceDeobfuscator;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -21,17 +22,9 @@ public class MixinCrashReportSection {
      */
     @Overwrite
     public void trimStackTraceEnd(int size) {
+        stackTrace = StacktraceDeobfuscator.deobfuscateStacktrace(Thread.currentThread().getStackTrace());
     }
 
-    //TODO
-//    /**
-//     * @reason Disable stack trace pruning, deobfuscate stack trace
-//     */
-//    @Overwrite
-//    public int trimStackTrace(int prune) {
-//        stackTrace = StacktraceDeobfuscator.deobfuscateStacktrace(Thread.currentThread().getStackTrace());
-//        return stackTrace.length;
-//    }
 
     /**
      * @reason Improve crash report formatting

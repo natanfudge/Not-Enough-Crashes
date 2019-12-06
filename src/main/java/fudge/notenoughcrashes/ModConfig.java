@@ -18,6 +18,7 @@ public class ModConfig {
 
     public String hasteURL = "https://paste.dimdev.org";
     public boolean disableReturnToMainMenu = false;
+    public boolean deobfuscateStackTrace = true;
 
     public static ModConfig instance() {
         if (instance != null) {

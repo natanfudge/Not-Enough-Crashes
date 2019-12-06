@@ -120,7 +120,6 @@ public abstract class ProblemScreen extends Screen {
         addWidget(new TextWidget(getSuspectedModsText(), TextWidget.CLICKABLE_TEXT_COLOR, font, width / 2, y + 29));
     }
 
-    //FIXME: weird lag when pressing the "get link" button
 
     @Override
     public void init() {

@@ -2,17 +2,19 @@ package fudge.notenoughcrashes;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 
 import fudge.notenoughcrashes.stacktrace.StacktraceDeobfuscator;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import fudge.notenoughcrashes.test.TestBlock;
 import fudge.notenoughcrashes.test.TestException;
 import fudge.utils.SSLUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;
@@ -22,29 +24,29 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.loader.api.FabricLoader;
+
 //TODO: icon
-//TODO: disable the startup crash screen in dev
 public class NotEnoughCrashes implements ModInitializer {
 
+    public static final Path DIRECTORY = Paths.get(FabricLoader.getInstance().getGameDirectory().getAbsolutePath(), "not-enough-crashes");
     public static final String NAME = "Not Enough Crashes";
 
-    private static final Logger LOGGER = LogManager.getLogger(NAME);
+    public static final Logger LOGGER = LogManager.getLogger(NAME);
     public static final Block EXAMPLE_BLOCK = new TestBlock();
 
     @Override
     public void onInitialize() {
         ModConfig.instance();
         trustIdenTrust();
+        initStacktraceDeobfuscator();
 
         Registry.register(Registry.BLOCK, new Identifier("tutorial", "example_block"), EXAMPLE_BLOCK);
         Registry.register(Registry.ITEM, new Identifier("tutorial", "example_block"),
                         new BlockItem(EXAMPLE_BLOCK, new Item.Settings().group(ItemGroup.MISC)));
 
-//        "Render thread"@1 in group "main":RUNNING
-
         throw new TestException();
 
-//        initStacktraceDeobfuscator();
     }
 
     private void trustIdenTrust() {
@@ -59,6 +61,8 @@ public class NotEnoughCrashes implements ModInitializer {
     }
 
     private void initStacktraceDeobfuscator() {
+        // No need to deobf in dev
+        if (/*FabricLoader.getInstance().isDevelopmentEnvironment() || */!ModConfig.instance().deobfuscateStackTrace) return;
         LOGGER.info("Initializing StacktraceDeobfuscator");
         try {
             StacktraceDeobfuscator.init();

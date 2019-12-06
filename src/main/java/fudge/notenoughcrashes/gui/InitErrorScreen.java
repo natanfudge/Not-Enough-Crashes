@@ -37,7 +37,6 @@ public class InitErrorScreen extends ProblemScreen {
 
     @Override
     public void render(int mouseX, int mouseY, float partialTicks) { // TODO: localize number of lines
-        //TODO: "exit game" button
         renderBackground();
         drawCenteredString(font, I18n.translate("notenoughcrashes.initerrorscreen.title"), width / 2, height / 4 - 40, 0xFFFFFF);
 
