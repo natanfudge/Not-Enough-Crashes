@@ -9,7 +9,7 @@
   "notenoughcrashes.crashscreen.paragraph1.line1": "The following mod(s) have been identified as potential causes:",
   "notenoughcrashes.crashscreen.unknownCause": "Unknown",
   "notenoughcrashes.crashscreen.identificationErrored": "[Error identifying, report to Not Enough Crashes]",
-  "notenoughcrashes.crashscreen.noModsErrored": "No Mods. Note that a mod could still be indirectly causing the crash.",
+  "notenoughcrashes.crashscreen.noModsErrored": "No Mods. (A mod could still be indirectly causing the crash.)",
   "notenoughcrashes.crashscreen.paragraph2.line1": "Click any mod in the list to go to their website for support. A",
   "notenoughcrashes.crashscreen.paragraph2.line2": "report has been generated, and can be found here (click):",
   "notenoughcrashes.crashscreen.reportSaveFailed": "[Error saving report, see log]",

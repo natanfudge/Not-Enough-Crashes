@@ -1,5 +1,6 @@
 package fudge.notenoughcrashes.stacktrace;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -58,10 +59,6 @@ public final class ModIdentifier {
         return mods;
     }
 
-    public static Set<ModMetadata> identifyFromClass(String className) {
-        return identifyFromClass(className, makeModMap());
-    }
-
     // TODO: get a list of mixin transformers that affected the class and blame those too
     private static Set<ModMetadata> identifyFromClass(String className, Map<URI, Set<ModMetadata>> modMap) {
         // Skip identification for Mixin, one's mod copy of the library is shared with all other mods
@@ -73,14 +70,23 @@ public final class ModIdentifier {
             Class<?> clazz = Class.forName(className);
             CodeSource codeSource = clazz.getProtectionDomain().getCodeSource();
             if (codeSource == null) return Collections.emptySet(); // Some internal native sun classes
-            URL url = clazz.getProtectionDomain().getCodeSource().getLocation();
+            URL url = codeSource.getLocation();
             if (url == null) {
                 LOGGER.warn("Failed to identify mod for " + className);
                 return Collections.emptySet();
             }
 
+            URI jar = jarFromUrl(url);
+            Set<ModMetadata> metadata = modMap.get(jar);
+            // For some reason loader gives the wrong location with kotlin mods in dev so we need to change it a bit
+            if (metadata == null) {
+                String oldPath = jar.getPath();
+                String fixedPath = oldPath.substring(0, oldPath.length() - "classes/kotlin/main/".length()) + "resources/main/";
+                metadata = modMap.get(new File(fixedPath).toURI());
+            }
+
             // Get the mod containing that class
-            return modMap.get(jarFromUrl(url));
+            return metadata;
         } catch (URISyntaxException | IOException | ClassNotFoundException ex) {
             return Collections.emptySet(); // we cannot do it
         }

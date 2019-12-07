@@ -4,6 +4,7 @@
     "name": "Not Enough Crashes",
     "description": "A fork of TooManyCrashes, a port of VanillaFix's crash improvement features to Fabric, for Minecraft 1.15+",
     "version": "${version}",
+    "license": "MIT",
     "contact": {
         "issues": "https://github.com/natanfudge/Not-Enough-Crashes/issues",
         "sources": "https://github.com/natanfudge/Not-Enough-Crashes"
@@ -16,5 +17,15 @@
         "main": [
             "fudge.notenoughcrashes.NotEnoughCrashes"
         ]
-    }
+    },
+    "recommends": {
+        "fabric-resource-loader-v0": "*"
+    },
+    "authors": [
+        "Fudge",
+        "Runemoro"
+    ],
+    "contributors": [
+        "liach"
+    ]
 }

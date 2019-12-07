@@ -48,6 +48,7 @@ public abstract class ProblemScreen extends Screen {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
+    public abstract ProblemScreen construct(CrashReport report);
 
     protected final CrashReport report;
     private String hasteLink = null;
@@ -139,7 +140,7 @@ public abstract class ProblemScreen extends Screen {
                                         Util.getOperatingSystem().open(hasteLink);
                                     }
 
-                                    this.minecraft.openScreen(this);
+                                    this.minecraft.openScreen(construct(report));
                                 }, hasteLink, true));
                             } catch (Throwable e) {
                                 LOGGER.error("Exception when crash menu button clicked:", e);

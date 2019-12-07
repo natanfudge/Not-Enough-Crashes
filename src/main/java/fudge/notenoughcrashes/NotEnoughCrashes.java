@@ -35,8 +35,8 @@ public class NotEnoughCrashes implements ModInitializer {
         initStacktraceDeobfuscator();
 
 //        TestBlock.init();
-
-//        throw new NullPointerException();
+//
+        throw new NullPointerException();
     }
 
     private void trustIdenTrust() {

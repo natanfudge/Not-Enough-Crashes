@@ -39,9 +39,6 @@ public class EntryPointCatcher {
         MinecraftClient.addSystemDetailsToCrashReport(null, new MinecraftVersion().getName(), null, crashReport);
         CrashUtils.outputReport(crashReport);
 
-        // Displaying a screen is just a nuisance in dev
-        if (FabricLoader.getInstance().isDevelopmentEnvironment()) return;
-
         try {
             getClient().openScreen(new InitErrorScreen(crashReport));
         } catch (Throwable t) {

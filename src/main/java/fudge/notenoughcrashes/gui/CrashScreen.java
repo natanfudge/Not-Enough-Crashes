@@ -14,6 +14,11 @@ import net.fabricmc.api.Environment;
 @Environment(EnvType.CLIENT)
 public class CrashScreen extends ProblemScreen {
 
+    @Override
+    public ProblemScreen construct(CrashReport report) {
+        return new CrashScreen(report);
+    }
+
     public CrashScreen(CrashReport report) {
         super(report);
     }
