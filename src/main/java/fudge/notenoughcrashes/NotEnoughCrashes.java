@@ -10,7 +10,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 
 import fudge.notenoughcrashes.stacktrace.StacktraceDeobfuscator;
-import fudge.notenoughcrashes.test.TestBlock;
+//import fudge.notenoughcrashes.test.TestBlock;
 import fudge.notenoughcrashes.utils.SSLUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
