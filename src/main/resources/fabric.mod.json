@@ -1,31 +1,34 @@
 {
-    "schemaVersion": 1,
-    "id": "notenoughcrashes",
-    "name": "Not Enough Crashes",
-    "description": "A fork of TooManyCrashes, a port of VanillaFix's crash improvement features to Fabric, for Minecraft 1.15+",
-    "version": "${version}",
-    "license": "MIT",
-    "contact": {
-        "issues": "https://github.com/natanfudge/Not-Enough-Crashes/issues",
-        "sources": "https://github.com/natanfudge/Not-Enough-Crashes"
-    },
-    "icon": "assets/notenoughcrashes/textures/game_crashed.png",
-    "mixins": [
-        "notenoughcrashes.mixins.json"
-    ],
-    "entrypoints": {
-        "main": [
-            "fudge.notenoughcrashes.NotEnoughCrashes"
-        ]
-    },
-    "recommends": {
-        "fabric-resource-loader-v0": "*"
-    },
-    "authors": [
-        "Fudge",
-        "Runemoro"
-    ],
-    "contributors": [
-        "liach"
+  "schemaVersion": 1,
+  "id": "notenoughcrashes",
+  "name": "Not Enough Crashes",
+  "description": "A fork of TooManyCrashes, a port of VanillaFix's crash improvement features to Fabric, for Minecraft 1.15+",
+  "version": "${version}",
+  "license": "MIT",
+  "contact": {
+    "issues": "https://github.com/natanfudge/Not-Enough-Crashes/issues",
+    "sources": "https://github.com/natanfudge/Not-Enough-Crashes"
+  },
+  "icon": "assets/notenoughcrashes/textures/game_crashed.png",
+  "mixins": [
+    "notenoughcrashes.mixins.json"
+  ],
+  "entrypoints": {
+    "main": [
+      "fudge.notenoughcrashes.NotEnoughCrashes"
     ]
+  },
+  "depends": {
+    "minecraft": "1.15.x"
+  },
+  "recommends": {
+    "fabric-resource-loader-v0": "*"
+  },
+  "authors": [
+    "Fudge",
+    "Runemoro"
+  ],
+  "contributors": [
+    "liach"
+  ]
 }

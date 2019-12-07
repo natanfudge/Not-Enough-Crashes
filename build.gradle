@@ -76,8 +76,6 @@ curseforge {
         mainArtifact(remapJar) {
             displayName = "$mod_name $total_version"
         }
-        addArtifact sourcesJar
-
     }
 
     options {
@@ -151,7 +149,7 @@ File propertiesFile = new File('gradle.properties')
 propertiesFile.withInputStream {
     properties.load(it)
 }
-properties.put("total_version",total_version)
+properties.put("total_version", total_version)
 
 
 task updateTemplate(type: Copy) {
@@ -169,5 +167,5 @@ task updateTemplate(type: Copy) {
 }
 
 bintrayUpload.dependsOn updateTemplate
-//bintrayUpload.dependsOn "curseforge$curseforge_id"
+bintrayUpload.dependsOn "curseforge$curseforge_id"
 
