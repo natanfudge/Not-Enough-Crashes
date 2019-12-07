@@ -59,7 +59,7 @@ public final class StacktraceDeobfuscator {
         try {
             Files.createDirectories(NotEnoughCrashes.DIRECTORY);
         } catch (IOException e) {
-            NotEnoughCrashes.LOGGER.error("Could not create Not Enough Crashes directory!", e);
+            NotEnoughCrashes.LOGGER.error("Could not create " +  NotEnoughCrashes.NAME + " directory!", e);
             return;
         }
 
