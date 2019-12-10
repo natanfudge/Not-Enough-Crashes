@@ -37,6 +37,7 @@ public class YarnVersion {
 
                 YarnVersion[] versions = new Gson().fromJson(new InputStreamReader((InputStream) request.getContent()), YarnVersion[].class);
                 String version = Arrays.stream(versions).max(Comparator.comparingInt(v -> v.build)).get().version;
+                NotEnoughCrashes.ensureDirectoryExists();
                 Files.write(VERSION_FILE, version.getBytes());
                 versionMemCache = version;
             } else {

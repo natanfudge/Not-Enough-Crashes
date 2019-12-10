@@ -2,6 +2,7 @@ package fudge.notenoughcrashes;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.KeyStore;
@@ -10,13 +11,14 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 
 import fudge.notenoughcrashes.stacktrace.StacktraceDeobfuscator;
-//import fudge.notenoughcrashes.test.TestBlock;
 import fudge.notenoughcrashes.utils.SSLUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
+
+//import fudge.notenoughcrashes.test.TestBlock;
 
 public class NotEnoughCrashes implements ModInitializer {
 
@@ -26,6 +28,10 @@ public class NotEnoughCrashes implements ModInitializer {
     public static final String MOD_ID = "notenoughcrashes";
 
     public static final Logger LOGGER = LogManager.getLogger(NAME);
+
+    public static void ensureDirectoryExists() throws IOException {
+        Files.createDirectories(DIRECTORY);
+    }
 
 
     @Override

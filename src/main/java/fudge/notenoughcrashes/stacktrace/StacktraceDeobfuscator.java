@@ -59,7 +59,7 @@ public final class StacktraceDeobfuscator {
         try {
             Files.createDirectories(NotEnoughCrashes.DIRECTORY);
         } catch (IOException e) {
-            NotEnoughCrashes.LOGGER.error("Could not create " +  NotEnoughCrashes.NAME + " directory!", e);
+            NotEnoughCrashes.LOGGER.error("Could not create " + NotEnoughCrashes.NAME + " directory!", e);
             return;
         }
 
@@ -73,6 +73,7 @@ public final class StacktraceDeobfuscator {
         }
 
         try (FileSystem jar = FileSystems.newFileSystem(jarFile.toPath(), null)) {
+            NotEnoughCrashes.ensureDirectoryExists();
             Files.copy(jar.getPath(MAPPINGS_JAR_LOCATION), CACHED_MAPPINGS, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             NotEnoughCrashes.LOGGER.error("Failed to extract mappings!", e);
@@ -147,7 +148,9 @@ public final class StacktraceDeobfuscator {
 
     // No need to insert multiple watermarks in one exception
     public static StackTraceElement[] deobfuscateStacktrace(StackTraceElement[] stackTrace, boolean insertWatermark) {
-        if (!ModConfig.instance().deobfuscateStackTrace || FabricLoader.getInstance().isDevelopmentEnvironment()) return stackTrace;
+        if (!ModConfig.instance().deobfuscateStackTrace || FabricLoader.getInstance().isDevelopmentEnvironment()) {
+            return stackTrace;
+        }
         if (mappings == null) loadMappings();
         if (mappings == null) return stackTrace;
 
