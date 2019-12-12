@@ -13,7 +13,7 @@ dependencies {
     mappings "net.fabricmc:yarn:$yarn_mappings:v2"
     modImplementation "net.fabricmc:fabric-loader:$loader_version"
     modImplementation "net.fabricmc.fabric-api:fabric-api:$fabric_version"
-    modImplementation files("crashy_test_mods/crashy_block.jar")
+//    modImplementation files("crashy_test_mods/crashy_block.jar")
 }
 
 
