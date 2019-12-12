@@ -1,21 +1,5 @@
 package fudge.notenoughcrashes.mixins;
 
-import net.fabricmc.loader.api.metadata.ModMetadata;
-import net.minecraft.util.crash.CrashReport;
-import net.minecraft.util.crash.CrashReportSection;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import fudge.notenoughcrashes.patches.PatchedCrashReport;
-import fudge.notenoughcrashes.stacktrace.StacktraceDeobfuscator;
-import fudge.notenoughcrashes.stacktrace.ModIdentifier;
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
@@ -24,17 +8,44 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import fudge.notenoughcrashes.patches.PatchedCrashReport;
+import fudge.notenoughcrashes.stacktrace.ModIdentifier;
+import fudge.notenoughcrashes.stacktrace.StacktraceDeobfuscator;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import net.minecraft.util.crash.CrashReport;
+import net.minecraft.util.crash.CrashReportSection;
+
+import net.fabricmc.loader.api.metadata.ModMetadata;
+
 @Mixin(value = CrashReport.class, priority = 500)
 public abstract class MixinCrashReport implements PatchedCrashReport {
 
     private static final boolean ANNOYING_EASTER_EGG_DISABLED = true;
-    @Shadow @Final private CrashReportSection systemDetailsSection;
-    @Shadow @Final private List<CrashReportSection> otherSections;
-    @Shadow @Final private Throwable cause;
-    @Shadow @Final private String message;
+    @Shadow
+    @Final
+    private CrashReportSection systemDetailsSection;
+    @Shadow
+    @Final
+    private List<CrashReportSection> otherSections;
+    @Shadow
+    @Final
+    private Throwable cause;
+    @Shadow
+    @Final
+    private String message;
     private Set<ModMetadata> suspectedMods = null;
 
-    @Shadow private static String generateWittyComment() {
+    @Shadow
+    private static String generateWittyComment() {
         return null;
     }
 
@@ -90,14 +101,14 @@ public abstract class MixinCrashReport implements PatchedCrashReport {
         StringBuilder builder = new StringBuilder();
 
         builder.append("---- Minecraft Crash Report ----\n")
-                .append("// ").append(ANNOYING_EASTER_EGG_DISABLED ? generateWittyComment() : generateEasterEggComment())
-                .append("\n\n")
-                .append("Time: ").append(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z").format(new Date())).append("\n")
-                .append("Description: ").append(message)
-                .append("\n\n")
-                .append(stacktraceToString(cause)
-                        .replace("\t", "    ")) // Vanilla's getCauseStackTraceOrString doesn't print causes and suppressed exceptions
-                .append("\n\nA detailed walkthrough of the error, its code path and all known details is as follows:\n");
+                        .append("// ").append(ANNOYING_EASTER_EGG_DISABLED ? generateWittyComment() : generateEasterEggComment())
+                        .append("\n\n")
+                        .append("Time: ").append(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z").format(new Date())).append("\n")
+                        .append("Description: ").append(message)
+                        .append("\n\n")
+                        .append(stacktraceToString(cause)
+                                        .replace("\t", "    ")) // Vanilla's getCauseStackTraceOrString doesn't print causes and suppressed exceptions
+                        .append("\n\nA detailed walkthrough of the error, its code path and all known details is as follows:\n");
 
         for (int i = 0; i < 87; i++) {
             builder.append("-");

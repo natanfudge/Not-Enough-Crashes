@@ -29,6 +29,11 @@ public class NotEnoughCrashes implements ModInitializer {
 
     public static final Logger LOGGER = LogManager.getLogger(NAME);
 
+    private static final boolean DEBUG_DEOBF = false;
+    // No need to deobf in dev
+    public static final boolean ENABLE_DEOBF = (!FabricLoader.getInstance().isDevelopmentEnvironment()
+                    && ModConfig.instance().deobfuscateStackTrace) || DEBUG_DEOBF;
+
     public static void ensureDirectoryExists() throws IOException {
         Files.createDirectories(DIRECTORY);
     }
@@ -53,8 +58,7 @@ public class NotEnoughCrashes implements ModInitializer {
     }
 
     private void initStacktraceDeobfuscator() {
-        // No need to deobf in dev
-        if (FabricLoader.getInstance().isDevelopmentEnvironment() || !ModConfig.instance().deobfuscateStackTrace) return;
+        if (!ENABLE_DEOBF) return;
         LOGGER.info("Initializing StacktraceDeobfuscator");
         try {
             StacktraceDeobfuscator.init();

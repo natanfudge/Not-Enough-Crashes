@@ -18,13 +18,12 @@ import java.util.Map;
 
 import com.google.common.collect.Lists;
 import com.google.common.net.UrlEscapers;
-import fudge.notenoughcrashes.ModConfig;
 import fudge.notenoughcrashes.NotEnoughCrashes;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import net.minecraft.MinecraftVersion;
 
-import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.mapping.reader.v2.MappingGetter;
 import net.fabricmc.mapping.reader.v2.TinyMetadata;
 import net.fabricmc.mapping.reader.v2.TinyV2Factory;
@@ -131,6 +130,7 @@ public final class StacktraceDeobfuscator {
     }
 
     public static void deobfuscateThrowable(Throwable t) {
+
         Deque<Throwable> queue = new ArrayDeque<>();
         queue.add(t);
         boolean firstLoop = true;
@@ -148,9 +148,13 @@ public final class StacktraceDeobfuscator {
 
     // No need to insert multiple watermarks in one exception
     public static StackTraceElement[] deobfuscateStacktrace(StackTraceElement[] stackTrace, boolean insertWatermark) {
-        if (!ModConfig.instance().deobfuscateStackTrace || FabricLoader.getInstance().isDevelopmentEnvironment()) {
+        if (!NotEnoughCrashes.ENABLE_DEOBF
+                        // Check it wasn't deobfuscated already. This can happen when this is called both by DeobfuscatingRewritePolicy
+                        // and then CrashReport mixin. They don't cover all cases alone though so we need both.
+                        || (stackTrace.length > 0 && StringUtils.startsWith(stackTrace[0].getClassName(), NotEnoughCrashes.NAME))) {
             return stackTrace;
         }
+
         if (mappings == null) loadMappings();
         if (mappings == null) return stackTrace;
 

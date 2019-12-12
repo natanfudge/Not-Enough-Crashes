@@ -27,7 +27,7 @@ public class DeobfuscatingRewritePolicy implements RewritePolicy {
 
         // Create the RewriteAppender, which wraps the appenders
         RewriteAppender rewriteAppender = RewriteAppender.createAppender(
-                "TooManyCrashesDeobfuscatingAppender",
+                "NotEnoughCrashesDeobfuscatingAppender",
                 "true",
                 appenderRefs.toArray(new AppenderRef[0]),
                 rootLogger.getContext().getConfiguration(),
