@@ -11,9 +11,30 @@ Features:
 - Allows going back to the title screen after crashing in game (in dev too).
 - Additional NBT information of entities and block entities in crash reports (in dev too).
 
-The mod is useful in development environments too:
+# Using the Not Enough Crashes API
+You can include the Not Enough Crashes API to reset any mod state that needs to be cleared by running disposing code whenever the game crashes.
+## Gradle Setup
+```groovy
+dependencies {
+    modImplementation "com.lettuce.fudge:notenoughcrashes-api:1.0.0"
+    include "com.lettuce.fudge:notenoughcrashes-api:1.0.0"
+}
+```
+## Code
+```java
+class MyModState {
+    private static List<String> dataThatIWantToReset = new ArrayList<>();
+    
+    static {
+        MinecraftCrashes.onEveryCrash(() -> dataThatIWantToReset.clear());
+    }
+}
+```
+You can also use `MinecraftCrashes.onNextCrash` to only call the code once in the next crash. For more information consult the javadocs of `MinecraftCrashes`.
 
-# Gradle Usage
+
+The mod is useful in development environments too:
+# Using Not Enough Crashes in a development environment
 ```groovy
 repositories {
     // [...]
@@ -23,11 +44,7 @@ repositories {
 
 ```groovy
 dependencies {
-    modRuntime "com.lettuce.fudge:notenoughcrashes:1.1.0+1.15"
+    modRuntime "com.lettuce.fudge:notenoughcrashes:1.1.1+1.15"
 }
 ```
-```groovy
-dependencies {
-    modRuntime "com.lettuce.fudge:notenoughcrashes-api:1.0.0"
-}
-```
+
