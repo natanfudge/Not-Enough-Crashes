@@ -50,8 +50,6 @@ public class NotEnoughCrashes implements ModInitializer {
         trustIdenTrust();
         initStacktraceDeobfuscator();
 
-        throw new NullPointerException();
-
 //        TestKeyBinding.init();
     }
 
