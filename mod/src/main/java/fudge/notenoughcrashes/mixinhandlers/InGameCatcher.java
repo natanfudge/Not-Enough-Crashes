@@ -4,6 +4,7 @@ import java.util.Queue;
 
 import fudge.notenoughcrashes.NotEnoughCrashes;
 import fudge.notenoughcrashes.StateManager;
+import fudge.notenoughcrashes.api.NotEnoughCrashesApi;
 import fudge.notenoughcrashes.gui.CrashScreen;
 import fudge.notenoughcrashes.stacktrace.CrashUtils;
 import fudge.notenoughcrashes.utils.GlUtil;
@@ -26,9 +27,17 @@ public class InGameCatcher {
         clientCrashCount++;
         getClient().addDetailsToCrashReport(report);
         addInfoToCrash(report);
+
+        resetModState();
         resetGameState(renderTaskQueue);
         LOGGER.fatal(reported ? "Reported" : "Unreported" + " exception thrown!", e);
         displayCrashScreen(report);
+    }
+
+    private static void resetModState() {
+        NotEnoughCrashesApi.permanentDisposers.forEach(Runnable::run);
+        NotEnoughCrashesApi.oneTimeDisposers.forEach(Runnable::run);
+        NotEnoughCrashesApi.oneTimeDisposers.clear();
     }
 
     public static void handleServerCrash(CrashReport report) {
