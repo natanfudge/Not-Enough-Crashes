@@ -31,7 +31,7 @@ public class NotEnoughCrashes implements ModInitializer {
     public static final Logger LOGGER = LogManager.getLogger(NAME);
 
     private static final boolean DEBUG_DEOBF = false;
-    private static final boolean DEBUG_ENTRYPOINT = true;
+    private static final boolean DEBUG_ENTRYPOINT = false;
 
     // No need to deobf in dev
     public static final boolean ENABLE_DEOBF = (!FabricLoader.getInstance().isDevelopmentEnvironment()
