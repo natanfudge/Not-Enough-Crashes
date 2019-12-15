@@ -1,4 +1,0 @@
-dependencies {
-	compileOnly project(path: ':mod')
-}
-setupMod(mod_id, mod_description, mod_version, "api_version")

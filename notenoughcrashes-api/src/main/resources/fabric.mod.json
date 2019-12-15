@@ -21,7 +21,7 @@
     "minecraft": "1.15.x"
   },
   "suggests": {
-    "notenoughcrashes": "*"
+    "notenoughcrashes": ">=1.1.0"
   },
   "custom": {
     "modmenu:api": true

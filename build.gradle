@@ -12,85 +12,48 @@ ext {
     propertiesFile.withInputStream {
         replaceProperties.load(it)
     }
-}
 
-def pomConfig = {
-    licenses {
-        license {
-            name project.license
+    pomConfig = {
+        licenses {
+            license {
+                name project.license
+            }
+        }
+        developers {
+            developer {
+                id "fudge"
+                name "natan"
+                email "natandestroyer100@gmail.com"
+            }
+        }
+
+        scm {
+            url githubUrl
         }
     }
-    developers {
-        developer {
-            id "fudge"
-            name "natan"
-            email "natandestroyer100@gmail.com"
-        }
-    }
-
-    scm {
-        url githubUrl
-    }
 }
 
+def setupMod(String total_version,  String template_key) {
+//    def total_version = "$mod_version+$minecraft_version"
 
 
-
-def setupMod(String mod_id, String mod_description, String mod_version, String template_key) {
-    def total_version = "$mod_version+$minecraft_version"
-
-    def githubUrl = "https://github.com/$github_repo"
-
-    version total_version
     group maven_group
 
-    bintray {
-        user = project.hasProperty('bintray_user') ? project.property('bintray_user') : ""
-        key = project.hasProperty('bintray_api_key') ? project.property('bintray_api_key') : ""
-        publications = ["MavenPublication"]
-        publish = true //[Default: false] Whether version should be auto published after an upload
-        pkg {
-            name = mod_id
-            desc = mod_description
-            repo = "libs"
-            websiteUrl = githubUrl
-            issueTrackerUrl = "$githubUrl/issues"
-            githubRepo = github_repo //Optional Github repository
-            githubReleaseNotesFile = 'README.md' //Optional Github readme file
-            licenses = [license]
-            vcsUrl = githubUrl
-            version {
-                name = total_version
-                released = new Date()
-            }
-        }
-
-    }
-
-    publishing {
-        publications {
-            MavenPublication(MavenPublication) {
-                artifact(remapJar)
-
-                artifact(sourcesJar) {
-                    classifier = "sources"
-                    builtBy remapSourcesJar
-                }
-                groupId maven_group
-                artifactId mod_id
-                version total_version
-                pom.withXml {
-                    def root = asNode()
-                    root.appendNode('description', mod_description)
-                    root.appendNode('name', mod_id)
-                    root.appendNode('url', githubUrl)
-                    root.children().last() + pomConfig
-                }
-            }
-        }
-    }
-
     project.replaceProperties.put(template_key, total_version)
+}
+
+task updateTemplate(type: Copy) {
+    group = "template"
+    description = "Switches out variables like \$total_version in .template.md files, and copies the results into .md files."
+    from(rootDir)
+    include("**/*.template.md")
+    filesMatching("**/*.template.md") {
+        def extensionLength = ".template.md".length()
+
+        name = sourceName.substring(0, sourceName.length() - extensionLength) + ".md"
+        expand(replaceProperties)
+    }
+    destinationDir = rootDir
 }
 
 
@@ -131,21 +94,11 @@ allprojects {
     jar {
         from "LICENSE"
     }
+
+    bintrayUpload.dependsOn updateTemplate
 }
 
 
-task updateTemplate(type: Copy) {
-    group = "template"
-    description = "Switches out variables like \$total_version in .template.md files, and copies the results into .md files."
-    from(rootDir)
-    include("**/*.template.md")
-    filesMatching("**/*.template.md") {
-        def extensionLength = ".template.md".length()
 
-        name = sourceName.substring(0, sourceName.length() - extensionLength) + ".md"
-        expand(replaceProperties)
-    }
-    destinationDir = rootDir
-}
 
-bintrayUpload.dependsOn updateTemplate
+

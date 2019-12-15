@@ -17,5 +17,5 @@ pluginManagement {
 
 }
 
-include "api"
-include "mod"
+include "notenoughcrashes"
+include "notenoughcrashes-api"
