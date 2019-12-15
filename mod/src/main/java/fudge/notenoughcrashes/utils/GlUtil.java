@@ -151,5 +151,8 @@ public class GlUtil {
         RenderSystem.matrixMode(5889);
         RenderSystem.loadIdentity();
         RenderSystem.matrixMode(5888);
+        // Disable scissoring (splitting the screen into different parts)
+        GL11.glDisable(GL11.GL_SCISSOR_TEST);
+
     }
 }

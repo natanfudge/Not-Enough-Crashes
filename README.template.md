@@ -23,6 +23,11 @@ repositories {
 
 ```groovy
 dependencies {
-    modRuntime "com.lettuce.fudge:notenoughcrashes:$total_version"
+    modRuntime "com.lettuce.fudge:notenoughcrashes:$mod_version"
+}
+```
+```groovy
+dependencies {
+    modRuntime "com.lettuce.fudge:notenoughcrashes-api:$api_version"
 }
 ```

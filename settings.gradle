@@ -1,5 +1,6 @@
 pluginManagement {
     repositories {
+        mavenLocal()
         jcenter()
         maven {
             name = 'Fabric'
@@ -15,3 +16,6 @@ pluginManagement {
     }
 
 }
+
+include "api"
+include "mod"

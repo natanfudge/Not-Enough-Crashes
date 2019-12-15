@@ -5,44 +5,14 @@ plugins {
     id 'com.matthewprenger.cursegradle'
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-
-dependencies {
-    minecraft "com.mojang:minecraft:$minecraft_version"
-    mappings "net.fabricmc:yarn:$yarn_mappings:v2"
-    modImplementation "net.fabricmc:fabric-loader:$loader_version"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:$fabric_version"
-//    modImplementation files("crashy_test_mods/crashy_block.jar")
-}
-
-
-def total_version = "$mod_version+$minecraft_version"
-
-
-version total_version
-group maven_group
-archivesBaseName = mod_id
-
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-
-processResources {
-    filesMatching("fabric.mod.json") {
-        expand "version": project.version
+ext {
+    githubUrl = "https://github.com/$github_repo"
+    replaceProperties = new Properties()
+    File propertiesFile = new File('gradle.properties')
+    propertiesFile.withInputStream {
+        replaceProperties.load(it)
     }
-
-    inputs.property "version", project.version
 }
-
-// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
-// if it is present.
-// If you remove this task, sources will not be generated.
-task sourcesJar(type: Jar, dependsOn: classes) {
-    archiveClassifier = "sources"
-    from sourceSets.main.allSource
-}
-def githubUrl = "https://github.com/$github_repo"
 
 def pomConfig = {
     licenses {
@@ -64,93 +34,104 @@ def pomConfig = {
 }
 
 
-curseforge {
-    apiKey = project.hasProperty("curseforge_api_key") ? project.curseforge_api_key : ""
-    project {
-        id = curseforge_id
-        releaseType = 'release'
-        addGameVersion "Fabric"
-        addGameVersion curseforge_mc_version
-        changelogType = "markdown"
-        changelog = file("changelog.md")
-
-        mainArtifact(remapJar) {
-            displayName = "$mod_name $total_version"
-        }
-    }
-
-    options {
-        forgeGradleIntegration = false
-    }
-}
 
 
-// ensure that the encoding is set to UTF-8, no matter what the system default is
-// this fixes some edge cases with special characters not displaying correctly
-// see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
-tasks.withType(JavaCompile) {
-    options.encoding = "UTF-8"
-}
+def setupMod(String mod_id, String mod_description, String mod_version, String template_key) {
+    def total_version = "$mod_version+$minecraft_version"
 
+    def githubUrl = "https://github.com/$github_repo"
 
-jar {
-    from "LICENSE"
-}
+    version total_version
+    group maven_group
 
-bintray {
-    user = project.hasProperty('bintray_user') ? project.property('bintray_user') : ""
-    key = project.hasProperty('bintray_api_key') ? project.property('bintray_api_key') : ""
-    publications = ["MavenPublication"]
-    publish = true //[Default: false] Whether version should be auto published after an upload
-    pkg {
-        repo = "libs"
-        name = mod_id
-        desc = mod_description
-        websiteUrl = githubUrl
-        issueTrackerUrl = "$githubUrl/issues"
-        githubRepo = github_repo //Optional Github repository
-        githubReleaseNotesFile = 'README.md' //Optional Github readme file
-        licenses = [license]
-        vcsUrl = githubUrl
-        version {
-            name = total_version
-            released = new Date()
-        }
-    }
-
-}
-
-
-publishing {
-    publications {
-        MavenPublication(MavenPublication) {
-            artifact(remapJar)
-
-            artifact(sourcesJar) {
-                classifier = "sources"
-                builtBy remapSourcesJar
+    bintray {
+        user = project.hasProperty('bintray_user') ? project.property('bintray_user') : ""
+        key = project.hasProperty('bintray_api_key') ? project.property('bintray_api_key') : ""
+        publications = ["MavenPublication"]
+        publish = true //[Default: false] Whether version should be auto published after an upload
+        pkg {
+            name = mod_id
+            desc = mod_description
+            repo = "libs"
+            websiteUrl = githubUrl
+            issueTrackerUrl = "$githubUrl/issues"
+            githubRepo = github_repo //Optional Github repository
+            githubReleaseNotesFile = 'README.md' //Optional Github readme file
+            licenses = [license]
+            vcsUrl = githubUrl
+            version {
+                name = total_version
+                released = new Date()
             }
-            groupId maven_group
-            artifactId mod_id
-            version total_version
-            pom.withXml {
-                def root = asNode()
-                root.appendNode('description', mod_description)
-                root.appendNode('name', mod_id)
-                root.appendNode('url', githubUrl)
-                root.children().last() + pomConfig
+        }
+
+    }
+
+    publishing {
+        publications {
+            MavenPublication(MavenPublication) {
+                artifact(remapJar)
+
+                artifact(sourcesJar) {
+                    classifier = "sources"
+                    builtBy remapSourcesJar
+                }
+                groupId maven_group
+                artifactId mod_id
+                version total_version
+                pom.withXml {
+                    def root = asNode()
+                    root.appendNode('description', mod_description)
+                    root.appendNode('name', mod_id)
+                    root.appendNode('url', githubUrl)
+                    root.children().last() + pomConfig
+                }
             }
         }
     }
+
+    project.replaceProperties.put(template_key, total_version)
 }
 
 
-Properties properties = new Properties()
-File propertiesFile = new File('gradle.properties')
-propertiesFile.withInputStream {
-    properties.load(it)
+allprojects {
+    apply plugin: "fabric-loom"
+    apply plugin: 'maven-publish'
+    apply plugin: "com.jfrog.bintray"
+    apply plugin: 'com.matthewprenger.cursegradle'
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+
+    group maven_group
+
+    dependencies {
+        minecraft "com.mojang:minecraft:$minecraft_version"
+        mappings "net.fabricmc:yarn:$yarn_mappings:v2"
+        modImplementation "net.fabricmc:fabric-loader:$loader_version"
+    }
+
+    processResources {
+        filesMatching("fabric.mod.json") {
+            expand "version": project.version
+        }
+
+        inputs.property "version", project.version
+    }
+
+    task sourcesJar(type: Jar, dependsOn: classes) {
+        archiveClassifier = "sources"
+        from sourceSets.main.allSource
+    }
+
+    tasks.withType(JavaCompile) {
+        options.encoding = "UTF-8"
+    }
+    jar {
+        from "LICENSE"
+    }
 }
-properties.put("total_version", total_version)
 
 
 task updateTemplate(type: Copy) {
@@ -162,11 +143,9 @@ task updateTemplate(type: Copy) {
         def extensionLength = ".template.md".length()
 
         name = sourceName.substring(0, sourceName.length() - extensionLength) + ".md"
-        expand(properties)
+        expand(replaceProperties)
     }
     destinationDir = rootDir
 }
 
 bintrayUpload.dependsOn updateTemplate
-bintrayUpload.dependsOn "curseforge$curseforge_id"
-

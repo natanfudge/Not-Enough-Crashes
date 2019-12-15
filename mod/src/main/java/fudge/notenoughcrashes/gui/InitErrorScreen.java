@@ -1,8 +1,5 @@
 package fudge.notenoughcrashes.gui;
 
-import fudge.notenoughcrashes.ModConfig;
-
-import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.client.gui.widget.AbstractButtonWidget;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.resource.language.I18n;

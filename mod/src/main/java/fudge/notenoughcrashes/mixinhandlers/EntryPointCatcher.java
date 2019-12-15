@@ -12,8 +12,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.crash.CrashReport;
 
-import net.fabricmc.loader.api.FabricLoader;
-
 public class EntryPointCatcher {
     private static Throwable entryPointCrash = null;
 

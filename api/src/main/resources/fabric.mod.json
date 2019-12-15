@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "id": "notenoughcrashes-api",
+  "version": "${version}",
+
+  "name": "Not Enough Crashes API",
+  "description": "API for disposing of things when the game crashes",
+  "authors": [
+    "Fudge"
+  ],
+  "contact": {
+    "homepage": "https://github.com/natanfudge/not-enough-crashes",
+    "sources": "https://github.com/natanfudge/not-enough-crashes",
+    "issues": "https://github.com/natanfudge/not-enough-crashes/issues"
+  },
+
+  "license": "MIT",
+  "environment": "*",
+  "depends": {
+    "fabricloader": ">=0.7.2",
+    "minecraft": "1.15.x"
+  },
+  "suggests": {
+    "notenoughcrashes": "*"
+  },
+  "custom": {
+    "modmenu:api": true
+  }
+}

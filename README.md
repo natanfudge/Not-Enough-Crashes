@@ -26,3 +26,8 @@ dependencies {
     modRuntime "com.lettuce.fudge:notenoughcrashes:1.0.12+1.15"
 }
 ```
+```groovy
+dependencies {
+    modRuntime "com.lettuce.fudge:notenoughcrashes-api:1.0.0+1.15"
+}
+```
