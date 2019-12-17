@@ -1,5 +1,5 @@
 # Not Enough Crashes
-[![Discord](https://img.shields.io/discord/214574167192764416.svg)](https://discord.gg/XBwZJR)
+[![Discord](https://img.shields.io/discord/219787567262859264.svg)](https://discord.gg/CFaCu97)
 [![CurseForge](http://cf.way2muchnoise.eu/not-enough-crashes.svg)](https://minecraft.curseforge.com/projects/not-enough-crashes)
 
 Not Enough Crashes is a fork of TooManyCrashes, a port of VanillaFix's crash improvements to Fabric, for Minecraft 1.15+.
@@ -12,7 +12,7 @@ Features:
 - Additional NBT information of entities and block entities in crash reports (in dev too).
 
 # Using the Not Enough Crashes API
-You can include the Not Enough Crashes API to reset any mod state that needs to be cleared by running disposing code whenever the game crashes.
+You can include the 4KB Not Enough Crashes API to reset any mod state that needs to be cleared by running disposing code whenever the game crashes. You don't need to check if Not Enough Crashes itself is present.
 ## Gradle Setup
 ```groovy
 dependencies {
