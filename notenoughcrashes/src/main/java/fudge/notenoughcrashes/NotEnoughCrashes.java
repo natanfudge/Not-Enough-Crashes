@@ -37,7 +37,7 @@ public class NotEnoughCrashes implements ModInitializer {
     public static final boolean ENABLE_DEOBF = (!FabricLoader.getInstance().isDevelopmentEnvironment()
                     && ModConfig.instance().deobfuscateStackTrace) || DEBUG_DEOBF;
 
-    public static final boolean ENABLE_ENTRYPOINT_CATCHING = FabricLoader.getInstance().isDevelopmentEnvironment() || DEBUG_ENTRYPOINT;
+    public static final boolean ENABLE_ENTRYPOINT_CATCHING = !FabricLoader.getInstance().isDevelopmentEnvironment() || DEBUG_ENTRYPOINT;
 
     public static void ensureDirectoryExists() throws IOException {
         Files.createDirectories(DIRECTORY);

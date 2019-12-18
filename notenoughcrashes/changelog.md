@@ -8,3 +8,5 @@ Released
 - Added an API for running code when the game crashes to prevent the window getting stuck in weird states.
 ### 1.1.1
 - Forgot a debug flag
+### 1.1.2
+- Fixed the entry point catcher not being enabled...
