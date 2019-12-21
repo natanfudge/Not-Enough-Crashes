@@ -1,6 +1,7 @@
 
 dependencies {
 	compileOnly project(path: ':notenoughcrashes')
+
 }
 def total_version = mod_version
 setupMod(total_version, "api_version")

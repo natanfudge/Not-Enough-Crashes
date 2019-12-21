@@ -10,3 +10,6 @@ Released
 - Forgot a debug flag
 ### 1.1.2
 - Fixed the entry point catcher not being enabled...
+### 1.1.3
+- Initialization errors will now be printed as soon as an error is caught, instead of only when displaying the crash screen.
+- The init error screen will now display in more disaster cases.

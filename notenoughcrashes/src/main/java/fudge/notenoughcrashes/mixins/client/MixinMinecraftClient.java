@@ -80,7 +80,6 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
         }
     }
 
-
     /**
      * @author Runemoro
      * @reason Substitute

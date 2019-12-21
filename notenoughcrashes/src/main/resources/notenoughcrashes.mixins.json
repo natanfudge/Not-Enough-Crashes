@@ -16,6 +16,7 @@
     "client.MixinKeyboard",
     "client.MixinMinecraftClient",
     "client.ClientMainMixin",
-    "client.SplashScreenMixin"
+    "client.SplashScreenMixin",
+    "client.EntityRenderDispatcherMixin"
   ]
 }

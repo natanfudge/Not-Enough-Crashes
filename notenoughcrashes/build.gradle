@@ -1,12 +1,42 @@
+plugins {
+    id "com.wynprice.cursemaven" version "2.1.1"
+}
 def total_version = "$mod_version+$minecraft_version"
 archivesBaseName = mod_id
 
+repositories {
+    maven {
+        name = "CottonMC"
+        url = "http://server.bbkr.space:8081/artifactory/libs-release"
+    }
+    maven { url = "http://server.bbkr.space:8081/artifactory/libs-snapshot" }
+}
+
 dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:$fabric_version"
+//    modRuntime("curse.maven:techreborn:2844732") {
+//        transitive = false
+//    }
+//
+//    modRuntime("curse.maven:reborncore:2843400") {
+//        transitive = false
+//    }
+//    modRuntime("curse.maven:adorn:2846299")
+//    modRuntime("net.fabricmc:fabric-language-kotlin:1.3.60+build.1")
+//    modRuntime ("io.github.cottonmc:LibGui:1.4.0-beta.1") {
+//        transitive = false
+//    }
+//    modRuntime ("io.github.cottonmc:Jankson-Fabric:2.0.1+j1.2.0") {
+//        transitive = false
+//    }
+//    modRuntime(group: "io.github.cottonmc", name: "LibCD", version: "1.6.2+1.15") {
+//        transitive = false
+//    }
+
 }
 
 
-setupMod(total_version,"mod_version")
+setupMod(total_version, "mod_version")
 
 version total_version
 
@@ -75,8 +105,6 @@ bintray {
     }
 
 }
-
-
 
 
 bintrayUpload.dependsOn "curseforge$curseforge_id"
