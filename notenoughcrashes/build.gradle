@@ -10,10 +10,30 @@ repositories {
         url = "http://server.bbkr.space:8081/artifactory/libs-release"
     }
     maven { url = "http://server.bbkr.space:8081/artifactory/libs-snapshot" }
+//    flatDir {
+//        dirs 'testmods'
+//    }
+    maven { url "https://www.jitpack.io" }
 }
 
 dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:$fabric_version"
+//    modRuntime("curse.maven:customtitlescreen:2846040")
+//    modRuntime("curse.maven:customtitlescreen:2846040")
+//    modRuntime("curse.maven:materialization:2799548")
+////    modRuntime(name : "cotton-config-1.0.0-rc.4")
+////    modRuntime(name : "cotton-logging-1.0.0-rc.4")
+//    modRuntime("me.shedaniel:RoughlyEnoughItems:3.2.28"){
+//        exclude(group :"net.fabricmc.fabric-api")
+//        exclude(group :"io.github.prospector.modmenu")
+//    }
+//    modRuntime("io.github.cottonmc.cotton:cotton:1.0.0-rc.6"){
+//        exclude(group :"net.fabricmc.fabric-api")
+//        exclude(group :"io.github.prospector.modmenu")
+//    }
+//    modRuntime("curse.maven:nbtcrafting:2843960")
+
+//    modRuntime("curse.maven:cotton:2839518")
 //    modRuntime("curse.maven:techreborn:2844732") {
 //        transitive = false
 //    }
@@ -26,9 +46,9 @@ dependencies {
 //    modRuntime ("io.github.cottonmc:LibGui:1.4.0-beta.1") {
 //        transitive = false
 //    }
-//    modRuntime ("io.github.cottonmc:Jankson-Fabric:2.0.1+j1.2.0") {
-//        transitive = false
-//    }
+    modRuntime ("io.github.cottonmc:Jankson-Fabric:2.0.1+j1.2.0") {
+        transitive = false
+    }
 //    modRuntime(group: "io.github.cottonmc", name: "LibCD", version: "1.6.2+1.15") {
 //        transitive = false
 //    }

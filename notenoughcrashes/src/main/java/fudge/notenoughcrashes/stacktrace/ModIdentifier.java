@@ -87,7 +87,7 @@ public final class ModIdentifier {
 
             // Get the mod containing that class
             return metadata;
-        } catch (URISyntaxException | IOException | ClassNotFoundException ex) {
+        } catch (URISyntaxException | IOException | ClassNotFoundException | NoClassDefFoundError e) {
             return Collections.emptySet(); // we cannot do it
         }
     }

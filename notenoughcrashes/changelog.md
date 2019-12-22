@@ -13,3 +13,5 @@ Released
 ### 1.1.3
 - Initialization errors will now be printed as soon as an error is caught, instead of only when displaying the crash screen.
 - The init error screen will now display in more disaster cases.
+### 1.1.4
+- Fixed the window not closing when pre-initialization errors occur.

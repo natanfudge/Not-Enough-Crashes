@@ -80,12 +80,12 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
         }
     }
 
+
     /**
-     * @author Runemoro
-     * @reason Substitute
+     * Prevent the integrated server from exiting in the case it crashed
      */
-    @Overwrite
-    public static void printCrashReport(CrashReport report) {
+    @Redirect(method = "startIntegratedServer", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;printCrashReport(Lnet/minecraft/util/crash/CrashReport;)V"))
+    private void redirectPrintCrashReport(CrashReport report) {
         CrashUtils.outputReport(report);
     }
 

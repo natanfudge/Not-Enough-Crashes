@@ -11,7 +11,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 
 import fudge.notenoughcrashes.stacktrace.StacktraceDeobfuscator;
-//import fudge.notenoughcrashes.test.TestKeyBinding;
 import fudge.notenoughcrashes.utils.SSLUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,7 +18,6 @@ import org.apache.logging.log4j.Logger;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 
-//import fudge.notenoughcrashes.test.TestBlock;
 
 public class NotEnoughCrashes implements ModInitializer {
 
@@ -50,6 +48,8 @@ public class NotEnoughCrashes implements ModInitializer {
         trustIdenTrust();
         initStacktraceDeobfuscator();
 
+//        TestBlock.init();
+//        throw new NullPointerException();
 //        TestKeyBinding.init();
     }
 
