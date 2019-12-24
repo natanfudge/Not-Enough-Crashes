@@ -186,6 +186,9 @@ public final class StacktraceDeobfuscator {
     }
 
     private static String getFileName(String className) {
+
+        if (className.isEmpty()) return className;
+
         String remappedFile = className;
         int lastDot = className.lastIndexOf('.');
         if (lastDot != -1) {
