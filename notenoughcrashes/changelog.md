@@ -15,3 +15,5 @@ Released
 - The init error screen will now display in more disaster cases.
 ### 1.1.4
 - Fixed the window not closing when pre-initialization errors occur.
+### 1.1.5
+- Fixed a rare error.
