@@ -28,7 +28,7 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
-import net.minecraft.util.Util;
+import net.minecraft.util.SystemUtil;
 import net.minecraft.util.crash.CrashReport;
 
 import net.fabricmc.api.EnvType;
@@ -137,7 +137,7 @@ public abstract class ProblemScreen extends Screen {
                                 uriField.set(ProblemScreen.this, new URI(hasteLink));
                                 minecraft.openScreen(new ConfirmChatLinkScreen(b -> {
                                     if (b) {
-                                        Util.getOperatingSystem().open(hasteLink);
+                                        SystemUtil.getOperatingSystem().open(hasteLink);
                                     }
 
                                     this.minecraft.openScreen(construct(report));
@@ -160,7 +160,7 @@ public abstract class ProblemScreen extends Screen {
         if (x >= xLeft && x <= xRight && y >= yTop && y <= yBottom) {
             File file = report.getFile();
             if (file != null) {
-                Util.getOperatingSystem().open(file);
+                SystemUtil.getOperatingSystem().open(file);
             }
         }
         return super.mouseClicked(x, y, int_1);

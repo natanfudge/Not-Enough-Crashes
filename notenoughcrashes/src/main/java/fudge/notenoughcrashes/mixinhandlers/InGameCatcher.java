@@ -25,7 +25,7 @@ public class InGameCatcher {
 
     public static void handleClientCrash(Throwable e, CrashReport report, boolean reported, Queue<Runnable> renderTaskQueue) {
         clientCrashCount++;
-        getClient().addDetailsToCrashReport(report);
+        getClient().populateCrashReport(report);
         addInfoToCrash(report);
 
         resetModState();
@@ -73,7 +73,7 @@ public class InGameCatcher {
         } catch (Throwable t) {
             // The crash screen has crashed. Report it normally instead.
             LOGGER.error("An uncaught exception occured while displaying the crash screen, making normal report instead", t);
-            MinecraftClient.printCrashReport(report);
+            MinecraftClient.getInstance().printCrashReport(report);
             System.exit(report.getFile() != null ? -1 : -2);
         }
     }
