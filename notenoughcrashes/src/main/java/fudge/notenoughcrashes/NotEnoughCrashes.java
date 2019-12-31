@@ -44,6 +44,7 @@ public class NotEnoughCrashes implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        LOGGER.warn("FOO BAR BAZ");
         ModConfig.instance();
         trustIdenTrust();
         initStacktraceDeobfuscator();
