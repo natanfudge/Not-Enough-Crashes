@@ -1,5 +1,5 @@
 plugins {
-    id "com.wynprice.cursemaven" version "2.1.1"
+    id ("com.wynprice.cursemaven") version "2.1.1"
 }
 def total_version = "$mod_version+$minecraft_version"
 archivesBaseName = mod_id
@@ -18,6 +18,9 @@ repositories {
 
 dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:$fabric_version"
+    modImplementation "com.github.natanfudge:EntrypointCatcher:$entrypoint_api_version"
+    include "com.github.natanfudge:EntrypointCatcher:$entrypoint_api_version"
+
 //    modRuntime("curse.maven:customtitlescreen:2846040")
 //    modRuntime("curse.maven:customtitlescreen:2846040")
 //    modRuntime("curse.maven:materialization:2799548")

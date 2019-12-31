@@ -16,6 +16,9 @@
   "entrypoints": {
     "main": [
       "fudge.notenoughcrashes.NotEnoughCrashes"
+    ],
+    "entry_handler": [
+      "fudge.noteno"
     ]
   },
   "depends": {

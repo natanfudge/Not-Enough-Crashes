@@ -16,8 +16,8 @@ You can include the 4KB Not Enough Crashes API to reset any mod state that needs
 ## Gradle Setup
 ```groovy
 dependencies {
-    modImplementation "com.lettuce.fudge:notenoughcrashes-api:1.0.0"
-    include "com.lettuce.fudge:notenoughcrashes-api:1.0.0"
+    modImplementation ("com.lettuce.fudge:notenoughcrashes-api:1.0.0")
+    include ("com.lettuce.fudge:notenoughcrashes-api:1.0.0")
 }
 ```
 ## Code
@@ -44,7 +44,7 @@ repositories {
 
 ```groovy
 dependencies {
-    modRuntime "com.lettuce.fudge:notenoughcrashes:1.1.3+1.15"
+    modRuntime ("com.lettuce.fudge:notenoughcrashes:1.1.5+1.15.1")
 }
 ```
 
