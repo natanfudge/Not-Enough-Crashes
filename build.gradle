@@ -34,9 +34,6 @@ ext {
 }
 
 def setupMod(String total_version,  String template_key) {
-//    def total_version = "$mod_version+$minecraft_version"
-
-
     group maven_group
 
     project.replaceProperties.put(template_key, total_version)
