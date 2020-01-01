@@ -6,6 +6,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -83,9 +84,7 @@ public abstract class ProblemScreen extends Screen {
         return null;
     }
 
-    private static final String MINECRAFT_ID = "minecraft";
-    private static final String LOADER_ID = "fabricloader";
-
+    private static final Set<String> IGNORED_MODS = new HashSet<>(Arrays.asList("minecraft","fabricloader","loadcatcher"));
     private Text getSuspectedModsText() {
         Set<ModMetadata> suspectedMods = ((PatchedCrashReport) report).getSuspectedMods();
         if (suspectedMods == null) return new TranslatableText("notenoughcrashes.crashscreen.identificationErrored");
@@ -94,7 +93,7 @@ public abstract class ProblemScreen extends Screen {
 
         // Minecraft exists and basically any stack trace, and loader exists in any launch,
         // it's better not to include them in the list of mods.
-        suspectedMods.removeIf(mod -> mod.getId().equals(MINECRAFT_ID) || mod.getId().equals(LOADER_ID));
+        suspectedMods.removeIf(mod -> IGNORED_MODS.contains(mod.getId()));
 
         if (suspectedMods.isEmpty()) return new TranslatableText("notenoughcrashes.crashscreen.noModsErrored");
 

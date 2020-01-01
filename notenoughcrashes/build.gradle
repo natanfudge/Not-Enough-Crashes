@@ -19,7 +19,7 @@ repositories {
 dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:$fabric_version"
     modImplementation "com.github.natanfudge:EntrypointCatcher:$entrypoint_api_version"
-    include "com.github.natanfudge:EntrypointCatcher:$entrypoint_api_version"
+    include "com.github.giantnuker:EntrypointCatcher:$entrypoint_api_version"
 
 //    modRuntime("curse.maven:customtitlescreen:2846040")
 //    modRuntime("curse.maven:customtitlescreen:2846040")

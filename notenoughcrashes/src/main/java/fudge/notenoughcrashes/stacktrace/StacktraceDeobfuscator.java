@@ -10,11 +10,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayDeque;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
 import com.google.common.net.UrlEscapers;
@@ -33,7 +35,7 @@ public final class StacktraceDeobfuscator {
 
     private static final String MAPPINGS_JAR_LOCATION = "mappings/mappings.tiny";
     private static final String NAMESPACE_FROM = "intermediary";
-    public static final String NAMESPACE_TO = "named";
+    private static final String NAMESPACE_TO = "named";
     private static final Path CACHED_MAPPINGS = NotEnoughCrashes.DIRECTORY
                     .resolve("mappings-" + new MinecraftVersion().getName() + ".tiny");
 
@@ -130,7 +132,6 @@ public final class StacktraceDeobfuscator {
     }
 
     public static void deobfuscateThrowable(Throwable t) {
-
         Deque<Throwable> queue = new ArrayDeque<>();
         queue.add(t);
         boolean firstLoop = true;
@@ -146,42 +147,49 @@ public final class StacktraceDeobfuscator {
         }
     }
 
+    private static final List<String> filteredClasses = Arrays.asList("io.github.giantnuker.fabric.loadcatcher.EntrypointCatcher$LoaderClientReplacement"
+                    , "io.github.giantnuker.fabric.loadcatcher.EntrypointCatcher");
+
     // No need to insert multiple watermarks in one exception
     public static StackTraceElement[] deobfuscateStacktrace(StackTraceElement[] stackTrace, boolean insertWatermark) {
-        if (!NotEnoughCrashes.ENABLE_DEOBF
+        if (stackTrace.length == 0) return stackTrace;
+
+        // Make the stack trace nicer by removing entrypoint catcher's cruft
+        List<StackTraceElement> stackTraceList = NotEnoughCrashes.FILTER_ENTRYPOINT_CATCHER ? Arrays.stream(stackTrace).filter(element -> !filteredClasses.contains(element.getClassName()))
+                        .collect(Collectors.toList()) : Lists.newArrayList(stackTrace);
+        if (NotEnoughCrashes.ENABLE_DEOBF
                         // Check it wasn't deobfuscated already. This can happen when this is called both by DeobfuscatingRewritePolicy
                         // and then CrashReport mixin. They don't cover all cases alone though so we need both.
-                        || (stackTrace.length > 0 && StringUtils.startsWith(stackTrace[0].getClassName(), NotEnoughCrashes.NAME))) {
-            return stackTrace;
-        }
+                        && !StringUtils.startsWith(stackTrace[0].getClassName(), NotEnoughCrashes.NAME)) {
+            if (mappings == null) loadMappings();
+            if (mappings == null) return stackTrace;
 
-        if (mappings == null) loadMappings();
-        if (mappings == null) return stackTrace;
+            if (insertWatermark) {
+                try {
+                    stackTraceList.add(0, new StackTraceElement(NotEnoughCrashes.NAME + " deobfuscated stack trace",
+                                    "", YarnVersion.getLatestBuildForCurrentVersion(), -1));
+                } catch (IOException e) {
+                    NotEnoughCrashes.LOGGER.error("Could not get used yarn version", e);
+                    return stackTrace;
+                }
+            }
 
-        ArrayList<StackTraceElement> stackTraceList = Lists.newArrayList(stackTrace);
-        if (insertWatermark) {
-            try {
-                stackTraceList.add(0, new StackTraceElement(NotEnoughCrashes.NAME + " deobfuscated stack trace",
-                                "", YarnVersion.getLatestBuildForCurrentVersion(), -1));
-            } catch (IOException e) {
-                NotEnoughCrashes.LOGGER.error("Could not get used yarn version", e);
-                return stackTrace;
+            int index = 0;
+
+            for (StackTraceElement el : stackTraceList) {
+                String remappedClass = mappings.get(el.getClassName());
+                String remappedMethod = mappings.get(el.getMethodName());
+                stackTraceList.set(index, new StackTraceElement(
+                                remappedClass != null ? remappedClass : el.getClassName(),
+                                remappedMethod != null ? remappedMethod : el.getMethodName(),
+                                remappedClass != null ? getFileName(remappedClass) : el.getFileName(),
+                                el.getLineNumber())
+                );
+                index++;
             }
         }
 
-        int index = 0;
 
-        for (StackTraceElement el : stackTraceList) {
-            String remappedClass = mappings.get(el.getClassName());
-            String remappedMethod = mappings.get(el.getMethodName());
-            stackTraceList.set(index, new StackTraceElement(
-                            remappedClass != null ? remappedClass : el.getClassName(),
-                            remappedMethod != null ? remappedMethod : el.getMethodName(),
-                            remappedClass != null ? getFileName(remappedClass) : el.getFileName(),
-                            el.getLineNumber())
-            );
-            index++;
-        }
         return stackTraceList.toArray(new StackTraceElement[] {});
     }
 

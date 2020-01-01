@@ -17,3 +17,5 @@ Released
 - Fixed the window not closing when pre-initialization errors occur.
 ### 1.1.5
 - Fixed a rare error.
+## 1.2.0
+- Compatibility with [Informed Load](https://www.curseforge.com/minecraft/mc-mods/informed-load).

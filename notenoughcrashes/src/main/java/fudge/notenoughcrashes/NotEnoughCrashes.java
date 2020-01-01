@@ -30,6 +30,7 @@ public class NotEnoughCrashes implements ModInitializer {
 
     private static final boolean DEBUG_DEOBF = false;
     private static final boolean DEBUG_ENTRYPOINT = false;
+    public static final boolean FILTER_ENTRYPOINT_CATCHER = true;
 
     // No need to deobf in dev
     public static final boolean ENABLE_DEOBF = (!FabricLoader.getInstance().isDevelopmentEnvironment()
@@ -44,7 +45,6 @@ public class NotEnoughCrashes implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        LOGGER.warn("FOO BAR BAZ");
         ModConfig.instance();
         trustIdenTrust();
         initStacktraceDeobfuscator();
