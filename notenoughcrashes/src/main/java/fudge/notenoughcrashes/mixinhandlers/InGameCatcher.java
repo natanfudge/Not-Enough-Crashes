@@ -15,6 +15,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.SaveLevelScreen;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
+import net.minecraft.util.crash.CrashException;
 import net.minecraft.util.crash.CrashReport;
 
 public class InGameCatcher {
@@ -23,14 +24,15 @@ public class InGameCatcher {
     private static int clientCrashCount = 0;
     private static int serverCrashCount = 0;
 
-    public static void handleClientCrash(Throwable e, CrashReport report, boolean reported, Queue<Runnable> renderTaskQueue) {
+    public static void handleClientCrash(CrashReport report,  Queue<Runnable> renderTaskQueue) {
         clientCrashCount++;
         getClient().addDetailsToCrashReport(report);
         addInfoToCrash(report);
 
         resetModState();
         resetGameState(renderTaskQueue);
-        LOGGER.fatal(reported ? "Reported" : "Unreported" + " exception thrown!", e);
+        boolean reported = report.getCause() instanceof CrashException;
+        LOGGER.fatal(reported ? "Reported" : "Unreported" + " exception thrown!", report.getCause());
         displayCrashScreen(report);
     }
 

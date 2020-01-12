@@ -19,3 +19,6 @@ Released
 - Fixed a rare error.
 ## 1.2.0
 - Compatibility with [Informed Load](https://www.curseforge.com/minecraft/mc-mods/informed-load).
+## 1.2.1
+- Compatibility with [Multiconnect](https://www.curseforge.com/minecraft/mc-mods/multiconnect/files).
+Note: Informed Load has yet to publish the compatible version.
