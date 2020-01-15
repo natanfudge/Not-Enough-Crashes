@@ -50,7 +50,7 @@ public class NotEnoughCrashes implements ModInitializer {
         initStacktraceDeobfuscator();
 
 //        TestBlock.init();
-//        throw new NullPointerException();
+        if (DEBUG_ENTRYPOINT) throw new NullPointerException();
 //        TestKeyBinding.init();
     }
 
