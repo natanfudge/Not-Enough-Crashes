@@ -16,7 +16,7 @@ import fudge.notenoughcrashes.ModConfig;
 import fudge.notenoughcrashes.patches.PatchedCrashReport;
 import fudge.notenoughcrashes.gui.util.TextWidget;
 import fudge.notenoughcrashes.gui.util.Widget;
-import fudge.notenoughcrashes.utils.HasteUpload;
+import fudge.notenoughcrashes.utils.CrashLogUpload;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -41,7 +41,7 @@ import net.fabricmc.loader.api.metadata.ModMetadata;
 //TODO: use proper widgets and composition over inheritance
 public abstract class ProblemScreen extends Screen {
 
-    private final List<Widget> widgets = new ArrayList<>();
+    private List<Widget> widgets = new ArrayList<>();
 
     protected void addWidget(Widget widget) {
         widgets.add(widget);
@@ -123,11 +123,12 @@ public abstract class ProblemScreen extends Screen {
 
     @Override
     public void init() {
+        widgets = new ArrayList<>();
         addButton(new ButtonWidget(width / 2 - 155 + 160, height / 4 + 120 + 12, 150, 20, I18n.translate("notenoughcrashes.gui.getLink"),
                         buttonWidget -> {
                             try {
                                 if (hasteLink == null) {
-                                    hasteLink = HasteUpload.uploadToHaste(ModConfig.instance().hasteURL, "mccrash", report.asString());
+                                    hasteLink = CrashLogUpload.upload(report.asString());
                                 }
                                 Field uriField;
                                 //noinspection JavaReflectionMemberAccess

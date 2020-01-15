@@ -19,6 +19,10 @@ Released
 - Fixed a rare error.
 ## 1.2.0
 - Compatibility with [Informed Load](https://www.curseforge.com/minecraft/mc-mods/informed-load).
-## 1.2.1
-- Compatibility with [Multiconnect](https://www.curseforge.com/minecraft/mc-mods/multiconnect/files).
+### 1.2.1
+- Compatibility with [Multiconnect](https://www.curseforge.com/minecraft/mc-mods/multiconnect/files).  
 Note: Informed Load has yet to publish the compatible version.
+### 1.2.2
+- Fixed an incompatibility with LambdaControls (mostly just a mistake, not really an incompatibility). 
+- Crash logs will now be uploaded as gists instead of to the dimdev haste. This can be reverted by setting `uploadCrashLogTo` to `DIMDEV_HASTE` in the config.
+- Fixed some GUI bugs in the crash screen

@@ -1,22 +1,28 @@
 package fudge.notenoughcrashes;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import net.fabricmc.loader.api.FabricLoader;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import net.fabricmc.loader.api.FabricLoader;
+
 public class ModConfig {
+
+    public enum CrashLogUploadType {
+        DIMDEV_HASTE,
+        GIST
+    }
 
     private static final File CONFIG_FILE = new File(FabricLoader.getInstance().getConfigDirectory(), NotEnoughCrashes.MOD_ID + ".json");
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static ModConfig instance = null;
 
-    public String hasteURL = "https://paste.dimdev.org";
+    public CrashLogUploadType uploadCrashLogTo = CrashLogUploadType.GIST;
     public boolean disableReturnToMainMenu = false;
     public boolean deobfuscateStackTrace = true;
 

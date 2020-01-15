@@ -61,7 +61,7 @@ public class TextWidget implements Widget {
         final int startY = y - height / 2;
         final int endY = y + height / 2;
 
-        return mouseX >= startX && mouseY >= startY && x < endX && y < endY;
+        return mouseX >= startX && mouseX <= endX && mouseY <= endY && mouseY >= startY;
     }
 
 

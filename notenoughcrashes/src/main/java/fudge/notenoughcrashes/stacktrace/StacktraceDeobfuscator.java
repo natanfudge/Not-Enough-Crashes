@@ -194,21 +194,14 @@ public final class StacktraceDeobfuscator {
     }
 
     private static String getFileName(String className) {
-
         if (className.isEmpty()) return className;
 
-        String remappedFile = className;
         int lastDot = className.lastIndexOf('.');
         if (lastDot != -1) {
-            remappedFile = remappedFile.substring(lastDot + 1);
+            className = className.substring(lastDot + 1);
         }
 
-        int firstDollar = className.indexOf('$');
-        if (firstDollar != -1) {
-            remappedFile = remappedFile.substring(0, firstDollar);
-        }
-
-        return remappedFile;
+        return className.split("\\$",2)[0];
     }
 
     // For testing
