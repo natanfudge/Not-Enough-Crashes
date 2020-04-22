@@ -3,7 +3,12 @@ package fudge.notenoughcrashes.gui.util;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class TextWidget implements Widget {
     private final Text text;
@@ -35,14 +40,14 @@ public class TextWidget implements Widget {
         this.font = font;
         this.x = x;
         this.y = y;
-        translated = text.asFormattedString();
+        translated = text.getString();
         width = MinecraftClient.getInstance().textRenderer.getStringWidth(translated);
         startX = x - width / 2;
     }
 
     @Override
-    public void draw() {
-        getScreen().drawCenteredString(font, translated, x, y, color);
+    public void draw(MatrixStack stack) {
+        getScreen().drawCenteredString(stack,font, translated, x, y, color);
     }
 
     @Override
@@ -51,7 +56,7 @@ public class TextWidget implements Widget {
         if (hoveredText != null) {
             Screen screen = MinecraftClient.getInstance().currentScreen;
             if (screen != null) {
-                screen.handleComponentClicked(hoveredText);
+                screen.handleTextClick(hoveredText);
             }
         }
     }
@@ -68,9 +73,10 @@ public class TextWidget implements Widget {
     private Text getTextAt(double x, double y) {
         if (isWithinBounds(x, y)) {
             int i = startX;
-            for (Text component : text) {
-                TextRenderer renderer = MinecraftClient.getInstance().textRenderer;
-                i += renderer.getStringWidth(component.asFormattedString());
+
+            TextRenderer renderer = MinecraftClient.getInstance().textRenderer;
+            for (Text component : getTextParts(text)) {
+                i += renderer.getStringWidth(component.asString());
                 if (i > x) {
                     return component;
                 }
@@ -78,5 +84,14 @@ public class TextWidget implements Widget {
         }
         return null;
     }
+
+    private List<Text> getTextParts(Text text){
+        List<Text> parts = new ArrayList<>();
+        parts.add(text);
+        parts.addAll(text.getSiblings());
+        return parts;
+    }
+
+
 
 }
