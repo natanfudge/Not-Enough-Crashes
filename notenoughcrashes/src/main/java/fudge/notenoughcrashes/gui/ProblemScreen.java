@@ -84,7 +84,7 @@ public abstract class ProblemScreen extends Screen {
         return null;
     }
 
-    private static final Set<String> IGNORED_MODS = new HashSet<>(Arrays.asList("minecraft","fabricloader","loadcatcher"));
+    private static final Set<String> IGNORED_MODS = new HashSet<>(Arrays.asList("minecraft","fabricloader","loadcatcher", "jumploader"));
     private Text getSuspectedModsText() {
         Set<ModMetadata> suspectedMods = ((PatchedCrashReport) report).getSuspectedMods();
         if (suspectedMods == null) return new TranslatableText("notenoughcrashes.crashscreen.identificationErrored");

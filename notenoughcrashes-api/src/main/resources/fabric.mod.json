@@ -17,8 +17,7 @@
   "license": "MIT",
   "environment": "*",
   "depends": {
-    "fabricloader": ">=0.7.2",
-    "minecraft": "1.15.x"
+    "fabricloader": ">=0.7.2"
   },
   "suggests": {
     "notenoughcrashes": ">=1.1.0"

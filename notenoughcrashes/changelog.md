@@ -26,3 +26,4 @@ Note: Informed Load has yet to publish the compatible version.
 - Fixed an incompatibility with LambdaControls (mostly just a mistake, not really an incompatibility). 
 - Crash logs will now be uploaded as gists instead of to the dimdev haste. This can be reverted by setting `uploadCrashLogTo` to `DIMDEV_HASTE` in the config.
 - Fixed some GUI bugs in the crash scree
+### 1.2.4

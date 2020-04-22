@@ -77,16 +77,13 @@ public abstract class MixinCrashReport implements PatchedCrashReport {
             try {
                 suspectedMods = ModIdentifier.identifyFromStacktrace(cause);
 
-                String modListString = "Unknown";
                 List<String> modNames = new ArrayList<>();
                 for (ModMetadata mod : suspectedMods) {
                     modNames.add(mod.getName() + " (" + mod.getId() + ")");
                 }
 
-                if (!modNames.isEmpty()) {
-                    modListString = StringUtils.join(modNames, ", ");
-                }
-                return modListString;
+                if (!modNames.isEmpty()) return StringUtils.join(modNames, ", ");
+                else return "Unknown";
             } catch (Throwable e) {
                 return ExceptionUtils.getStackTrace(e).replace("\t", "    ");
             }
@@ -101,14 +98,14 @@ public abstract class MixinCrashReport implements PatchedCrashReport {
         StringBuilder builder = new StringBuilder();
 
         builder.append("---- Minecraft Crash Report ----\n")
-                        .append("// ").append(ANNOYING_EASTER_EGG_DISABLED ? generateWittyComment() : generateEasterEggComment())
-                        .append("\n\n")
-                        .append("Time: ").append(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z").format(new Date())).append("\n")
-                        .append("Description: ").append(message)
-                        .append("\n\n")
-                        .append(stacktraceToString(cause)
-                                        .replace("\t", "    ")) // Vanilla's getCauseStackTraceOrString doesn't print causes and suppressed exceptions
-                        .append("\n\nA detailed walkthrough of the error, its code path and all known details is as follows:\n");
+                .append("// ").append(ANNOYING_EASTER_EGG_DISABLED ? generateWittyComment() : generateEasterEggComment())
+                .append("\n\n")
+                .append("Time: ").append(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z").format(new Date())).append("\n")
+                .append("Description: ").append(message)
+                .append("\n\n")
+                .append(stacktraceToString(cause)
+                        .replace("\t", "    ")) // Vanilla's getCauseStackTraceOrString doesn't print causes and suppressed exceptions
+                .append("\n\nA detailed walkthrough of the error, its code path and all known details is as follows:\n");
 
         for (int i = 0; i < 87; i++) {
             builder.append("-");

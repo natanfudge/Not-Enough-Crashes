@@ -49,6 +49,8 @@ dependencies {
 //    modRuntime ("io.github.cottonmc:LibGui:1.4.0-beta.1") {
 //        transitive = false
 //    }
+
+    modRuntime(files("../crashy_test_mods/crashy_startup.jar"))
     modRuntime ("io.github.cottonmc:Jankson-Fabric:2.0.1+j1.2.0") {
         transitive = false
     }
