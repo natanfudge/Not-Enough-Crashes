@@ -37,7 +37,7 @@ public final class StacktraceDeobfuscator {
     private static final String NAMESPACE_FROM = "intermediary";
     private static final String NAMESPACE_TO = "named";
     private static final Path CACHED_MAPPINGS = NotEnoughCrashes.DIRECTORY
-                    .resolve("mappings-" + new MinecraftVersion().getName() + ".tiny");
+                    .resolve("mappings-" +  MinecraftVersion.create().getName() + ".tiny");
 
     private static Map<String, String> mappings = null;
 

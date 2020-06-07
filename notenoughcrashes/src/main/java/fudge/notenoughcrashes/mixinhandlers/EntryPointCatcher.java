@@ -13,6 +13,9 @@ import net.minecraft.client.util.Window;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.crash.CrashReport;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
 public class EntryPointCatcher {
     private static CrashReport crashReport = null;
 
@@ -22,14 +25,12 @@ public class EntryPointCatcher {
 
     private static final Logger LOGGER = LogManager.getLogger(NotEnoughCrashes.NAME + " Entry Points");
 
-    private static MinecraftClient getClient() {
-        return MinecraftClient.getInstance();
-    }
 
+    @Environment(EnvType.CLIENT)
     public static void handleEntryPointError(Throwable e) {
         crashReport = CrashReport.create(e, "Initializing game");
         crashReport.addElement("Initialization");
-        MinecraftClient.addSystemDetailsToCrashReport(null, new MinecraftVersion().getName(), null, crashReport);
+        MinecraftClient.addSystemDetailsToCrashReport(null,  MinecraftVersion.create().getName(), null, crashReport);
         CrashUtils.outputReport(crashReport);
 
         // Make GL shuttup about any GL error that occurred
@@ -39,10 +40,10 @@ public class EntryPointCatcher {
         // Make it obvious the game crashed
         SplashScreenMixin.setLogo(new Identifier(NotEnoughCrashes.MOD_ID, "textures/game_crashed.png"));
     }
-
+    @Environment(EnvType.CLIENT)
     public static void displayInitErrorScreen() {
         try {
-            getClient().openScreen(new InitErrorScreen(crashReport));
+            MinecraftClient.getInstance().openScreen(new InitErrorScreen(crashReport));
         } catch (Throwable t) {
             CrashReport additionalReport = CrashReport.create(t, "Displaying init error screen");
             LOGGER.error("An uncaught exception occured while displaying the init error screen, making normal report instead", t);

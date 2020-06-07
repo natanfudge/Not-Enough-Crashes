@@ -50,21 +50,21 @@ public class CrashScreen extends ProblemScreen {
         int x = width / 2 - 155;
         int y = height / 4;
 
-        drawString(matrixStack,textRenderer, I18n.translate("notenoughcrashes.crashscreen.summary"), x, y, textColor);
-        drawString(matrixStack,textRenderer, I18n.translate("notenoughcrashes.crashscreen.paragraph1.line1"), x, y += 18, textColor);
+        drawStringWithShadow(matrixStack,textRenderer, I18n.translate("notenoughcrashes.crashscreen.summary"), x, y, textColor);
+        drawStringWithShadow(matrixStack,textRenderer, I18n.translate("notenoughcrashes.crashscreen.paragraph1.line1"), x, y += 18, textColor);
 
         y += 11;
 
-        drawString(matrixStack,textRenderer, I18n.translate("notenoughcrashes.crashscreen.paragraph2.line1"), x, y += 11, textColor);
-        drawString(matrixStack,textRenderer, I18n.translate("notenoughcrashes.crashscreen.paragraph2.line2"), x, y += 9, textColor);
+        drawStringWithShadow(matrixStack,textRenderer, I18n.translate("notenoughcrashes.crashscreen.paragraph2.line1"), x, y += 11, textColor);
+        drawStringWithShadow(matrixStack,textRenderer, I18n.translate("notenoughcrashes.crashscreen.paragraph2.line2"), x, y += 9, textColor);
 
         drawFileNameString(matrixStack,y);
         y += 11;
 
-        drawString(matrixStack,textRenderer, I18n.translate("notenoughcrashes.crashscreen.paragraph3.line1"), x, y += 12, textColor);
-        drawString(matrixStack,textRenderer, I18n.translate("notenoughcrashes.crashscreen.paragraph3.line2"), x, y += 9, textColor);
-        drawString(matrixStack,textRenderer, I18n.translate("notenoughcrashes.crashscreen.paragraph3.line3"), x, y += 9, textColor);
-        drawString(matrixStack,textRenderer, I18n.translate("notenoughcrashes.crashscreen.paragraph3.line4"), x, y + 9, textColor);
+        drawStringWithShadow(matrixStack,textRenderer, I18n.translate("notenoughcrashes.crashscreen.paragraph3.line1"), x, y += 12, textColor);
+        drawStringWithShadow(matrixStack,textRenderer, I18n.translate("notenoughcrashes.crashscreen.paragraph3.line2"), x, y += 9, textColor);
+        drawStringWithShadow(matrixStack,textRenderer, I18n.translate("notenoughcrashes.crashscreen.paragraph3.line3"), x, y += 9, textColor);
+        drawStringWithShadow(matrixStack,textRenderer, I18n.translate("notenoughcrashes.crashscreen.paragraph3.line4"), x, y + 9, textColor);
 
         super.render(matrixStack, mouseY, i, f);
     }

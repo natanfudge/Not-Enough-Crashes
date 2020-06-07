@@ -23,7 +23,7 @@ public class YarnVersion {
     public String version;
     public boolean stable;
 
-    private static final String YARN_API_ENTRYPOINT = "https://meta.fabricmc.net/v2/versions/yarn/" + new MinecraftVersion().getName();
+    private static final String YARN_API_ENTRYPOINT = "https://meta.fabricmc.net/v2/versions/yarn/" +  MinecraftVersion.create().getName();
     private static final Path VERSION_FILE = NotEnoughCrashes.DIRECTORY.resolve("yarn-version.txt");
     private static String versionMemCache = null;
 

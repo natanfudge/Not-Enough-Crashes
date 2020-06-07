@@ -10,6 +10,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
+@Environment(EnvType.CLIENT)
 public class TextWidget implements Widget {
     private final Text text;
     private final String translated;
@@ -41,7 +45,7 @@ public class TextWidget implements Widget {
         this.x = x;
         this.y = y;
         translated = text.getString();
-        width = MinecraftClient.getInstance().textRenderer.getStringWidth(translated);
+        width = MinecraftClient.getInstance().textRenderer.getWidth(translated);
         startX = x - width / 2;
     }
 
@@ -56,7 +60,7 @@ public class TextWidget implements Widget {
         if (hoveredText != null) {
             Screen screen = MinecraftClient.getInstance().currentScreen;
             if (screen != null) {
-                screen.handleTextClick(hoveredText);
+                screen.handleTextClick(hoveredText.getStyle());
             }
         }
     }
@@ -76,7 +80,7 @@ public class TextWidget implements Widget {
 
             TextRenderer renderer = MinecraftClient.getInstance().textRenderer;
             for (Text component : getTextParts(text)) {
-                i += renderer.getStringWidth(component.asString());
+                i += renderer.getWidth(component.asString());
                 if (i > x) {
                     return component;
                 }

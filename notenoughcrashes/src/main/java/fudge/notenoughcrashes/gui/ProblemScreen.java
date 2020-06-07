@@ -17,7 +17,6 @@ import fudge.notenoughcrashes.gui.util.TextWidget;
 import fudge.notenoughcrashes.gui.util.Widget;
 import fudge.notenoughcrashes.utils.CrashLogUpload;
 import net.fabricmc.loader.metadata.ModMetadataV1;
-import net.minecraft.class_5250;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
 import org.apache.logging.log4j.LogManager;
@@ -29,6 +28,7 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.LiteralText;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Util;
@@ -105,9 +105,9 @@ public abstract class ProblemScreen extends Screen {
                         .sorted(Comparator.comparing(ModMetadata::getName))
                         .map(mod -> {
                             String issuesPage = getIssuesPage(mod.getContact());
-                            class_5250 modText = new LiteralText(mod.getName());
+                            MutableText modText = new LiteralText(mod.getName());
                             if (issuesPage != null) {
-                                modText.method_27694(style -> style.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, issuesPage)));
+                                modText.styled(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, issuesPage)));
                             }
                             return modText;
 
@@ -177,10 +177,10 @@ public abstract class ProblemScreen extends Screen {
     protected void drawFileNameString(MatrixStack matrixStack, int y) {
         String fileNameString = report.getFile() != null ? "\u00A7n" + report.getFile().getName()
                                         : I18n.translate("notenoughcrashes.crashscreen.reportSaveFailed");
-        int stLen = textRenderer.getStringWidth(fileNameString);
+        int stLen = textRenderer.getWidth(fileNameString);
         xLeft = width / 2 - stLen / 2;
         xRight = width / 2 + stLen / 2;
-        drawString(matrixStack, textRenderer, fileNameString, xLeft, y += 11, 0x00FF00);
+        drawStringWithShadow(matrixStack, textRenderer, fileNameString, xLeft, y += 11, 0x00FF00);
         yTop = y;
         yBottom = y + 10;
     }
