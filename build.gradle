@@ -3,6 +3,7 @@ plugins {
     id 'maven-publish'
     id "com.jfrog.bintray"
     id 'com.matthewprenger.cursegradle'
+    id "com.github.fudge.forgedflowerloom" version "2.0.0"
 }
 
 ext {
