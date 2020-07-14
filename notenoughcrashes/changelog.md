@@ -28,3 +28,7 @@ Note: Informed Load has yet to publish the compatible version.
 - Fixed some GUI bugs in the crash scree
 ### 1.2.4
 - Will no longer blame jumploader for errors all the time
+# 2.0.0
+- Fixed the mod not working in Fabric Loader 0.9.0+, however, this and the following versions will only work for the 0.9.0+ Fabric Loader versions.
+## 2.1.0
+- Added Estonian localization, courtesy of @Madis0! 
