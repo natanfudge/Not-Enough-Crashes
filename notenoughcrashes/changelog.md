@@ -32,3 +32,5 @@ Note: Informed Load has yet to publish the compatible version.
 - Fixed the mod not working in Fabric Loader 0.9.0+, however, this and the following versions will only work for the 0.9.0+ Fabric Loader versions.
 ## 2.1.0
 - Added Estonian localization, courtesy of @Madis0! 
+### 2.1.1
+- Fixed "upload crashlog" not working. 

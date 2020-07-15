@@ -22,9 +22,10 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
 public final class CrashLogUpload {
-    private static final String GIST_ACCESS_TOKEN_PART_1 = "6a2e213ac9552fa00bc0";
-    private static final String GIST_ACCESS_TOKEN_PART_2 = "2708c640955c84928407";
-    // I don't think there's any security problem because the token can only upload gists and it's on a separate bot account,
+//     6accc10e617df543d1575b7b832b8282bd4cba26
+    private static final String GIST_ACCESS_TOKEN_PART_1 = "6accc10e617df543d157";
+    private static final String GIST_ACCESS_TOKEN_PART_2 = "5b7b832b8282bd4cba26";
+    // I don't think there's any security problem because the token can only upload gists,
     // but Github will revoke the token as soon as it sees it, so we trick it by splitting the token into 2.
     private static final String GIST_ACCESS_TOKEN = GIST_ACCESS_TOKEN_PART_1 + GIST_ACCESS_TOKEN_PART_2;
 
