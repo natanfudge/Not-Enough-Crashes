@@ -34,3 +34,5 @@ Note: Informed Load has yet to publish the compatible version.
 - Added Estonian localization, courtesy of @Madis0! 
 ### 2.1.1
 - Fixed "upload crashlog" not working. 
+### 2.1.3
+- Fixed "upload crashlog" not working :) .

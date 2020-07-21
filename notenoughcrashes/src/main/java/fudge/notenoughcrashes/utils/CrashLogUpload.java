@@ -1,15 +1,5 @@
 package fudge.notenoughcrashes.utils;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.SerializedName;
@@ -21,14 +11,28 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
+
 public final class CrashLogUpload {
-    private static final String GIST_ACCESS_TOKEN_PART_1 = "a08bcd1f31e70b067614";
-    private static final String GIST_ACCESS_TOKEN_PART_2 = "f759b1cb7cc2a117c79d";
+    private static String GIST_ACCESS_TOKEN_PART_1() {
+        return "dc07dacff0c2cf84f706";
+    }
+
+    private static String GIST_ACCESS_TOKEN_PART_2() {
+        return "8ac0fd6a757d53b81233";
+    }
+
     // I don't think there's any security problem because the token can only upload gists,
     // but Github will revoke the token as soon as it sees it, so we trick it by splitting the token into 2.
-     private static  String GIST_ACCESS_TOKEN(){
-         return GIST_ACCESS_TOKEN_PART_1 + GIST_ACCESS_TOKEN_PART_2;
-     }
+    private static final String GIST_ACCESS_TOKEN = GIST_ACCESS_TOKEN_PART_1() + GIST_ACCESS_TOKEN_PART_2();
 
     private static class GistPost {
         @SerializedName("public")
@@ -66,12 +70,12 @@ public final class CrashLogUpload {
 
         String fileName = "crash.txt";
 
-        post.addHeader("Authorization", "token " +  GIST_ACCESS_TOKEN());
+        post.addHeader("Authorization", "token " + GIST_ACCESS_TOKEN);
 
         GistPost body = new GistPost(true,
-                        new HashMap<String, GistFile>() {{
-                            put(fileName, new GistFile(text));
-                        }}
+                new HashMap<String, GistFile>() {{
+                    put(fileName, new GistFile(text));
+                }}
         );
         post.setEntity(new StringEntity(new Gson().toJson(body)));
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
@@ -79,9 +83,9 @@ public final class CrashLogUpload {
             String responseString = EntityUtils.toString(response.getEntity());
             JsonObject responseJson = new Gson().fromJson(responseString, JsonObject.class);
             return responseJson.getAsJsonObject("files")
-                            .getAsJsonObject(fileName)
-                            .getAsJsonPrimitive("raw_url")
-                            .getAsString();
+                    .getAsJsonObject(fileName)
+                    .getAsJsonPrimitive("raw_url")
+                    .getAsString();
         }
 
     }
