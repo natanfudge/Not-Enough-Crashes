@@ -16,7 +16,6 @@ import fudge.notenoughcrashes.patches.PatchedCrashReport;
 import fudge.notenoughcrashes.gui.util.TextWidget;
 import fudge.notenoughcrashes.gui.util.Widget;
 import fudge.notenoughcrashes.utils.CrashLogUpload;
-import net.fabricmc.loader.metadata.ModMetadataV1;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
 import org.apache.logging.log4j.LogManager;

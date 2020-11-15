@@ -44,7 +44,7 @@ repositories {
 
 ```groovy
 dependencies {
-    modRuntime ("com.lettuce.fudge:notenoughcrashes:2.1.4+1.16.2")
+    modRuntime ("com.lettuce.fudge:notenoughcrashes:2.1.4+1.16.4")
 }
 ```
 
