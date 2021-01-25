@@ -13,13 +13,19 @@ repositories {
 //    flatDir {
 //        dirs 'testmods'
 //    }
-    maven { url "https://www.jitpack.io" }
+    maven {
+        url "https://www.jitpack.io"
+        content {
+            includeGroupByRegex ("com.github.giantnuker")
+        }
+    }
 }
 
 dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:$fabric_version"
     modImplementation "com.github.giantnuker:EntrypointCatcher:$entrypoint_api_version"
     include "com.github.giantnuker:EntrypointCatcher:$entrypoint_api_version"
+    modRuntime("io.github.prospector:modmenu:1.14.13+build.22")
 
 //    modRuntime("curse.maven:customtitlescreen:2846040")
 //    modRuntime("curse.maven:customtitlescreen:2846040")

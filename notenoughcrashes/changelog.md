@@ -38,3 +38,6 @@ Note: Informed Load has yet to publish the compatible version.
 - Fixed "upload crashlog" not working :) .
 ### 2.1.4
 - Improved Simplified Chinese localization, courtesy of @WuzgXY!
+## 2.2.0
+- Removed 'feature' that would instantly crash the game when pressing F3+C instead of after 6 seconds, since that hotkey is used to copy location information.
+- Added a proper mod icon.

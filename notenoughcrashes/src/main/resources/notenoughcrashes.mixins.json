@@ -8,14 +8,13 @@
     "MixinCrashReportSection",
     "CrashReportSectionElementMixin",
     "MixinEntity",
-    "MixinIntegratedServer",
     "MixinTileEntity"
   ],
   "client": [
     "client.MixinBufferBuilder",
-    "client.MixinKeyboard",
     "client.MixinMinecraftClient",
     "client.SplashScreenMixin",
-    "client.EntityRenderDispatcherMixin"
+    "client.EntityRenderDispatcherMixin",
+    "client.MixinIntegratedServer"
   ]
 }

@@ -47,7 +47,6 @@ public class NotEnoughCrashes implements ModInitializer {
     @Override
     public void onInitialize() {
         ModConfig.instance();
-        trustIdenTrust();
         initStacktraceDeobfuscator();
 
 //        TestBlock.init();
@@ -55,16 +54,6 @@ public class NotEnoughCrashes implements ModInitializer {
 //        TestKeyBinding.init();
     }
 
-    private void trustIdenTrust() {
-        // Trust the "IdenTrust DST Root CA X3" certificate (used by Let's Encrypt, which is used by paste.dimdev.org)
-        try (InputStream keyStoreInputStream = NotEnoughCrashes.class.getResourceAsStream("/dst_root_ca_x3.jks")) {
-            KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-            keyStore.load(keyStoreInputStream, "password".toCharArray());
-            SSLUtils.trustCertificates(keyStore);
-        } catch (IOException | CertificateException | NoSuchAlgorithmException | KeyStoreException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     private void initStacktraceDeobfuscator() {
         if (!ENABLE_DEOBF) return;

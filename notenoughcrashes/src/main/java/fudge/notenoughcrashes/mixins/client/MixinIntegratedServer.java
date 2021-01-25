@@ -1,4 +1,4 @@
-package fudge.notenoughcrashes.mixins;
+package fudge.notenoughcrashes.mixins.client;
 
 import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.util.crash.CrashException;

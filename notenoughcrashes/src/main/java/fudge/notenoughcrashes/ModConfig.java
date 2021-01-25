@@ -14,7 +14,6 @@ import net.fabricmc.loader.api.FabricLoader;
 public class ModConfig {
 
     public enum CrashLogUploadType {
-        DIMDEV_HASTE,
         GIST
     }
 

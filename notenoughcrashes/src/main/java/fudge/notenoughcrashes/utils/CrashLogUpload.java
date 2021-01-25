@@ -54,12 +54,14 @@ public final class CrashLogUpload {
     }
 
     public static String upload(String text) throws IOException {
-        ModConfig.CrashLogUploadType type = ModConfig.instance().uploadCrashLogTo;
-        if (type == ModConfig.CrashLogUploadType.GIST) {
-            return uploadToGist(text);
-        } else {
-            return uploadToHaste(text);
-        }
+        // Don't give a fuck about your preferences
+        return uploadToGist(text);
+//        ModConfig.CrashLogUploadType type = ModConfig.instance().uploadCrashLogTo;
+//        if (type == ModConfig.CrashLogUploadType.GIST) {
+//            return uploadToGist(text);
+//        } else {
+//            return uploadToHaste(text);
+//        }
     }
 
     /**
@@ -90,29 +92,4 @@ public final class CrashLogUpload {
 
     }
 
-    private static String uploadToHaste(String str) throws IOException {
-        String baseUrl = "https://paste.dimdev.org";
-        byte[] bytes = str.getBytes(StandardCharsets.UTF_8);
-        URL uploadURL = new URL(baseUrl + "/documents");
-        HttpURLConnection connection = (HttpURLConnection) uploadURL.openConnection();
-        connection.setRequestMethod("POST");
-        connection.setRequestProperty("Content-Type", "text/plain; charset=UTF-8");
-        connection.setFixedLengthStreamingMode(bytes.length);
-        connection.setDoInput(true);
-        connection.setDoOutput(true);
-        connection.connect();
-
-        try {
-            try (OutputStream os = connection.getOutputStream()) {
-                os.write(bytes);
-            }
-
-            try (InputStream is = connection.getInputStream()) {
-                JsonObject json = new Gson().fromJson(new InputStreamReader(is), JsonObject.class);
-                return baseUrl + "/" + json.get("key").getAsString() + ".mccrash";
-            }
-        } finally {
-            connection.disconnect();
-        }
-    }
 }
