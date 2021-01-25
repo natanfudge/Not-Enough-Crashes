@@ -1,21 +1,15 @@
 pluginManagement {
     repositories {
-        mavenLocal()
         jcenter()
-        maven {
-            name = 'Fabric'
-            url = 'https://maven.fabricmc.net/'
-        }
+        maven { url "https://maven.fabricmc.net/" }
+        maven { url "https://dl.bintray.com/shedaniel/cloth" }
+        maven { url "https://files.minecraftforge.net/maven/" }
         gradlePluginPortal()
     }
-
-    plugins {
-        id 'fabric-loom' version loom_version
-        id "com.jfrog.bintray" version bintray_gradle_version
-        id 'com.matthewprenger.cursegradle' version cursegradle_version
-    }
-
 }
 
-include "notenoughcrashes"
-include "notenoughcrashes-api"
+include("common")
+include("fabric")
+include("forge")
+
+rootProject.name = "architect-example-mod"

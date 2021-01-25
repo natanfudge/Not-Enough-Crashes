@@ -1,0 +1,49 @@
+plugins {
+    id "com.github.johnrengelman.shadow" version "5.0.0"
+}
+
+configurations {
+    shadow
+}
+
+architectury {
+    platformSetupLoomIde()
+}
+
+dependencies {
+    minecraft("com.mojang:minecraft:${rootProject.minecraft_version}")
+    mappings("net.fabricmc:yarn:${rootProject.yarn_mappings}:v2")
+    modCompile("net.fabricmc:fabric-loader:${rootProject.loader_version}")
+    modCompile("net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_version}")
+    // Remove the next line if you don't want to depend on the API
+//    modCompile("me.shedaniel:architectury:${rootProject.architectury_version}:fabric")
+
+    compileOnly(project(path: ":common")) {
+        transitive = false
+    }
+    runtimeOnly(project(path: ":common", configuration: "transformDevelopmentFabric")) {
+        transitive = false
+    }
+    shadow(project(path: ":common", configuration: "transformProductionFabric")) {
+        transitive = false
+    }
+}
+
+processResources {
+    inputs.property "version", project.version
+
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version
+    }
+}
+
+shadowJar {
+    configurations = [project.configurations.shadow]
+    classifier "shadow"
+}
+
+remapJar {
+    dependsOn(shadowJar)
+    input.set(shadowJar.archivePath)
+    classifier "fabric"
+}

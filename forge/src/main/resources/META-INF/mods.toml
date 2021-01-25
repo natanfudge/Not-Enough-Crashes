@@ -1,0 +1,28 @@
+modLoader = "javafml"
+loaderVersion = "[35,)"
+issueTrackerURL = "https://github.com/natanfudge/Not-Enough-Crashes/issues"
+license = "MIT"
+
+[[mods]]
+modId = "notenoughcrashes"
+version = "${version}"
+displayName = "Not Enough Crashes"
+authors = "Fudge"
+description = '''
+A port of VanillaFix's crash improvement features for Minecraft 1.16+
+'''
+logoFile = "assets/notenoughcrashes/icon.png"
+
+[[dependencies.notenoughcrashes]]
+modId = "forge"
+mandatory = true
+versionRange = "[35,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.notenoughcrashes]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.16.2,)"
+ordering = "NONE"
+side = "BOTH"

@@ -1,105 +1,41 @@
 plugins {
-    id 'fabric-loom'
-    id 'maven-publish'
-    id "com.jfrog.bintray"
-    id 'com.matthewprenger.cursegradle'
-    id "com.github.fudge.forgedflowerloom" version "2.0.0"
+    id "architectury-plugin" version "2.0.64"
+    id "forgified-fabric-loom" version "0.6.53" apply false
 }
 
-ext {
-    githubUrl = "https://github.com/$github_repo"
-    replaceProperties = new Properties()
-    File propertiesFile = new File('gradle.properties')
-    propertiesFile.withInputStream {
-        replaceProperties.load(it)
-    }
+architectury {
+    minecraft = rootProject.minecraft_version
+}
 
-    pomConfig = {
-        licenses {
-            license {
-                name project.license
-            }
-        }
-        developers {
-            developer {
-                id "fudge"
-                name "natan"
-                email "natandestroyer100@gmail.com"
-            }
-        }
+subprojects {
+    apply plugin: "forgified-fabric-loom"
 
-        scm {
-            url githubUrl
-        }
+    loom {
+        silentMojangMappingsLicense()
     }
 }
-
-def setupMod(String total_version,  String template_key) {
-//    def total_version = "$mod_version+$minecraft_version"
-
-
-    group maven_group
-
-    project.replaceProperties.put(template_key, total_version)
-}
-
-task updateTemplate(type: Copy) {
-    group = "template"
-    description = "Switches out variables like \$total_version in .template.md files, and copies the results into .md files."
-    from(rootDir)
-    include("**/*.template.md")
-    filesMatching("**/*.template.md") {
-        def extensionLength = ".template.md".length()
-
-        name = sourceName.substring(0, sourceName.length() - extensionLength) + ".md"
-        expand(replaceProperties)
-    }
-    destinationDir = rootDir
-}
-
 
 allprojects {
-    apply plugin: "fabric-loom"
-    apply plugin: 'maven-publish'
-    apply plugin: "com.jfrog.bintray"
-    apply plugin: 'com.matthewprenger.cursegradle'
+    apply plugin: "java"
+    apply plugin: "architectury-plugin"
 
-    sourceCompatibility = 1.8
-    targetCompatibility = 1.8
-
-
-    group maven_group
-
-    dependencies {
-        minecraft "com.mojang:minecraft:$minecraft_version"
-        mappings "net.fabricmc:yarn:$yarn_mappings:v2"
-        modImplementation "net.fabricmc:fabric-loader:$loader_version"
-    }
-
-    processResources {
-        filesMatching("fabric.mod.json") {
-            expand "version": project.version
-        }
-
-        inputs.property "version", project.version
-    }
-
-    task sourcesJar(type: Jar, dependsOn: classes) {
-        archiveClassifier = "sources"
-        from sourceSets.main.allSource
-    }
+    archivesBaseName = rootProject.archives_base_name
+    version = rootProject.mod_version
+    group = rootProject.maven_group
 
     tasks.withType(JavaCompile) {
         options.encoding = "UTF-8"
-    }
-    jar {
-        from "LICENSE"
+
+        // The Minecraft launcher currently installs Java 8 for users, so your mod probably wants to target Java 8 too
+        // JDK 9 introduced a new way of specifying this that will make sure no newer classes or methods are used.
+        // We'll use that if it's available, but otherwise we'll use the older option.
+        def targetVersion = 8
+        if (JavaVersion.current().isJava9Compatible()) {
+            options.release = targetVersion
+        }
     }
 
-    bintrayUpload.dependsOn updateTemplate
+    java {
+        withSourcesJar()
+    }
 }
-
-
-
-
-
