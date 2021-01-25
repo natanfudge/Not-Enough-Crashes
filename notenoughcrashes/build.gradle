@@ -23,8 +23,8 @@ repositories {
 
 dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:$fabric_version"
-    modImplementation "com.github.giantnuker:EntrypointCatcher:$entrypoint_api_version"
-    include "com.github.giantnuker:EntrypointCatcher:$entrypoint_api_version"
+//    modImplementation "com.github.giantnuker:EntrypointCatcher:$entrypoint_api_version"
+//    include "com.github.giantnuker:EntrypointCatcher:$entrypoint_api_version"
     modRuntime("io.github.prospector:modmenu:1.14.13+build.22")
 
 //    modRuntime("curse.maven:customtitlescreen:2846040")

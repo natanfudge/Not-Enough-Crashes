@@ -1,10 +1,13 @@
 package fudge.notenoughcrashes.mixins.client;
 
+import java.io.File;
 import java.util.Queue;
 
+import fudge.notenoughcrashes.NotEnoughCrashes;
 import fudge.notenoughcrashes.mixinhandlers.EntryPointCatcher;
 import fudge.notenoughcrashes.mixinhandlers.InGameCatcher;
 import fudge.notenoughcrashes.stacktrace.CrashUtils;
+import net.fabricmc.loader.entrypoint.minecraft.hooks.EntrypointClient;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -90,5 +93,18 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
     //TODO: can be replaced by 2-4 injection/redirections
     public void cleanUpAfterCrash() {
         InGameCatcher.resetGameState(renderTaskQueue);
+    }
+
+    @Redirect(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/fabricmc/loader/entrypoint/minecraft/hooks/EntrypointClient;start(Ljava/io/File;Ljava/lang/Object;)V", remap = false))
+    private void catchFabricInit(File runDir, Object gameInstance) {
+        if(NotEnoughCrashes.ENABLE_ENTRYPOINT_CATCHING) {
+            try {
+                EntrypointClient.start(runDir, gameInstance);
+            }catch (Throwable throwable) {
+                EntryPointCatcher.handleEntryPointError(throwable);
+            }
+        } else{
+            EntrypointClient.start(runDir, gameInstance);
+        }
     }
 }
