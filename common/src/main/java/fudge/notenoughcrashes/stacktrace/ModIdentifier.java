@@ -66,6 +66,7 @@ public final class ModIdentifier {
             CodeSource codeSource = clazz.getProtectionDomain().getCodeSource();
             if (codeSource == null) return Collections.emptySet(); // Some internal native sun classes
             URL url = codeSource.getLocation();
+            //TODO: i'm getting modjar://crashmod. I think the solution is to do mods.get("crashmod") in those cases.
             if (url == null) {
                 LOGGER.warn("Failed to identify mod for " + className);
                 return Collections.emptySet();

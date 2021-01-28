@@ -9,7 +9,7 @@
     "issues": "https://github.com/natanfudge/Not-Enough-Crashes/issues",
     "sources": "https://github.com/natanfudge/Not-Enough-Crashes"
   },
-  "icon": "assets/notenoughcrashes/icon.png",
+  "icon": "icon.png",
   "mixins": [
     "notenoughcrashes.mixins.json"
   ],

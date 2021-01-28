@@ -11,7 +11,7 @@ authors = "Fudge"
 description = '''
 A port of VanillaFix's crash improvement features for Minecraft 1.16+
 '''
-logoFile = "assets/notenoughcrashes/icon.png"
+logoFile = "icon.png"
 
 [[dependencies.notenoughcrashes]]
 modId = "forge"

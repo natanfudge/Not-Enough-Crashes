@@ -19,6 +19,7 @@ dependencies {
     minecraft("com.mojang:minecraft:${rootProject.minecraft_version}")
     mappings("net.fabricmc:yarn:${rootProject.yarn_mappings}:v2")
     forge("net.minecraftforge:forge:${rootProject.minecraft_version}-${rootProject.forge_version}")
+//    modRuntime(files("testmods/modid-1.0.jar"))
     // Remove the next line if you don't want to depend on the API
 //    modCompile("me.shedaniel:architectury:${rootProject.architectury_version}:forge")
 

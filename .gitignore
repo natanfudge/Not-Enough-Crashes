@@ -8,7 +8,7 @@ out/
 output/
 bin/
 libs/
-
+!run/mods/forge-template-loom.jar
 .classpath
 .project
 .idea/
