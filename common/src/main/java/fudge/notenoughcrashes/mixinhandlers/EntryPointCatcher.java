@@ -2,6 +2,7 @@ package fudge.notenoughcrashes.mixinhandlers;
 
 import fudge.notenoughcrashes.NotEnoughCrashes;
 import fudge.notenoughcrashes.gui.InitErrorScreen;
+import fudge.notenoughcrashes.mixins.client.SplashScreenMixin;
 import fudge.notenoughcrashes.platform.NecPlatform;
 import fudge.notenoughcrashes.stacktrace.CrashUtils;
 import net.fabricmc.api.EnvType;
@@ -36,7 +37,7 @@ public class EntryPointCatcher {
         });
 
         // Make it obvious the game crashed
-        NecPlatform.instance().setSplashScreenLogo(new Identifier(NotEnoughCrashes.MOD_ID, "textures/game_crashed.png"));
+        SplashScreenMixin.setLogo(new Identifier(NotEnoughCrashes.MOD_ID, "textures/game_crashed.png"));
     }
 
 

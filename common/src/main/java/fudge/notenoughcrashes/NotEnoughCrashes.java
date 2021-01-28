@@ -23,7 +23,7 @@ public class NotEnoughCrashes {
     public static final Logger LOGGER = LogManager.getLogger(NAME);
 
     private static final boolean DEBUG_DEOBF = false;
-    private static final boolean DEBUG_ENTRYPOINT = true;
+    private static final boolean DEBUG_ENTRYPOINT = false;
     private static final boolean DEBUG_GAMELOOP = false;
     public static final boolean FILTER_ENTRYPOINT_CATCHER = true;
 

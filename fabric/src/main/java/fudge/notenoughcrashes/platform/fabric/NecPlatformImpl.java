@@ -1,6 +1,5 @@
 package fudge.notenoughcrashes.platform.fabric;
 
-import fudge.notenoughcrashes.mixins.client.SplashScreenMixin;
 import fudge.notenoughcrashes.platform.CommonModMetadata;
 import fudge.notenoughcrashes.platform.NecPlatform;
 import fudge.notenoughcrashes.stacktrace.ModIdentifier;
@@ -19,10 +18,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class NecPlatformImpl implements NecPlatform {
-    @Override
-    public void setSplashScreenLogo(Identifier newLogo) {
-        SplashScreenMixin.setLogo(newLogo);
-    }
 
     @Override
     public Map<URI, Set<CommonModMetadata>> getModsAtLocationsInDisk() {
