@@ -57,6 +57,12 @@ public class NecPlatformImpl implements NecPlatform {
         return FabricLoader.getInstance().isDevelopmentEnvironment();
     }
 
+    @Override
+    public  List<CommonModMetadata> getModMetadatas(String modId) {
+        Optional<ModContainer> mod = FabricLoader.getInstance().getModContainer(modId);
+        return mod.map(modContainer -> Collections.singletonList(toCommon(modContainer.getMetadata()))).orElse(new ArrayList<>());
+    }
+
     // Earlier elements will be used first, may need to add more elements if people start using weird shit
     private static final List<String> possibleIssuesFieldsByPriority = Arrays.asList(
             "issues", "sources", "homepage"

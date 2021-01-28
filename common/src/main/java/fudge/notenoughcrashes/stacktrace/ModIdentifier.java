@@ -51,7 +51,6 @@ public final class ModIdentifier {
         }
         return mods;
     }
-    //TODO: create a crashy test mod for forge to test mod crash detection
 
     // TODO: get a list of mixin transformers that affected the class and blame those too
     private static Set<CommonModMetadata> identifyFromClass(String className, Map<URI, Set<CommonModMetadata>> modMap) {
@@ -66,7 +65,7 @@ public final class ModIdentifier {
             CodeSource codeSource = clazz.getProtectionDomain().getCodeSource();
             if (codeSource == null) return Collections.emptySet(); // Some internal native sun classes
             URL url = codeSource.getLocation();
-            //TODO: i'm getting modjar://crashmod. I think the solution is to do mods.get("crashmod") in those cases.
+
             if (url == null) {
                 LOGGER.warn("Failed to identify mod for " + className);
                 return Collections.emptySet();
@@ -74,6 +73,12 @@ public final class ModIdentifier {
 
             URI jar = jarFromUrl(url);
             Set<CommonModMetadata> metadata = modMap.get(jar);
+            // Forge tends to give modjar://crashmod type urls, so we try to figure out the mod based on that.
+            if (metadata == null && jar.toString().startsWith("modjar://")) {
+                metadata = new HashSet<>(NecPlatform.instance().getModMetadatas(jar.toString().substring("modjar://".length())));
+            }
+
+
             // For some reason loader gives the wrong location with kotlin mods in dev so we need to change it a bit
             if (metadata == null) {
                 String oldPath = jar.getPath();
@@ -82,6 +87,7 @@ public final class ModIdentifier {
                     metadata = modMap.get(new File(fixedPath).toURI());
                 }
             }
+
 
             // Get the mod containing that class
             return metadata;

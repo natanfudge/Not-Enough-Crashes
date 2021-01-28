@@ -35,4 +35,6 @@ public class CommonModMetadata {
     public List<String> getAuthors() {
         return authors;
     }
+
+    public static final CommonModMetadata STUB = new CommonModMetadata("","UNKNOWN",null,null);
 }

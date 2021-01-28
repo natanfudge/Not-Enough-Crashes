@@ -36,7 +36,6 @@ public class EntryPointCatcher {
         });
 
         // Make it obvious the game crashed
-        //TODO: seems like this broke recently?
         NecPlatform.instance().setSplashScreenLogo(new Identifier(NotEnoughCrashes.MOD_ID, "textures/game_crashed.png"));
     }
 
