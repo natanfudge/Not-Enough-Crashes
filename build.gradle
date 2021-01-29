@@ -1,6 +1,8 @@
 plugins {
     id "architectury-plugin" version "2.0.64"
     id "forgified-fabric-loom" version "0.6.53" apply false
+    id 'maven-publish'
+    id 'com.matthewprenger.cursegradle'
 }
 
 architectury {
@@ -9,10 +11,14 @@ architectury {
 
 subprojects {
     apply plugin: "forgified-fabric-loom"
+    apply plugin: 'maven-publish'
+    apply plugin: 'com.matthewprenger.cursegradle'
 
     loom {
         silentMojangMappingsLicense()
     }
+
+    ext.total_version = "$mod_version+$minecraft_version"
 }
 
 allprojects {

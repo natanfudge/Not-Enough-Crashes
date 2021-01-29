@@ -1,12 +1,4 @@
-buildscript {
-    repositories {
-        maven {
-            name = 'sponge'
-            url = 'https://repo.spongepowered.org/maven'
-        }
-    }
 
-}
 plugins {
     id "com.github.johnrengelman.shadow" version "5.0.0"
     id 'org.spongepowered.plugin' version '0.9.0'
@@ -21,7 +13,7 @@ architectury {
 }
 
 loom {
-    mixinConfigs = ["notenoughcrashes.mixins.json"]
+    mixinConfigs = ["notenoughcrashes.mixins.json", "notenoughcrashes.forge.mixins.json"]
     useFabricMixin = true
 }
 
@@ -69,5 +61,25 @@ jar {
         attributes([
                 "MixinConfigs"            : "notenoughcrashes.mixins.json"
         ])
+    }
+}
+
+curseforge {
+    apiKey = project.hasProperty("curseforge_api_key") ? project.curseforge_api_key : ""
+    project {
+        id = curseforge_id
+        releaseType = 'release'
+        addGameVersion "Forge"
+        addGameVersion curseforge_mc_version
+        changelogType = "markdown"
+        changelog = rootProject.file("changelog.md")
+
+        mainArtifact(remapJar) {
+            displayName = "$mod_name $total_version Forge"
+        }
+    }
+
+    options {
+        forgeGradleIntegration = false
     }
 }

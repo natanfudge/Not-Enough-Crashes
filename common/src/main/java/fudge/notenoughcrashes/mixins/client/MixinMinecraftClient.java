@@ -91,17 +91,4 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
     public void cleanUpAfterCrash() {
         InGameCatcher.resetGameState(renderTaskQueue);
     }
-
-    @Redirect(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/fabricmc/loader/entrypoint/minecraft/hooks/EntrypointClient;start(Ljava/io/File;Ljava/lang/Object;)V", remap = false))
-    private void catchFabricInit(File runDir, Object gameInstance) {
-        if(NotEnoughCrashes.ENABLE_ENTRYPOINT_CATCHING) {
-            try {
-                EntrypointClient.start(runDir, gameInstance);
-            }catch (Throwable throwable) {
-                EntryPointCatcher.handleEntryPointError(throwable);
-            }
-        } else{
-            EntrypointClient.start(runDir, gameInstance);
-        }
-    }
 }

@@ -102,11 +102,11 @@ public abstract class ProblemScreen extends Screen {
                                 if (hasteLink == null) {
                                     hasteLink = CrashLogUpload.upload(report.asString());
                                 }
-                                Field uriField;
-                                //noinspection JavaReflectionMemberAccess
-                                uriField = Screen.class.getDeclaredField("clickedLink");
-                                uriField.setAccessible(true);
-                                uriField.set(ProblemScreen.this, new URI(hasteLink));
+//                                Field uriField;
+//                                //noinspection JavaReflectionMemberAccess
+//                                uriField = Screen.class.getDeclaredField("clickedLink");
+//                                uriField.setAccessible(true);
+//                                uriField.set(ProblemScreen.this, new URI(hasteLink));
                                 MinecraftClient.getInstance().openScreen(new ConfirmChatLinkScreen(b -> {
                                     if (b) {
                                         Util.getOperatingSystem().open(hasteLink);

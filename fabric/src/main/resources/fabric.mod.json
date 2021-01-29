@@ -11,7 +11,8 @@
   },
   "icon": "icon.png",
   "mixins": [
-    "notenoughcrashes.mixins.json"
+    "notenoughcrashes.mixins.json",
+    "notenoughcrashes.fabric.mixins.json"
   ],
   "entrypoints": {
     "main": [

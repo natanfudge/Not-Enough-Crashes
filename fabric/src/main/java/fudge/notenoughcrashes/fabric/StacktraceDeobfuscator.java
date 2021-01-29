@@ -1,8 +1,9 @@
-package fudge.notenoughcrashes.stacktrace;
+package fudge.notenoughcrashes.fabric;
 
 import com.google.common.collect.Lists;
 import com.google.common.net.UrlEscapers;
 import fudge.notenoughcrashes.NotEnoughCrashes;
+import fudge.notenoughcrashes.stacktrace.YarnVersion;
 import net.fabricmc.mapping.reader.v2.MappingGetter;
 import net.fabricmc.mapping.reader.v2.TinyMetadata;
 import net.fabricmc.mapping.reader.v2.TinyV2Factory;
@@ -145,7 +146,7 @@ public final class StacktraceDeobfuscator {
         // Make the stack trace nicer by removing entrypoint catcher's cruft
         List<StackTraceElement> stackTraceList = NotEnoughCrashes.FILTER_ENTRYPOINT_CATCHER ? Arrays.stream(stackTrace).filter(element -> !filteredClasses.contains(element.getClassName()))
                         .collect(Collectors.toList()) : Lists.newArrayList(stackTrace);
-        if (NotEnoughCrashes.ENABLE_DEOBF
+        if (NotEnoughCrashesFabric.ENABLE_DEOBF
                         // Check it wasn't deobfuscated already. This can happen when this is called both by DeobfuscatingRewritePolicy
                         // and then CrashReport mixin. They don't cover all cases alone though so we need both.
                         && !StringUtils.startsWith(stackTrace[0].getClassName(), NotEnoughCrashes.NAME)) {

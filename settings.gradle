@@ -6,6 +6,10 @@ pluginManagement {
         maven { url "https://files.minecraftforge.net/maven/" }
         gradlePluginPortal()
     }
+
+    plugins {
+        id 'com.matthewprenger.cursegradle' version cursegradle_version
+    }
 }
 
 include("common")

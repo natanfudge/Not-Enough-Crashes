@@ -1,0 +1,15 @@
+{
+  "package": "fudge.notenoughcrashes.mixins",
+  "required": true,
+  "target": "@env(DEFAULT)",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "DeobfCrashReportMixin",
+    "DeobfCrashReportSectionMixin",
+    "MixinMain"
+  ],
+  "client": [
+    "client.MixinMain",
+    "client.CatchInitMInecraftClientMixin"
+  ]
+}

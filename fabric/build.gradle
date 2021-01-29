@@ -29,6 +29,7 @@ dependencies {
     }
 }
 
+
 processResources {
     inputs.property "version", project.version
 
@@ -46,4 +47,24 @@ remapJar {
     dependsOn(shadowJar)
     input.set(shadowJar.archivePath)
     classifier "fabric"
+}
+
+curseforge {
+    apiKey = project.hasProperty("curseforge_api_key") ? project.curseforge_api_key : ""
+    project {
+        id = curseforge_id
+        releaseType = 'release'
+        addGameVersion "Fabric"
+        addGameVersion curseforge_mc_version
+        changelogType = "markdown"
+        changelog = rootProject.file("changelog.md")
+
+        mainArtifact(remapJar) {
+            displayName = "$mod_name $total_version Fabric"
+        }
+    }
+
+    options {
+        forgeGradleIntegration = false
+    }
 }

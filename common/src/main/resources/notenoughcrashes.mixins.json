@@ -4,19 +4,16 @@
   "target": "@env(DEFAULT)",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "CrashReportSectionElementMixin",
     "MixinCrashReport",
     "MixinCrashReportSection",
     "MixinEntity",
-    "MixinTileEntity",
-    "MixinMain"
+    "MixinTileEntity"
   ],
   "client": [
     "client.EntityRenderDispatcherMixin",
     "client.MixinBufferBuilder",
     "client.MixinIntegratedServer",
     "client.MixinMinecraftClient",
-    "client.SplashScreenMixin",
-    "client.MixinMain"
+    "client.SplashScreenMixin"
   ]
 }

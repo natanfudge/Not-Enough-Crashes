@@ -3,7 +3,6 @@ package fudge.notenoughcrashes.mixins;
 import fudge.notenoughcrashes.patches.PatchedCrashReport;
 import fudge.notenoughcrashes.platform.CommonModMetadata;
 import fudge.notenoughcrashes.stacktrace.ModIdentifier;
-import fudge.notenoughcrashes.stacktrace.StacktraceDeobfuscator;
 import net.minecraft.util.crash.CrashReport;
 import net.minecraft.util.crash.CrashReportSection;
 import org.apache.commons.lang3.StringUtils;
@@ -60,13 +59,6 @@ public abstract class MixinCrashReport implements PatchedCrashReport {
         return suspectedMods;
     }
 
-    /**
-     * @reason Deobfuscate the stacktrace
-     */
-    @Inject(method = "fillSystemDetails", at = @At("HEAD"))
-    private void beforeFillSystemDetails(CallbackInfo ci) {
-        StacktraceDeobfuscator.deobfuscateThrowable(cause);
-    }
 
     /**
      * @reason Adds a list of mods which may have caused the crash to the report.
