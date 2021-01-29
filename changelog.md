@@ -43,3 +43,5 @@ Released
 - Added a proper mod icon.
 # 3.0.0
 - Now supports Forge!
+## 3.1.0
+- Added extra info for feature/structure crashes to make it much easier to find the problematic mod, courtesy of TelepathicGrunt!.
