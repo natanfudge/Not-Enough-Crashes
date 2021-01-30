@@ -45,3 +45,5 @@ Released
 - Now supports Forge!
 ## 3.1.0
 - Added extra info for feature/structure crashes to make it much easier to find the problematic mod, courtesy of TelepathicGrunt!.
+### 3.1.1
+- Fixed mod not loading.
