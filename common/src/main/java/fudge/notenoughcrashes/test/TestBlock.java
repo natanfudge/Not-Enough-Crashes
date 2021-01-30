@@ -25,12 +25,17 @@ public class TestBlock extends Block {
 
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        throw new NullPointerException();
+        try {
+            throw new RuntimeException("something NPED!", new NullPointerException("THIS NPED!"));
+        } catch (Throwable e) {
+            e.addSuppressed(new NullPointerException("SUPRESSED!"));
+            throw e;
+        }
     }
 
-    public static void init(){
-        Registry.register(Registry.BLOCK, new Identifier("tutorial", "example_block"), EXAMPLE_BLOCK);
-        Registry.register(Registry.ITEM, new Identifier("tutorial", "example_block"),
-                        new BlockItem(EXAMPLE_BLOCK, new Item.Settings().group(ItemGroup.MISC)));
+    public static void init() {
+        Registry.register(Registry.BLOCK, new Identifier("nec", "crash_block"), EXAMPLE_BLOCK);
+        Registry.register(Registry.ITEM, new Identifier("nec", "crash_block"),
+                new BlockItem(EXAMPLE_BLOCK, new Item.Settings().group(ItemGroup.MISC)));
     }
 }

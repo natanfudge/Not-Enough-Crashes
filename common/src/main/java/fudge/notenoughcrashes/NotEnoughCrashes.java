@@ -1,6 +1,7 @@
 package fudge.notenoughcrashes;
 
 import fudge.notenoughcrashes.platform.NecPlatform;
+import fudge.notenoughcrashes.test.TestBlock;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -32,7 +33,7 @@ public class NotEnoughCrashes {
     public static void initialize() {
         ModConfig.instance();
 
-//        if (DEBUG_GAMELOOP) TestBlock.init();
+        if (DEBUG_GAMELOOP) TestBlock.init();
         if (DEBUG_ENTRYPOINT) throw new NullPointerException();
 //        TestKeyBinding.init();
     }

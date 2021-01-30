@@ -86,32 +86,6 @@ public abstract class MixinCrashReport implements PatchedCrashReport {
      * @reason Improve report formatting
      */
     @Overwrite
-    public String asString() {
-        StringBuilder builder = new StringBuilder();
-
-        builder.append("---- Minecraft Crash Report ----\n")
-                .append("// ").append(ANNOYING_EASTER_EGG_DISABLED ? generateWittyComment() : generateEasterEggComment())
-                .append("\n\n")
-                .append("Time: ").append(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z").format(new Date())).append("\n")
-                .append("Description: ").append(message)
-                .append("\n\n")
-                .append(stacktraceToString(cause)
-                        .replace("\t", "    ")) // Vanilla's getCauseStackTraceOrString doesn't print causes and suppressed exceptions
-                .append("\n\nA detailed walkthrough of the error, its code path and all known details is as follows:\n");
-
-        for (int i = 0; i < 87; i++) {
-            builder.append("-");
-        }
-
-        builder.append("\n\n");
-        addStackTrace(builder);
-        return builder.toString().replace("\t", "    ");
-    }
-
-    /**
-     * @reason Improve report formatting
-     */
-    @Overwrite
     public void addStackTrace(StringBuilder builder) {
         for (CrashReportSection section : otherSections) {
             section.addStackTrace(builder);

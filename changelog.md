@@ -47,3 +47,5 @@ Released
 - Added extra info for feature/structure crashes to make it much easier to find the problematic mod, courtesy of TelepathicGrunt!.
 ### 3.1.1
 - Fixed mod not loading.
+### 3.1.2
+- Made NEC more compatible with other mods, specifically with [Structure Gel API](https://www.curseforge.com/minecraft/mc-mods/structure-gel-api).
