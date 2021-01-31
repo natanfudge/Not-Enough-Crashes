@@ -4,7 +4,8 @@
   "target": "@env(DEFAULT)",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "MixinMain"
+    "MixinMain",
+    "MixinBiomeStructureDetails"
   ],
   "client": [
     "client.MixinMain"
