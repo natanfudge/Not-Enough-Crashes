@@ -7,7 +7,8 @@
   "license": "MIT",
   "contact": {
     "issues": "https://github.com/natanfudge/Not-Enough-Crashes/issues",
-    "sources": "https://github.com/natanfudge/Not-Enough-Crashes"
+    "sources": "https://github.com/natanfudge/Not-Enough-Crashes",
+    "homepage": "https://www.curseforge.com/minecraft/mc-mods/not-enough-crashes"
   },
   "icon": "icon.png",
   "mixins": [

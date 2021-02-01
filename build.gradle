@@ -48,5 +48,5 @@ allprojects {
 
 task publishAll {
     dependsOn("fabric:curseforge353890")
-    dependsOn("forge:curseforge353890")
+    dependsOn("forge:curseforge442354")
 }
