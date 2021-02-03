@@ -1,9 +1,7 @@
 package fudge.notenoughcrashes.platform.forge;
 
-import fudge.notenoughcrashes.mixins.client.SplashScreenMixin;
 import fudge.notenoughcrashes.platform.CommonModMetadata;
 import fudge.notenoughcrashes.platform.NecPlatform;
-import net.minecraft.util.Identifier;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.FMLPaths;
@@ -21,7 +19,7 @@ public class NecPlatformImpl implements NecPlatform {
 
 
     @Override
-    public  Map<URI, Set<CommonModMetadata>> getModsAtLocationsInDisk() {
+    public Map<URI, Set<CommonModMetadata>> getModsAtLocationsInDisk() {
         Map<URI, Set<CommonModMetadata>> modMap = new HashMap<>();
 
         for (ModFileInfo modFile : ModList.get().getModFiles()) {
@@ -52,16 +50,16 @@ public class NecPlatformImpl implements NecPlatform {
     @Override
     public List<CommonModMetadata> getModMetadatas(String modId) {
         ModFileInfo mod = ModList.get().getModFileById(modId);
-        if(mod == null) return Collections.emptyList();
+        if (mod == null) return Collections.emptyList();
         return mod.getMods().stream().map(NecPlatformImpl::toCommon).collect(Collectors.toList());
     }
 
     private static CommonModMetadata toCommon(IModInfo imod) {
-        if(!(imod instanceof ModInfo)) return CommonModMetadata.STUB;
-        ModInfo mod = (ModInfo)imod;
+        if (!(imod instanceof ModInfo)) return CommonModMetadata.STUB;
+        ModInfo mod = (ModInfo) imod;
         URL issueUrl = mod.getOwningFile().getIssueURL();
-        String authors =  (String)mod.getConfigElement("authors").orElse(null);
-        return new CommonModMetadata(mod.getModId(), mod.getDisplayName(), issueUrl == null ? null : issueUrl.toExternalForm(),
-               authors == null ? null : Collections.singletonList(authors));
+        Object authorsObj = mod.getConfigElement("authors").orElse(null);
+        List<String> authors = authorsObj instanceof String ? Collections.singletonList((String) authorsObj) : (List<String>) authorsObj;
+        return new CommonModMetadata(mod.getModId(), mod.getDisplayName(), issueUrl == null ? null : issueUrl.toExternalForm(), authors);
     }
 }
