@@ -3,7 +3,7 @@ plugins {
 }
 
 configurations {
-    shadow
+shadow
 }
 
 architectury {
