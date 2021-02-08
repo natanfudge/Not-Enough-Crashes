@@ -1,3 +1,5 @@
+### 3.1.7
+- Added a new config option: debugModIdentification, that will hopefully help in discovering mods in more cases.
 ### 3.1.6
 - (Forge) Fixed being unable to identify crashing mods that have multiple authors.
 ### 3.1.5

@@ -20,6 +20,7 @@ public class ModConfig {
     public CrashLogUploadType uploadCrashLogTo = CrashLogUploadType.GIST;
     public boolean disableReturnToMainMenu = false;
     public boolean deobfuscateStackTrace = true;
+    public boolean debugModIdentification = false;
 
     public static ModConfig instance() {
         if (instance != null) {

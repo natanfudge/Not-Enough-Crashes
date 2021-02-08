@@ -1,5 +1,7 @@
 package fudge.notenoughcrashes.stacktrace;
 
+import fudge.notenoughcrashes.ModConfig;
+import fudge.notenoughcrashes.NotEnoughCrashes;
 import fudge.notenoughcrashes.platform.CommonModMetadata;
 import fudge.notenoughcrashes.platform.NecPlatform;
 import org.apache.logging.log4j.LogManager;
@@ -52,10 +54,18 @@ public final class ModIdentifier {
         return mods;
     }
 
+    private static final boolean debugLog = true;
+
+    private static void debug(String message) {
+        if (ModConfig.instance().debugModIdentification) NotEnoughCrashes.LOGGER.info(message);
+    }
+
     // TODO: get a list of mixin transformers that affected the class and blame those too
     private static Set<CommonModMetadata> identifyFromClass(String className, Map<URI, Set<CommonModMetadata>> modMap) {
+        debug("Analyzing " + className);
         // Skip identification for Mixin, one's mod copy of the library is shared with all other mods
         if (className.startsWith("org.spongepowered.asm.mixin.")) {
+            debug("Ignoring class " + className + " for identification because it is a mixin class");
             return Collections.emptySet();
         }
 
@@ -63,7 +73,10 @@ public final class ModIdentifier {
             // Get the URL of the class
             Class<?> clazz = Class.forName(className);
             CodeSource codeSource = clazz.getProtectionDomain().getCodeSource();
-            if (codeSource == null) return Collections.emptySet(); // Some internal native sun classes
+            if (codeSource == null) {
+                debug("Ignoring class " + className + " for identification because the code source could not be found");
+                return Collections.emptySet(); // Some internal native sun classes
+            }
             URL url = codeSource.getLocation();
 
             if (url == null) {
@@ -92,6 +105,10 @@ public final class ModIdentifier {
             // Get the mod containing that class
             return metadata;
         } catch (URISyntaxException | IOException | ClassNotFoundException | NoClassDefFoundError e) {
+            debug("Ignoring class " + className + " for identification because an error occurred");
+            if (debugLog) {
+                e.printStackTrace();
+            }
             return Collections.emptySet(); // we cannot do it
         }
     }
