@@ -1,3 +1,5 @@
+### 3.1.9
+- Fixed additional crash stack traces appearing when debugModIdentification is false. 
 ### 3.1.8
 - The 1.16.5 Fabric version will no longer deliberately crash in 1.17 snapshots. This means that it may work if nothing broke the mod in a snapshot.
 ### 3.1.7

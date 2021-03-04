@@ -54,8 +54,6 @@ public final class ModIdentifier {
         return mods;
     }
 
-    private static final boolean debugLog = true;
-
     private static void debug(String message) {
         if (ModConfig.instance().debugModIdentification) NotEnoughCrashes.LOGGER.info(message);
     }
@@ -106,7 +104,7 @@ public final class ModIdentifier {
             return metadata;
         } catch (URISyntaxException | IOException | ClassNotFoundException | NoClassDefFoundError e) {
             debug("Ignoring class " + className + " for identification because an error occurred");
-            if (debugLog) {
+            if (ModConfig.instance().debugModIdentification) {
                 e.printStackTrace();
             }
             return Collections.emptySet(); // we cannot do it
