@@ -2,13 +2,15 @@ pluginManagement {
     repositories {
         jcenter()
         maven { url "https://maven.fabricmc.net/" }
-        maven { url "https://dl.bintray.com/shedaniel/cloth" }
+        maven { url "https://maven.shedaniel.me/"}
         maven { url "https://files.minecraftforge.net/maven/" }
         gradlePluginPortal()
     }
 
     plugins {
         id 'com.matthewprenger.cursegradle' version cursegradle_version
+        id "architectury-plugin" version architectury_plugin_version
+        id "forgified-fabric-loom" version forgeloom_version
     }
 }
 

@@ -3,28 +3,29 @@ plugins {
 }
 
 configurations {
-shadow
+    shadowCommon
 }
 
 architectury {
     platformSetupLoomIde()
+    fabric()
 }
 
 dependencies {
-    minecraft("com.mojang:minecraft:${rootProject.minecraft_version}")
+//    minecraft("com.mojang:minecraft:${rootProject.minecraft_version}")
     mappings("net.fabricmc:yarn:${rootProject.yarn_mappings}:v2")
-    modCompile("net.fabricmc:fabric-loader:${rootProject.loader_version}")
-    modCompile("net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_version}")
+//    modCompile("net.fabricmc:fabric-loader:${rootProject.loader_version}")
+    modApi ("net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_version}")
     // Remove the next line if you don't want to depend on the API
 //    modCompile("me.shedaniel:architectury:${rootProject.architectury_version}:fabric")
 
-    compileOnly(project(path: ":common")) {
+    implementation(project(path: ":common")) {
         transitive = false
     }
-    runtimeOnly(project(path: ":common", configuration: "transformDevelopmentFabric")) {
+    developmentFabric(project(path: ":common")) {
         transitive = false
     }
-    shadow(project(path: ":common", configuration: "transformProductionFabric")) {
+    shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) {
         transitive = false
     }
 }
@@ -39,14 +40,28 @@ processResources {
 }
 
 shadowJar {
-    configurations = [project.configurations.shadow]
-    classifier "shadow"
+    configurations = [project.configurations.shadowCommon]
+    classifier "dev-shadow"
 }
 
 remapJar {
-    dependsOn(shadowJar)
-    input.set(shadowJar.archivePath)
+    input.set shadowJar.archiveFile
+    dependsOn shadowJar
     classifier "fabric"
+}
+
+jar {
+    classifier "dev"
+}
+
+java {
+    withSourcesJar()
+}
+
+sourcesJar {
+    def commonSources = project(":common").remapSourcesJar
+    dependsOn commonSources
+    from zipTree(commonSources.output)
 }
 
 curseforge {

@@ -5,11 +5,12 @@ plugins {
 }
 
 configurations {
-    shadow
+    shadowCommon
 }
 
 architectury {
     platformSetupLoomIde()
+    forge()
 }
 
 loom {
@@ -18,7 +19,7 @@ loom {
 }
 
 dependencies {
-    minecraft("com.mojang:minecraft:${rootProject.minecraft_version}")
+//    minecraft("com.mojang:minecraft:${rootProject.minecraft_version}")
     mappings("net.fabricmc:yarn:${rootProject.yarn_mappings}:v2")
     forge("net.minecraftforge:forge:${rootProject.minecraft_version}-${rootProject.forge_version}")
 //    modRuntime(files("testmods/modid-1.0.jar"))
@@ -28,10 +29,10 @@ dependencies {
     compileOnly(project(path: ":common")) {
         transitive = false
     }
-    runtimeOnly(project(path: ":common", configuration: "transformDevelopmentForge")) {
+    developmentForge(project(path: ":common")) {
         transitive = false
     }
-    shadow(project(path: ":common", configuration: "transformProductionForge")) {
+    shadowCommon(project(path: ":common", configuration: "transformProductionForge")) {
         transitive = false
     }
 }
@@ -47,13 +48,13 @@ processResources {
 shadowJar {
     exclude "fabric.mod.json"
 
-    configurations = [project.configurations.shadow]
-    classifier "shadow"
+    configurations = [project.configurations.shadowCommon]
+    classifier "dev-shadow"
 }
 
 remapJar {
-    dependsOn(shadowJar)
-    input.set(shadowJar.archivePath)
+    input.set shadowJar.archiveFile
+    dependsOn shadowJar
     classifier "forge"
 }
 jar {
@@ -62,6 +63,20 @@ jar {
                 "MixinConfigs"            : "notenoughcrashes.mixins.json"
         ])
     }
+}
+
+jar {
+    classifier "dev"
+}
+
+java {
+    withSourcesJar()
+}
+
+sourcesJar {
+    def commonSources = project(":common").remapSourcesJar
+    dependsOn commonSources
+    from zipTree(commonSources.output)
 }
 
 curseforge {
