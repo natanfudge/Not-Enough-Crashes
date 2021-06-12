@@ -3,6 +3,7 @@ package fudge.notenoughcrashes.mixins;
 import fudge.notenoughcrashes.patches.PatchedCrashReport;
 import fudge.notenoughcrashes.platform.CommonModMetadata;
 import fudge.notenoughcrashes.stacktrace.ModIdentifier;
+import net.minecraft.util.SystemDetails;
 import net.minecraft.util.crash.CrashReport;
 import net.minecraft.util.crash.CrashReportSection;
 import org.apache.commons.lang3.StringUtils;
@@ -25,13 +26,14 @@ import java.util.Set;
 
 //TODO: move all fields that should be in common
 
+@SuppressWarnings("unused")
 @Mixin(value = CrashReport.class, priority = 500)
 public abstract class MixinCrashReport implements PatchedCrashReport {
 
     private static final boolean ANNOYING_EASTER_EGG_DISABLED = true;
     @Shadow
     @Final
-    private CrashReportSection systemDetailsSection;
+    private SystemDetails systemDetailsSection;
     @Shadow
     @Final
     private List<CrashReportSection> otherSections;
@@ -65,7 +67,7 @@ public abstract class MixinCrashReport implements PatchedCrashReport {
      */
     @Inject(method = "fillSystemDetails", at = @At("TAIL"))
     private void afterFillSystemDetails(CallbackInfo ci) {
-        systemDetailsSection.add("Suspected Mods", () -> {
+        systemDetailsSection.addSection("Suspected Mods", () -> {
             try {
                 suspectedMods = ModIdentifier.identifyFromStacktrace(cause);
 
@@ -82,18 +84,20 @@ public abstract class MixinCrashReport implements PatchedCrashReport {
         });
     }
 
-    /**
-     * @reason Improve report formatting
-     */
-    @Overwrite
-    public void addStackTrace(StringBuilder builder) {
-        for (CrashReportSection section : otherSections) {
-            section.addStackTrace(builder);
-            builder.append("\n");
-        }
 
-        systemDetailsSection.addStackTrace(builder);
-    }
+    //TODO: unlikely that this is an improvement anymore
+//    /**
+//     * @reason Improve report formatting
+//     */
+//    @Overwrite
+//    public void addStackTrace(StringBuilder builder) {
+//        for (CrashReportSection section : otherSections) {
+//            section.addStackTrace(builder);
+//            builder.append("\n");
+//        }
+//
+//        systemDetailsSection.writeTo(builder);
+//    }
 
     private String generateEasterEggComment() {
         try {

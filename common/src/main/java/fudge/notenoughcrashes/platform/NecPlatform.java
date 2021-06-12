@@ -2,7 +2,6 @@ package fudge.notenoughcrashes.platform;
 
 import net.minecraft.util.Identifier;
 
-import javax.annotation.Nullable;
 import java.net.URI;
 import java.nio.file.Path;
 import java.util.List;

@@ -1,3 +1,6 @@
+## 3.2.0
+- Updated to Minecraft 1.17, Java 16. 
+- Currently buggy, this is a minimum viable alpha release.
 ### 3.1.9
 - Fixed additional crash stack traces appearing when debugModIdentification is false. 
 ### 3.1.8

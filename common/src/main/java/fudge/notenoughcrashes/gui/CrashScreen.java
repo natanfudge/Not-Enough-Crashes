@@ -34,14 +34,14 @@ public class CrashScreen extends ProblemScreen {
             mainMenuButton.setMessage(new TranslatableText("notenoughcrashes.gui.disabledByConfig"));
         }
 
-        addButton(mainMenuButton);
+        addDrawableChild(mainMenuButton);
     }
 
 
     @Override
     public void render(MatrixStack matrixStack, int mouseY, int i, float f) {
         renderBackground(matrixStack);
-        drawCenteredString(matrixStack,textRenderer, I18n.translate("notenoughcrashes.crashscreen.title"), width / 2, height / 4 - 40, 0xFFFFFF);
+        drawCenteredText(matrixStack,textRenderer, I18n.translate("notenoughcrashes.crashscreen.title"), width / 2, height / 4 - 40, 0xFFFFFF);
 
         int textColor = 0xD0D0D0;
         int x = width / 2 - 155;

@@ -49,7 +49,7 @@ public class TextWidget implements Widget {
 
     @Override
     public void draw(MatrixStack stack) {
-        getScreen().drawCenteredString(stack,font, translated, x, y, color);
+        getScreen().drawCenteredText(stack,font, translated, x, y, color);
     }
 
     @Override

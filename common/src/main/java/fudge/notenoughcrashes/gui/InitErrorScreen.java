@@ -2,8 +2,8 @@ package fudge.notenoughcrashes.gui;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.gui.widget.AbstractButtonWidget;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.TranslatableText;
@@ -26,7 +26,6 @@ public class InitErrorScreen extends ProblemScreen {
     @Override
     public void init() {
         super.init();
-        AbstractButtonWidget getLinkButton = buttons.get(0);
         getLinkButton.x = width / 2 - 155;
         getLinkButton.y = height / 4 + 120 + 6;
         getLinkButton.setWidth(310);
@@ -35,13 +34,13 @@ public class InitErrorScreen extends ProblemScreen {
                 310, 20, new TranslatableText("menu.quit"),
                 button -> System.exit(-1));
 
-        addButton(exitButton);
+        addDrawableChild(exitButton);
     }
 
     @Override
     public void render(MatrixStack matrixStack, int mouseY, int i, float f) {
         renderBackground(matrixStack);
-        drawCenteredString(matrixStack, textRenderer, I18n.translate("notenoughcrashes.initerrorscreen.title"), width / 2, height / 4 - 40, 0xFFFFFF);
+        drawCenteredText(matrixStack, textRenderer, I18n.translate("notenoughcrashes.initerrorscreen.title"), width / 2, height / 4 - 40, 0xFFFFFF);
 
         drawStringWithShadow(matrixStack, textRenderer, I18n.translate("notenoughcrashes.initerrorscreen.summary"), x, y, TEXT_COLOR);
         drawStringWithShadow(matrixStack, textRenderer, I18n.translate("notenoughcrashes.crashscreen.paragraph1.line1"), x, y + 18, TEXT_COLOR);

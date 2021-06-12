@@ -11,6 +11,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ConfirmChatLinkScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.*;
@@ -37,13 +38,12 @@ public abstract class ProblemScreen extends Screen {
 
     public abstract ProblemScreen construct(CrashReport report);
 
-    protected final CrashReport report;
+    protected CrashReport report;
     private String hasteLink = null;
     protected int xLeft = Integer.MAX_VALUE;
     protected int xRight = Integer.MIN_VALUE;
     protected int yTop = Integer.MAX_VALUE;
     protected int yBottom = Integer.MIN_VALUE;
-
 
     protected int x;
     protected int y;
@@ -55,10 +55,11 @@ public abstract class ProblemScreen extends Screen {
     }
 
 
+    private static final Set<String> IGNORED_MODS = new HashSet<>(Arrays.asList("minecraft", "fabricloader", "loadcatcher", "jumploader"));
 
-    private static final Set<String> IGNORED_MODS = new HashSet<>(Arrays.asList("minecraft","fabricloader","loadcatcher", "jumploader"));
     private Text getSuspectedModsText() {
         Set<CommonModMetadata> suspectedMods = ((PatchedCrashReport) report).getSuspectedMods();
+        //TODO: getting null here right now, also i don't like this roundabout code. also doesn't seem to throw a stack trace when it's null.
         if (suspectedMods == null) return new TranslatableText("notenoughcrashes.crashscreen.identificationErrored");
 //        if (suspectedMods.isEmpty()) return new TranslatableText("notenoughcrashes.crashscreen.unknownCause");
 
@@ -72,18 +73,18 @@ public abstract class ProblemScreen extends Screen {
         if (suspectedMods.isEmpty()) return new TranslatableText("notenoughcrashes.crashscreen.noModsErrored");
 
         Text text = suspectedMods.stream()
-                        .sorted(Comparator.comparing(CommonModMetadata::getName))
-                        .map(mod -> {
-                            String issuesPage = mod.getIssuesPage();
-                            MutableText modText = new LiteralText(mod.getName());
-                            if (issuesPage != null) {
-                                modText.styled(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, issuesPage)));
-                            }
-                            return modText;
+                .sorted(Comparator.comparing(CommonModMetadata::getName))
+                .map(mod -> {
+                    String issuesPage = mod.getIssuesPage();
+                    MutableText modText = new LiteralText(mod.getName());
+                    if (issuesPage != null) {
+                        modText.styled(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, issuesPage)));
+                    }
+                    return modText;
 
-                        })
-                        .reduce((existing, next) -> existing.append(new LiteralText(", ")).append(next))
-                        .get();
+                })
+                .reduce((existing, next) -> existing.append(new LiteralText(", ")).append(next))
+                .get();
 
         return text;
     }
@@ -92,34 +93,38 @@ public abstract class ProblemScreen extends Screen {
         addWidget(new TextWidget(getSuspectedModsText(), TextWidget.CLICKABLE_TEXT_COLOR, textRenderer, width / 2, y + 29));
     }
 
+    protected ClickableWidget getLinkButton = null;
 
     @Override
     public void init() {
         widgets = new ArrayList<>();
-        addButton(new ButtonWidget(width / 2 - 155 + 160, height / 4 + 120 + 12, 150, 20, new TranslatableText("notenoughcrashes.gui.getLink"),
-                        buttonWidget -> {
-                            try {
-                                if (hasteLink == null) {
-                                    hasteLink = CrashLogUpload.upload(report.asString());
-                                }
+
+        this.getLinkButton = new ButtonWidget(width / 2 - 155 + 160, height / 4 + 120 + 12, 150, 20, new TranslatableText("notenoughcrashes.gui.getLink"),
+                buttonWidget -> {
+                    try {
+                        if (hasteLink == null) {
+                            hasteLink = CrashLogUpload.upload(report.asString());
+                        }
 //                                Field uriField;
 //                                //noinspection JavaReflectionMemberAccess
 //                                uriField = Screen.class.getDeclaredField("clickedLink");
 //                                uriField.setAccessible(true);
 //                                uriField.set(ProblemScreen.this, new URI(hasteLink));
-                                MinecraftClient.getInstance().openScreen(new ConfirmChatLinkScreen(b -> {
-                                    if (b) {
-                                        Util.getOperatingSystem().open(hasteLink);
-                                    }
-
-                                    MinecraftClient.getInstance().openScreen(construct(report));
-                                }, hasteLink, true));
-                            } catch (Throwable e) {
-                                LOGGER.error("Exception when crash menu button clicked:", e);
-                                buttonWidget.setMessage(new TranslatableText("notenoughcrashes.gui.failed"));
-                                buttonWidget.active = false;
+                        MinecraftClient.getInstance().openScreen(new ConfirmChatLinkScreen(b -> {
+                            if (b) {
+                                Util.getOperatingSystem().open(hasteLink);
                             }
-                        }));
+
+                            MinecraftClient.getInstance().openScreen(construct(report));
+                        }, hasteLink, true));
+                    } catch (Throwable e) {
+                        LOGGER.error("Exception when crash menu button clicked:", e);
+                        buttonWidget.setMessage(new TranslatableText("notenoughcrashes.gui.failed"));
+                        buttonWidget.active = false;
+                    }
+                });
+
+        addDrawableChild(getLinkButton);
 
         x = width / 2 - 155;
         y = height / 4;
@@ -146,7 +151,7 @@ public abstract class ProblemScreen extends Screen {
 
     protected void drawFileNameString(MatrixStack matrixStack, int y) {
         String fileNameString = report.getFile() != null ? "\u00A7n" + report.getFile().getName()
-                                        : I18n.translate("notenoughcrashes.crashscreen.reportSaveFailed");
+                : I18n.translate("notenoughcrashes.crashscreen.reportSaveFailed");
         int stLen = textRenderer.getWidth(fileNameString);
         xLeft = width / 2 - stLen / 2;
         xRight = width / 2 + stLen / 2;

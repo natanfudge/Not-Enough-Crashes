@@ -1,6 +1,7 @@
 package fudge.notenoughcrashes.platform;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
 
 public class CommonModMetadata {

@@ -52,8 +52,8 @@ public class InGameCatcher {
     }
 
     private static void addInfoToCrash(CrashReport report) {
-        report.getSystemDetailsSection().add("Client Crashes Since Restart", () -> String.valueOf(clientCrashCount));
-        report.getSystemDetailsSection().add("Integrated Server Crashes Since Restart", () -> String.valueOf(serverCrashCount));
+        report.getSystemDetailsSection().addSection("Client Crashes Since Restart", () -> String.valueOf(clientCrashCount));
+        report.getSystemDetailsSection().addSection("Integrated Server Crashes Since Restart", () -> String.valueOf(serverCrashCount));
     }
 
     private static void displayCrashScreen(CrashReport report) {

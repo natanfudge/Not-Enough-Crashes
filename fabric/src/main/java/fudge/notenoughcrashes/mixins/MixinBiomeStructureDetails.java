@@ -51,23 +51,25 @@ import java.util.function.Supplier;
  */
 @Mixin(Biome.class)
 public class MixinBiomeStructureDetails {
+	//TODO: currently removing because so many parameters is unmaintainable.
+
 	/**
 	 * Place blame on broke structures during worldgen.
 	 * Prints registry name of feature and biome.
 	 * Prints the crashlog to latest.log as well.
 	 */
-	@Inject(method = "generateFeatureStep(Lnet/minecraft/world/gen/StructureAccessor;Lnet/minecraft/world/gen/chunk/ChunkGenerator;Lnet/minecraft/world/ChunkRegion;JLnet/minecraft/world/gen/ChunkRandom;Lnet/minecraft/util/math/BlockPos;)V",
-			at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/util/crash/CrashReport;create(Ljava/lang/Throwable;Ljava/lang/String;)Lnet/minecraft/util/crash/CrashReport;", ordinal = 0),
-			locals = LocalCapture.CAPTURE_FAILHARD)
-	private void addStructureDetails(StructureAccessor structureAccessor, ChunkGenerator chunkGenerator,
-									 ChunkRegion chunkRegion, long seed, ChunkRandom random, BlockPos pos,
-									 CallbackInfo ci, List<List<Supplier<ConfiguredFeature<?, ?>>>> list,
-									 int numOfGenerationStage, int generationStageIndex, int structureIndex,
-									 List<StructureFeature<?>> list2, Iterator<StructureFeature<?>> var13,
-									 StructureFeature<?> structureFeature, Exception exception, CrashReport crashreport)
-	{
-		MixinHandler.placeBlameOnBrokenStructures((Biome)(Object)this, chunkRegion, structureFeature, crashreport);
-	}
+//	@Inject(method = "generateFeatureStep(Lnet/minecraft/world/gen/StructureAccessor;Lnet/minecraft/world/gen/chunk/ChunkGenerator;Lnet/minecraft/world/ChunkRegion;JLnet/minecraft/world/gen/ChunkRandom;Lnet/minecraft/util/math/BlockPos;)V",
+//			at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/util/crash/CrashReport;create(Ljava/lang/Throwable;Ljava/lang/String;)Lnet/minecraft/util/crash/CrashReport;", ordinal = 0),
+//			locals = LocalCapture.CAPTURE_FAILHARD)
+//	private void addStructureDetails(StructureAccessor structureAccessor, ChunkGenerator chunkGenerator,
+//									 ChunkRegion chunkRegion, long seed, ChunkRandom random, BlockPos pos,
+//									 CallbackInfo ci, List<List<Supplier<ConfiguredFeature<?, ?>>>> list,
+//									 int numOfGenerationStage, int generationStageIndex, int structureIndex,
+//									 List<StructureFeature<?>> list2, Iterator<StructureFeature<?>> var13,
+//									 StructureFeature<?> structureFeature, Exception exception, CrashReport crashreport)
+//	{
+//		MixinHandler.placeBlameOnBrokenStructures((Biome)(Object)this, chunkRegion, structureFeature, crashreport);
+//	}
 
 
 }

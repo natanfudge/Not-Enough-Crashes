@@ -51,44 +51,45 @@ import java.util.function.Supplier;
  */
 @Mixin(Biome.class)
 public class MixinBiome {
-	/**
-	 * Place blame on broke feature during worldgen.
-	 * Prints registry name of feature and biome.
-	 * Prints the crashlog to latest.log as well.
-	 *
-	 * I tried using crashreport.addElement( ) to add
-	 * a new section in the crashreport but it crashes
-	 * the code instead and I have zero clue why.
-	 * If you can figure out why, I would love to know!
-	 * Otherwise, I just tack on the extra info at end
-	 * of the crash report.
-	 */
-	@Inject(method = "generateFeatureStep(Lnet/minecraft/world/gen/StructureAccessor;Lnet/minecraft/world/gen/chunk/ChunkGenerator;Lnet/minecraft/world/ChunkRegion;JLnet/minecraft/world/gen/ChunkRandom;Lnet/minecraft/util/math/BlockPos;)V",
-			at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/util/crash/CrashReport;create(Ljava/lang/Throwable;Ljava/lang/String;)Lnet/minecraft/util/crash/CrashReport;", ordinal = 1),
-			locals = LocalCapture.CAPTURE_FAILHARD)
-	private void addFeatureDetails(StructureAccessor structureAccessor, ChunkGenerator chunkGenerator,
-								   ChunkRegion chunkRegion, long seed, ChunkRandom random, BlockPos pos,
-								   CallbackInfo ci, List<List<Supplier<ConfiguredFeature<?, ?>>>> GenerationStageList,
-								   int numOfGenerationStage, int generationStageIndex, int configuredFeatureIndex,
-								   Iterator<ConfiguredFeature<?, ?>> var12, Supplier<ConfiguredFeature<?, ?>> supplier, ConfiguredFeature<?, ?> configuredfeature,
-								   Exception exception, CrashReport crashreport)
-	{
-		DynamicRegistryManager dynamicRegistries = chunkRegion.getRegistryManager();
-		Gson gson = new GsonBuilder().setPrettyPrinting().create(); // Make JSON form pretty for crashing ConfiguredFeatures
-
-		Identifier configuredFeatureID = dynamicRegistries.get(Registry.CONFIGURED_FEATURE_WORLDGEN).getId(configuredfeature);
-		Identifier biomeID = dynamicRegistries.get(Registry.BIOME_KEY).getId((Biome)(Object)this);
-		Optional<JsonElement> configuredFeatureJSON = ConfiguredFeature.CODEC.encode(configuredfeature, JsonOps.INSTANCE, JsonOps.INSTANCE.empty()).get().left();
-
-		// Add extra info to the crash report file.
-		crashreport.getSystemDetailsSection()
-				.add("\n****************** Not Enough Crashes Report ******************",
-				"\n\n ConfiguredFeature Registry Name : " + (configuredFeatureID != null ? configuredFeatureID : "Has no identifier as it was not registered... go yell at the mod owner when you find them! lol") +
-					"\n Biome Registry Name : " + (biomeID != null ? biomeID : "Wait what? How is the biome not registered and has no registry name!?!? This should be impossible!!!") +
-					"\n\n JSON info : " + (configuredFeatureJSON.isPresent() ? gson.toJson(configuredFeatureJSON.get()) : "Failed to generate JSON somehow.") + "\n\n");
-
-		// Log it to the latest.log file as well.
-		NotEnoughCrashes.LOGGER.log(Level.ERROR, crashreport.getMessage());
-	}
+	//TODO: currently removing because so many parameters is unmaintainable.
+//	/**
+//	 * Place blame on broke feature during worldgen.
+//	 * Prints registry name of feature and biome.
+//	 * Prints the crashlog to latest.log as well.
+//	 *
+//	 * I tried using crashreport.addElement( ) to add
+//	 * a new section in the crashreport but it crashes
+//	 * the code instead and I have zero clue why.
+//	 * If you can figure out why, I would love to know!
+//	 * Otherwise, I just tack on the extra info at end
+//	 * of the crash report.
+//	 */
+//	@Inject(method = "generateFeatureStep(Lnet/minecraft/world/gen/StructureAccessor;Lnet/minecraft/world/gen/chunk/ChunkGenerator;Lnet/minecraft/world/ChunkRegion;JLnet/minecraft/world/gen/ChunkRandom;Lnet/minecraft/util/math/BlockPos;)V",
+//			at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/util/crash/CrashReport;create(Ljava/lang/Throwable;Ljava/lang/String;)Lnet/minecraft/util/crash/CrashReport;", ordinal = 1),
+//			locals = LocalCapture.CAPTURE_FAILHARD)
+//	private void addFeatureDetails(StructureAccessor structureAccessor, ChunkGenerator chunkGenerator,
+//								   ChunkRegion chunkRegion, long seed, ChunkRandom random, BlockPos pos,
+//								   CallbackInfo ci, List<List<Supplier<ConfiguredFeature<?, ?>>>> GenerationStageList,
+//								   int numOfGenerationStage, int generationStageIndex, int configuredFeatureIndex,
+//								   Iterator<ConfiguredFeature<?, ?>> var12, Supplier<ConfiguredFeature<?, ?>> supplier, ConfiguredFeature<?, ?> configuredfeature,
+//								   Exception exception, CrashReport crashreport)
+//	{
+//		DynamicRegistryManager dynamicRegistries = chunkRegion.getRegistryManager();
+//		Gson gson = new GsonBuilder().setPrettyPrinting().create(); // Make JSON form pretty for crashing ConfiguredFeatures
+//
+//		Identifier configuredFeatureID = dynamicRegistries.get(Registry.CONFIGURED_FEATURE_KEY).getId(configuredfeature);
+//		Identifier biomeID = dynamicRegistries.get(Registry.BIOME_KEY).getId((Biome)(Object)this);
+//		Optional<JsonElement> configuredFeatureJSON = ConfiguredFeature.CODEC.encode(configuredfeature, JsonOps.INSTANCE, JsonOps.INSTANCE.empty()).get().left();
+//
+//		// Add extra info to the crash report file.
+//		crashreport.getSystemDetailsSection()
+//				.addSection("\n****************** Not Enough Crashes Report ******************",
+//				"\n\n ConfiguredFeature Registry Name : " + (configuredFeatureID != null ? configuredFeatureID : "Has no identifier as it was not registered... go yell at the mod owner when you find them! lol") +
+//					"\n Biome Registry Name : " + (biomeID != null ? biomeID : "Wait what? How is the biome not registered and has no registry name!?!? This should be impossible!!!") +
+//					"\n\n JSON info : " + (configuredFeatureJSON.isPresent() ? gson.toJson(configuredFeatureJSON.get()) : "Failed to generate JSON somehow.") + "\n\n");
+//
+//		// Log it to the latest.log file as well.
+//		NotEnoughCrashes.LOGGER.log(Level.ERROR, crashreport.getMessage());
+//	}
 
 }
