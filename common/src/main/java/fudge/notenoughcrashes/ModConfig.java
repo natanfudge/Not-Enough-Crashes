@@ -21,6 +21,7 @@ public class ModConfig {
     public boolean disableReturnToMainMenu = false;
     public boolean deobfuscateStackTrace = true;
     public boolean debugModIdentification = false;
+    public boolean forceCrashScreen = false;
 
     public static ModConfig instance() {
         if (instance != null) {

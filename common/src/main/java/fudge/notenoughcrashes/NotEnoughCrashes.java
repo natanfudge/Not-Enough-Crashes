@@ -2,12 +2,14 @@ package fudge.notenoughcrashes;
 
 import fudge.notenoughcrashes.platform.NecPlatform;
 import fudge.notenoughcrashes.test.TestBlock;
+import fudge.notenoughcrashes.utils.SystemExitBlock;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.Permission;
 
 //TODO: access wideners don't work right now
 public class NotEnoughCrashes {
@@ -23,7 +25,6 @@ public class NotEnoughCrashes {
     public static final boolean FILTER_ENTRYPOINT_CATCHER = true;
 
 
-
     public static final boolean ENABLE_ENTRYPOINT_CATCHING = !NecPlatform.instance().isDevelopmentEnvironment() || DEBUG_ENTRYPOINT;
 
     public static void ensureDirectoryExists() throws IOException {
@@ -31,13 +32,13 @@ public class NotEnoughCrashes {
     }
 
     public static void initialize() {
+        if (ModConfig.instance().forceCrashScreen) SystemExitBlock.forbidSystemExitCall();
         ModConfig.instance();
 
         if (DEBUG_GAMELOOP) TestBlock.init();
         if (DEBUG_ENTRYPOINT) throw new NullPointerException();
 //        TestKeyBinding.init();
     }
-
 
 
 }

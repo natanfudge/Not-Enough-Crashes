@@ -25,12 +25,16 @@ public class TestBlock extends Block {
 
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+//        System.exit(0);
         try {
+
             throw new RuntimeException("something NPED!", new NullPointerException("THIS NPED!"));
         } catch (Throwable e) {
             e.addSuppressed(new NullPointerException("SUPRESSED!"));
             throw e;
         }
+
+//        return null;
     }
 
     public static void init() {

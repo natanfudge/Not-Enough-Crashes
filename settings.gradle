@@ -9,6 +9,8 @@ pluginManagement {
 
     plugins {
         id 'com.matthewprenger.cursegradle' version cursegradle_version
+        id "architectury-plugin" version architectury_plugin_version
+        id "forgified-fabric-loom" version forgeloom_version
     }
 }
 

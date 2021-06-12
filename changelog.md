@@ -1,6 +1,8 @@
-## 3.2.0
+## 3.3.0
 - Updated to Minecraft 1.17, Java 16. 
 - Currently buggy, this is a minimum viable alpha release.
+## 3.2.0
+- Added a new option `forceCrashScreen` that will prevent cases in which the game closes with no crash log. Instead, the game will crash normally.
 ### 3.1.9
 - Fixed additional crash stack traces appearing when debugModIdentification is false. 
 ### 3.1.8
