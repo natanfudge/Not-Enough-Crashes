@@ -86,3 +86,24 @@ curseforge {
         forgeGradleIntegration = false
     }
 }
+
+task publishModrinth (type: com.modrinth.minotaur.TaskModrinthUpload){ // Make sure it runs after build!
+    group = "upload"
+    token =  project.hasProperty("modrinth_api_key") ? project.modrinth_api_key : ""
+    projectId = 'yM94ont6'
+    versionNumber = total_version // Will fail if Modrinth has this version already
+    versionName = "$mod_name $total_version Fabric"
+    uploadFile = remapJar
+    addGameVersion(curseforge_mc_version)
+    addLoader('fabric')
+    changelog = rootProject.file("changelog.md")
+    versionType = "RELEASE"
+
+}
+
+task publishFabric {
+    afterEvaluate {
+        dependsOn(curseforge353890)
+        dependsOn(publishModrinth)
+    }
+}

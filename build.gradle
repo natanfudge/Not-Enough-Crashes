@@ -4,6 +4,7 @@ plugins {
 //    id "com.github.fudge.forgedflowerloom" version "2.0.0" apply false
     id 'maven-publish'
     id 'com.matthewprenger.cursegradle'
+    id "com.modrinth.minotaur" version "1.2.1" apply false
 }
 
 
@@ -16,6 +17,7 @@ subprojects {
 //    apply plugin: "com.github.fudge.forgedflowerloom"
     apply plugin: 'maven-publish'
     apply plugin: 'com.matthewprenger.cursegradle'
+    apply plugin: "com.modrinth.minotaur"
 
 
     dependencies {
