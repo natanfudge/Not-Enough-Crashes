@@ -6,6 +6,7 @@ import fudge.notenoughcrashes.platform.CommonModMetadata;
 import fudge.notenoughcrashes.platform.NecPlatform;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,7 +24,13 @@ public final class ModIdentifier {
     public static Set<CommonModMetadata> identifyFromStacktrace(Throwable e) {
         Set<CommonModMetadata> mods = new HashSet<>();
         // Include suppressed exceptions too
-        visitChildrenThrowables(e, throwable -> mods.addAll(identifyFromThrowable(throwable)));
+        visitChildrenThrowables(e, throwable -> {
+            for (var newMod : identifyFromThrowable(throwable)) {
+                if (mods.stream().noneMatch(mod -> mod.getId().equals(newMod.getId()))) {
+                    mods.add(newMod);
+                }
+            }
+        });
         return mods;
     }
 
@@ -35,17 +42,17 @@ public final class ModIdentifier {
     private static Set<CommonModMetadata> identifyFromThrowable(Throwable e) {
         Map<URI, Set<CommonModMetadata>> modMap = NecPlatform.instance().getModsAtLocationsInDisk();
 
-        // Get the set of classes
-        Set<String> classes = new LinkedHashSet<>();
+
+        Set<String> involvedClasses = new LinkedHashSet<>();
         while (e != null) {
             for (StackTraceElement element : e.getStackTrace()) {
-                classes.add(element.getClassName());
+                involvedClasses.add(element.getClassName());
             }
             e = e.getCause();
         }
 
         Set<CommonModMetadata> mods = new LinkedHashSet<>();
-        for (String className : classes) {
+        for (String className : involvedClasses) {
             Set<CommonModMetadata> classMods = identifyFromClass(className, modMap);
             if (classMods != null) {
                 mods.addAll(classMods);
@@ -54,8 +61,10 @@ public final class ModIdentifier {
         return mods;
     }
 
+    private static final boolean FORCE_DEBUG = false;
+
     private static void debug(String message) {
-        if (ModConfig.instance().debugModIdentification) NotEnoughCrashes.LOGGER.info(message);
+        if (FORCE_DEBUG || ModConfig.instance().debugModIdentification) NotEnoughCrashes.LOGGER.info(message);
     }
 
     // TODO: get a list of mixin transformers that affected the class and blame those too
@@ -83,31 +92,38 @@ public final class ModIdentifier {
             }
 
             URI jar = jarFromUrl(url);
-            Set<CommonModMetadata> metadata = modMap.get(jar);
-            // Forge tends to give modjar://crashmod type urls, so we try to figure out the mod based on that.
-            if (metadata == null && jar.toString().startsWith("modjar://")) {
-                metadata = new HashSet<>(NecPlatform.instance().getModMetadatas(jar.toString().substring("modjar://".length())));
-            }
-
-
-            // For some reason loader gives the wrong location with kotlin mods in dev so we need to change it a bit
-            if (metadata == null) {
-                String oldPath = jar.getPath();
-                if (oldPath.length() > "classes/kotlin/main/".length()) {
-                    String fixedPath = oldPath.substring(0, oldPath.length() - "classes/kotlin/main/".length()) + "resources/main/";
-                    metadata = modMap.get(new File(fixedPath).toURI());
-                }
-            }
-
 
             // Get the mod containing that class
-            return metadata;
+            return getModAt(jar, modMap);
         } catch (URISyntaxException | IOException | ClassNotFoundException | NoClassDefFoundError e) {
             debug("Ignoring class " + className + " for identification because an error occurred");
             if (ModConfig.instance().debugModIdentification) {
                 e.printStackTrace();
             }
             return Collections.emptySet(); // we cannot do it
+        }
+    }
+
+    @Nullable
+    private static Set<CommonModMetadata> getModAt(URI uri, Map<URI, Set<CommonModMetadata>> modMap) {
+        Set<CommonModMetadata> mod = modMap.get(uri);
+        if (mod != null) return mod;
+        else if (uri.toString().startsWith("modjar://")) {
+            // Forge tends to give modjar://crashmod type urls, so we try to figure out the mod based on that.
+            return new HashSet<>(NecPlatform.instance().getModMetadatas(uri.toString().substring("modjar://".length())));
+        } else if (NecPlatform.instance().isDevelopmentEnvironment()) {
+
+            // For some reason, in dev, the mod being tested has the 'resources' folder as the origin instead of the 'classes' folder.
+            String resourcesPath = uri.getPath()
+                    // Make it work with Architectury as well
+                    .replace("common/build/classes/java/main", "fabric/build/resources/main")
+                    .replace("common/build/classes/kotlin/main", "fabric/build/resources/main")
+                    .replace("classes/java/main", "resources/main")
+                    .replace("classes/kotlin/main", "resources/main");
+            URI resourcesUri = new File(resourcesPath).toURI();
+            return modMap.get(resourcesUri);
+        } else {
+            return null;
         }
     }
 

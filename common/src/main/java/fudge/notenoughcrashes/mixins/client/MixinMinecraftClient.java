@@ -87,7 +87,7 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
      * - Memory reserve not recreated after out-of memory
      */
     @Overwrite
-    //TODO: can be replaced by 2-4 injection/redirections
+    // can be replaced by 2-4 injection/redirections
     public void cleanUpAfterCrash() {
         InGameCatcher.resetGameState(renderTaskQueue);
     }

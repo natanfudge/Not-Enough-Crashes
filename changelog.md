@@ -1,3 +1,7 @@
+## 3.3.1
+- Fixed mod identification not working.
+- Fixed deobfuscation sometimes not working.
+- Promoted to Release!
 ## 3.3.0
 - Updated to Minecraft 1.17, Java 16. 
 - Currently buggy, this is a minimum viable alpha release.

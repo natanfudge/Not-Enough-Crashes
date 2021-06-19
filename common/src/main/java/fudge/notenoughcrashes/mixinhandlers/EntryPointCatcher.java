@@ -3,6 +3,7 @@ package fudge.notenoughcrashes.mixinhandlers;
 import fudge.notenoughcrashes.NotEnoughCrashes;
 import fudge.notenoughcrashes.gui.InitErrorScreen;
 import fudge.notenoughcrashes.stacktrace.CrashUtils;
+import fudge.notenoughcrashes.utils.MutableIdentifier;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.MinecraftVersion;
@@ -17,11 +18,12 @@ import org.jetbrains.annotations.NotNull;
 public class EntryPointCatcher {
 
     @NotNull
-    public static Identifier replacedImage() {
-        return new Identifier(NotEnoughCrashes.MOD_ID, "assets/notenoughcrashes/textures/game_crashed.png");
-    }
+    public static Identifier GAME_CRASHED_IMAGE =
+            new Identifier(NotEnoughCrashes.MOD_ID, "assets/notenoughcrashes/textures/game_crashed.png");
+
 
     private static CrashReport crashReport = null;
+    public static MutableIdentifier splashScreenImageId;
 
     public static boolean crashedDuringStartup() {
         return crashReport != null;
@@ -41,11 +43,7 @@ public class EntryPointCatcher {
         Window.acceptError((integer, stringx) -> {
         });
 
-        // Make it obvious the game crashed
-        //TODO: this hasn't been working anyway
-//        SplashScreenMixin.setLogo(new Identifier(NotEnoughCrashes.MOD_ID, "textures/game_crashed.png"));
     }
-
 
 
     @Environment(EnvType.CLIENT)

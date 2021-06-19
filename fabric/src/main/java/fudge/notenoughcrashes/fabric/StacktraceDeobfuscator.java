@@ -2,7 +2,9 @@ package fudge.notenoughcrashes.fabric;
 
 import com.google.common.collect.Lists;
 import com.google.common.net.UrlEscapers;
+import fudge.notenoughcrashes.ModConfig;
 import fudge.notenoughcrashes.NotEnoughCrashes;
+import fudge.notenoughcrashes.platform.NecPlatform;
 import fudge.notenoughcrashes.stacktrace.YarnVersion;
 import net.fabricmc.mapping.reader.v2.MappingGetter;
 import net.fabricmc.mapping.reader.v2.TinyMetadata;
@@ -29,6 +31,25 @@ public final class StacktraceDeobfuscator {
                     .resolve("mappings-" +  MinecraftVersion.create().getName() + ".tiny");
 
     private static Map<String, String> mappings = null;
+
+    // No need to deobf in dev
+    private static final boolean DEBUG_DEOBF = false;
+    private static final boolean ENABLE_DEOBF = (!NecPlatform.instance().isDevelopmentEnvironment()
+            && ModConfig.instance().deobfuscateStackTrace) || DEBUG_DEOBF;
+
+    public static void init() {
+        if (!ENABLE_DEOBF) return;
+        NotEnoughCrashes.LOGGER.info("Initializing StacktraceDeobfuscator");
+        try {
+            if (!Files.exists(CACHED_MAPPINGS)) downloadAndCacheMappings();
+        } catch (Exception e) {
+            NotEnoughCrashes.LOGGER.error("Failed to load mappings!", e);
+        }
+        NotEnoughCrashes.LOGGER.info("Done initializing StacktraceDeobfuscator");
+
+        // Install the log exception deobfuscation rewrite policy
+        DeobfuscatingRewritePolicy.install();
+    }
 
 
     private static void downloadAndCacheMappings() {
@@ -70,9 +91,6 @@ public final class StacktraceDeobfuscator {
         }
     }
 
-    public static void init() {
-        if (!Files.exists(CACHED_MAPPINGS)) downloadAndCacheMappings();
-    }
 
     private static void loadMappings() {
         if (!Files.exists(CACHED_MAPPINGS)) {
@@ -146,7 +164,7 @@ public final class StacktraceDeobfuscator {
         // Make the stack trace nicer by removing entrypoint catcher's cruft
         List<StackTraceElement> stackTraceList = NotEnoughCrashes.FILTER_ENTRYPOINT_CATCHER ? Arrays.stream(stackTrace).filter(element -> !filteredClasses.contains(element.getClassName()))
                         .collect(Collectors.toList()) : Lists.newArrayList(stackTrace);
-        if (NotEnoughCrashesFabric.ENABLE_DEOBF
+        if (ENABLE_DEOBF
                         // Check it wasn't deobfuscated already. This can happen when this is called both by DeobfuscatingRewritePolicy
                         // and then CrashReport mixin. They don't cover all cases alone though so we need both.
                         && !StringUtils.startsWith(stackTrace[0].getClassName(), NotEnoughCrashes.NAME)) {

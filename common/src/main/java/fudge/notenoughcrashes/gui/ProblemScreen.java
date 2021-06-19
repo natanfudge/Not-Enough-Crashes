@@ -59,7 +59,7 @@ public abstract class ProblemScreen extends Screen {
 
     private Text getSuspectedModsText() {
         Set<CommonModMetadata> suspectedMods = ((PatchedCrashReport) report).getSuspectedMods();
-        //TODO: getting null here right now, also i don't like this roundabout code. also doesn't seem to throw a stack trace when it's null.
+
         if (suspectedMods == null) return new TranslatableText("notenoughcrashes.crashscreen.identificationErrored");
 //        if (suspectedMods.isEmpty()) return new TranslatableText("notenoughcrashes.crashscreen.unknownCause");
 

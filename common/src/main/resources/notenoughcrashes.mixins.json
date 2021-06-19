@@ -6,12 +6,10 @@
   "mixins": [
     "MixinBiome",
     "MixinCrashReport",
-    "MixinCrashReportSection",
     "MixinEntity",
     "MixinTileEntity"
   ],
   "client": [
-    "client.EntityRenderDispatcherMixin",
     "client.MixinBufferBuilder",
     "client.MixinIntegratedServer",
     "client.MixinMinecraftClient"

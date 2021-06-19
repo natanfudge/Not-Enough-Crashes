@@ -24,7 +24,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-//TODO: move all fields that should be in common
 
 @SuppressWarnings("unused")
 @Mixin(value = CrashReport.class, priority = 500)
@@ -65,8 +64,8 @@ public abstract class MixinCrashReport implements PatchedCrashReport {
     /**
      * @reason Adds a list of mods which may have caused the crash to the report.
      */
-    @Inject(method = "fillSystemDetails", at = @At("TAIL"))
-    private void afterFillSystemDetails(CallbackInfo ci) {
+    @Inject(method = "addStackTrace", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/SystemDetails;writeTo(Ljava/lang/StringBuilder;)V"))
+    private void beforeSystemDetailsAreWritten(CallbackInfo ci) {
         systemDetailsSection.addSection("Suspected Mods", () -> {
             try {
                 suspectedMods = ModIdentifier.identifyFromStacktrace(cause);
@@ -84,20 +83,6 @@ public abstract class MixinCrashReport implements PatchedCrashReport {
         });
     }
 
-
-    //TODO: unlikely that this is an improvement anymore
-//    /**
-//     * @reason Improve report formatting
-//     */
-//    @Overwrite
-//    public void addStackTrace(StringBuilder builder) {
-//        for (CrashReportSection section : otherSections) {
-//            section.addStackTrace(builder);
-//            builder.append("\n");
-//        }
-//
-//        systemDetailsSection.writeTo(builder);
-//    }
 
     private String generateEasterEggComment() {
         try {

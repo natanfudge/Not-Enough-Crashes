@@ -51,7 +51,7 @@ import java.util.function.Supplier;
  */
 @Mixin(Biome.class)
 public class MixinBiome {
-	//TODO: currently removing because so many parameters is unmaintainable.
+	// currently removing because so many parameters is unmaintainable.
 //	/**
 //	 * Place blame on broke feature during worldgen.
 //	 * Prints registry name of feature and biome.

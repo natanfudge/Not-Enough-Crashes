@@ -1,6 +1,7 @@
 plugins {
     id "architectury-plugin" version "3.1-SNAPSHOT"
     id "dev.architectury.loom" version "0.7.2-SNAPSHOT" apply false
+//    id "com.github.fudge.forgedflowerloom" version "2.0.0" apply false
     id 'maven-publish'
     id 'com.matthewprenger.cursegradle'
 }
@@ -12,6 +13,7 @@ architectury {
 
 subprojects {
     apply plugin: "dev.architectury.loom"
+//    apply plugin: "com.github.fudge.forgedflowerloom"
     apply plugin: 'maven-publish'
     apply plugin: 'com.matthewprenger.cursegradle'
 

@@ -1,5 +1,6 @@
 package fudge.notenoughcrashes.gui;
 
+import fudge.notenoughcrashes.ModConfig;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -32,7 +33,11 @@ public class InitErrorScreen extends ProblemScreen {
 
         ButtonWidget exitButton = new ButtonWidget(width / 2 - 155, height / 4 + 120 + 12 + 18,
                 310, 20, new TranslatableText("menu.quit"),
-                button -> System.exit(-1));
+                button -> {
+            // Prevent the game from freaking out when we try to close it
+                    ModConfig.instance().forceCrashScreen = false;
+                    System.exit(-1);
+                });
 
         addDrawableChild(exitButton);
     }

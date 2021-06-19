@@ -17,7 +17,7 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class NecPlatformImpl implements NecPlatform {
+public class FabricPlatform implements NecPlatform {
 
     @Override
     public Map<URI, Set<CommonModMetadata>> getModsAtLocationsInDisk() {

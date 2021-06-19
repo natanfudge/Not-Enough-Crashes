@@ -50,6 +50,19 @@ remapJar {
     classifier "fabric"
 }
 
+// Asset files will otherwise be missing when debugging
+task copyAssetFilesForDebugging(type: Copy){
+    from rootProject.file("common/src/main/resources/assets/notenoughcrashes")
+    into "${project.buildDir}/resources/main/assets/notenoughcrashes"
+    dependsOn processResources
+}
+
+assemble.dependsOn(copyAssetFilesForDebugging)
+
+//// Shut up gradle
+//shadowJar.inputs.dir("${project.buildDir}/resources/main/assets/notenoughcrashes")
+
+
 //loom {
 //    accessWidener = file("src/main/resources/notenoughcrashes.accessWidener")
 //}

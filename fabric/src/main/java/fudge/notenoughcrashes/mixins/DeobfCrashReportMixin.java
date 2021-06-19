@@ -10,9 +10,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-//TODO: move all fields that should be in common
-
 @Mixin(value = CrashReport.class, priority = 500)
+//TODO: test deobfuscation
 public abstract class DeobfCrashReportMixin implements PatchedCrashReport {
     @Shadow
     @Final
@@ -20,8 +19,8 @@ public abstract class DeobfCrashReportMixin implements PatchedCrashReport {
     /**
      * @reason Deobfuscate the stacktrace
      */
-    @Inject(method = "fillSystemDetails", at = @At("HEAD"))
-    private void beforeFillSystemDetails(CallbackInfo ci) {
+    @Inject(method = "addStackTrace", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/SystemDetails;writeTo(Ljava/lang/StringBuilder;)V"))
+    private void beforeWritingSystemDetails(CallbackInfo ci) {
         StacktraceDeobfuscator.deobfuscateThrowable(cause);
     }
 
