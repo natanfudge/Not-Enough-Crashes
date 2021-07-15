@@ -73,6 +73,11 @@ public final class CrashLogUpload {
                 }}
         );
         post.setEntity(new StringEntity(new Gson().toJson(body)));
+
+        if (ModConfig.instance().uploadCustomUserAgent != null) {
+            post.setHeader("User-Agent",ModConfig.instance().uploadCustomUserAgent);
+        }
+
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             CloseableHttpResponse response = httpClient.execute(post);
             String responseString = EntityUtils.toString(response.getEntity());

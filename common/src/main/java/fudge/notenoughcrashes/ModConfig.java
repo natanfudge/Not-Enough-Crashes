@@ -18,6 +18,8 @@ public class ModConfig {
     private static ModConfig instance = null;
 
     public CrashLogUploadType uploadCrashLogTo = CrashLogUploadType.GIST;
+    public String uploadCustomUserAgent = null;
+
     public boolean disableReturnToMainMenu = false;
     public boolean deobfuscateStackTrace = true;
     public boolean debugModIdentification = false;
