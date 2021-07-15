@@ -3,6 +3,7 @@ package fudge.notenoughcrashes.utils;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.SerializedName;
+import fudge.notenoughcrashes.ModConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -67,7 +68,7 @@ public final class CrashLogUpload {
 
         post.addHeader("Authorization", "token " + GIST_ACCESS_TOKEN);
 
-        GistPost body = new GistPost(true,
+        GistPost body = new GistPost(!ModConfig.instance().GISTUnlisted,
                 new HashMap<String, GistFile>() {{
                     put(fileName, new GistFile(text));
                 }}
