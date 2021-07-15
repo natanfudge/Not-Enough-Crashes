@@ -59,6 +59,12 @@ public final class CrashLogUpload {
                     URL = uploadToGist(text, GISTuploadKey);
                 }
                 break;
+            case HASTE:
+                URL = uploadToHaste(text);
+                break;
+            case BYTEBIN:
+                URL = uploadToByteBin(text);
+                break;
             default:
                 throw new IOException("fail, unknown provider");
         }
@@ -105,4 +111,40 @@ public final class CrashLogUpload {
 
     }
 
+    private static String uploadToHaste(String str) throws IOException {
+        HttpPost post = new HttpPost(ModConfig.instance().HASTEUrl + "documents");
+        post.setEntity(new StringEntity(str));
+        if (ModConfig.instance().uploadCustomUserAgent != null) {
+            post.setHeader("User-Agent",ModConfig.instance().uploadCustomUserAgent);
+        }
+
+        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            CloseableHttpResponse response = httpClient.execute(post);
+            String responseString = EntityUtils.toString(response.getEntity());
+            JsonObject responseJson = new Gson().fromJson(responseString, JsonObject.class);
+            String hasteKey = responseJson.getAsJsonPrimitive("key").getAsString();
+            return ModConfig.instance().HASTEUrl + "raw/" + hasteKey;
+        }
+
+    }
+    private static String uploadToByteBin(String text) throws IOException {
+        HttpPost post = new HttpPost(ModConfig.instance().BYTEBINUrl + "post");
+        if (ModConfig.instance().uploadCustomUserAgent == null) {
+            post.setHeader("User-Agent",(String.join(" ", post.getHeaders("User-Agent").toString())
+                    .concat(" NotEnoughCrashes")));
+        } else {
+            post.setHeader("User-Agent",ModConfig.instance().uploadCustomUserAgent);
+        }
+
+        post.addHeader("Content-Type", "text/plain");
+        post.setEntity(new StringEntity(text));
+
+        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            CloseableHttpResponse response = httpClient.execute(post);
+            String responseString = EntityUtils.toString(response.getEntity());
+            JsonObject responseJson = new Gson().fromJson(responseString, JsonObject.class);
+            String bytebinKey = responseJson.getAsJsonPrimitive("key").getAsString();
+            return ModConfig.instance().BYTEBINUrl + bytebinKey;
+    }
+    }
 }

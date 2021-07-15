@@ -10,7 +10,9 @@ import java.io.*;
 public class ModConfig {
 
     public enum CrashLogUploadType {
-        GIST
+        GIST,
+        HASTE,
+        BYTEBIN
     }
 
     private static final File CONFIG_FILE = new File(NecPlatform.instance().getConfigDirectory().toFile(), NotEnoughCrashes.MOD_ID + ".json");
@@ -22,6 +24,10 @@ public class ModConfig {
 
     public String GISTUploadKey = "";
     public boolean GISTUnlisted = false;
+
+    public String HASTEUrl = "https://hastebin.com/";
+
+    public String BYTEBINUrl = "https://bytebin.lucko.me/";
 
     public boolean disableReturnToMainMenu = false;
     public boolean deobfuscateStackTrace = true;
