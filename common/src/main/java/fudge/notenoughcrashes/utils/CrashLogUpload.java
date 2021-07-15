@@ -4,15 +4,20 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.SerializedName;
 import fudge.notenoughcrashes.ModConfig;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public final class CrashLogUpload {
@@ -61,6 +66,9 @@ public final class CrashLogUpload {
                 break;
             case HASTE:
                 URL = uploadToHaste(text);
+                break;
+            case PASTEBIN:
+                URL = uploadToPasteBin(text);
                 break;
             case BYTEBIN:
                 URL = uploadToByteBin(text);
@@ -127,6 +135,34 @@ public final class CrashLogUpload {
         }
 
     }
+
+    private  static  String uploadToPasteBin(String text) throws IOException {
+        HttpPost post = new HttpPost("https://pastebin.com/api/api_post.php");
+        String pastebinUploadKey = ModConfig.instance().PASTEBINUploadKey;
+        String pastebinPrivacy = ModConfig.instance().PASTEBINPrivacy.getApiValue();
+        String pastebinExpiryKey = ModConfig.instance().PASTEBINExpiry.getPastebinExpiryKey();
+
+        List<NameValuePair> params = new ArrayList<NameValuePair>(7);
+        params.add(new BasicNameValuePair("api_dev_key", pastebinUploadKey));
+        params.add(new BasicNameValuePair("api_option", "paste")); // to create
+        params.add(new BasicNameValuePair("api_paste_code", text));
+        params.add(new BasicNameValuePair("api_paste_name", "crash.txt")); // mirroring gist
+        params.add(new BasicNameValuePair("api_paste_format", "yaml")); // hl.js auto detects mc crashes as this
+        params.add(new BasicNameValuePair("api_paste_expire_date", pastebinExpiryKey));
+        params.add(new BasicNameValuePair("api_paste_private", pastebinPrivacy));
+
+        post.setEntity(new UrlEncodedFormEntity(params,"UTF-8"));
+
+        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            CloseableHttpResponse response = httpClient.execute(post);
+            String responseString = EntityUtils.toString(response.getEntity());
+            // returns a normal pastebin url, like https://pastebin.com/xxxxxxxxx
+            // inserting raw afer the .com works to return the raw content
+            responseString.replace("https://pastebin.com/","https://pastebin.com/raw/");
+            return responseString;
+        }
+    }
+
     private static String uploadToByteBin(String text) throws IOException {
         HttpPost post = new HttpPost(ModConfig.instance().BYTEBINUrl + "post");
         if (ModConfig.instance().uploadCustomUserAgent == null) {
@@ -145,6 +181,6 @@ public final class CrashLogUpload {
             JsonObject responseJson = new Gson().fromJson(responseString, JsonObject.class);
             String bytebinKey = responseJson.getAsJsonPrimitive("key").getAsString();
             return ModConfig.instance().BYTEBINUrl + bytebinKey;
-    }
+        }
     }
 }
