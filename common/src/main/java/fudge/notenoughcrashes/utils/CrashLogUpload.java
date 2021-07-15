@@ -48,14 +48,17 @@ public final class CrashLogUpload {
     }
 
     public static String upload(String text) throws IOException {
-        // Don't give a fuck about your preferences
-        return uploadToGist(text);
-//        ModConfig.CrashLogUploadType type = ModConfig.instance().uploadCrashLogTo;
-//        if (type == ModConfig.CrashLogUploadType.GIST) {
-//            return uploadToGist(text);
-//        } else {
-//            return uploadToHaste(text);
-//        }
+        String URL;
+        ModConfig.CrashLogUploadType type = ModConfig.instance().uploadCrashLogTo;
+        switch (type) {
+            case GIST:
+                    URL = uploadToGist(text);
+                break;
+            default:
+                throw new IOException("fail, unknown provider");
+        }
+
+        return URL;
     }
 
     /**
