@@ -20,7 +20,9 @@ public class ModConfig {
     public CrashLogUploadType uploadCrashLogTo = CrashLogUploadType.GIST;
     public String uploadCustomUserAgent = null;
 
+    public String GISTUploadKey = "";
     public boolean GISTUnlisted = false;
+
     public boolean disableReturnToMainMenu = false;
     public boolean deobfuscateStackTrace = true;
     public boolean debugModIdentification = false;

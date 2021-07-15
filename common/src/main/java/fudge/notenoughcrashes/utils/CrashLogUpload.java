@@ -52,24 +52,35 @@ public final class CrashLogUpload {
         ModConfig.CrashLogUploadType type = ModConfig.instance().uploadCrashLogTo;
         switch (type) {
             case GIST:
+                String GISTuploadKey = ModConfig.instance().GISTUploadKey;
+                if (GISTuploadKey == "") {
                     URL = uploadToGist(text);
+                } else {
+                    URL = uploadToGist(text, GISTuploadKey);
+                }
                 break;
             default:
                 throw new IOException("fail, unknown provider");
         }
 
         return URL;
+
+    }
+
+    private static String uploadToGist(String text) throws IOException {
+        return uploadToGist(text, GIST_ACCESS_TOKEN);
     }
 
     /**
      * @return The link of the gist
      */
-    private static String uploadToGist(String text) throws IOException {
+    private static String uploadToGist(String text, String key) throws IOException {
         HttpPost post = new HttpPost("https://api.github.com/gists");
 
         String fileName = "crash.txt";
 
-        post.addHeader("Authorization", "token " + GIST_ACCESS_TOKEN);
+
+        post.addHeader("Authorization", "token " + key);
 
         GistPost body = new GistPost(!ModConfig.instance().GISTUnlisted,
                 new HashMap<String, GistFile>() {{
