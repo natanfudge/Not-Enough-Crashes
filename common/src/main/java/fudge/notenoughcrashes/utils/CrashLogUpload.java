@@ -53,7 +53,7 @@ public final class CrashLogUpload {
     }
 
     public static String upload(String text) throws IOException {
-        String URL;
+        String URL = "";
         ModConfig.CrashLogUploadType type = ModConfig.instance().uploadCrashLogTo;
         switch (type) {
             case GIST:
@@ -74,9 +74,13 @@ public final class CrashLogUpload {
                 URL = uploadToByteBin(text);
                 break;
             default:
-                throw new IOException("fail, unknown provider");
+                // Unknown provider, defaulting to gist
+                URL = uploadToGist(text);
         }
-
+        if (URL == "") {
+            URL = uploadToGist(text); // if it can't upload here, it will error
+        }
+        //TODO: when im not on mobile, add catching of errors
         return URL;
 
     }
