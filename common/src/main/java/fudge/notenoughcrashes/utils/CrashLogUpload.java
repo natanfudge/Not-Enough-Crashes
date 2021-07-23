@@ -59,7 +59,7 @@ public final class CrashLogUpload {
         Collections.addAll(fallBackTypes, ModConfig.CrashLogUploadType.values());
         fallBackTypes.sort(new CrashLogUploadTypeComparator());
         fallBackTypes.removeIf(fallbackType -> fallbackType.getPriority() < 0);
-        System.out.println(fallBackTypes);
+
         return  fallBackTypes;
     }
     private static ArrayList<ModConfig.CrashLogUploadType> getFallBackTypes() {
@@ -78,15 +78,12 @@ public final class CrashLogUpload {
     public static String upload(String text, Boolean fallBack) throws IOException {
         String URL = "";
         ModConfig.CrashLogUploadType uploadType;
-        System.out.println("starting upload");
         if (fallBack && getFallBackTypes().isEmpty()) {
-            System.out.println("fallback + empty");
             throw new IOException("no valid fallbacks");
         } else if (fallBack) {
-            System.out.println("fallback");
             uploadType = getFallBackTypes().remove(0);
         } else { uploadType = ModConfig.instance().uploadCrashLogTo; }
-        System.out.println("type:" + uploadType + uploadType.getPriority());
+
 
     try {
 
@@ -122,18 +119,14 @@ public final class CrashLogUpload {
     } catch (IOException exception) {
         URL = "";
         exception.printStackTrace();
-        System.out.println("caught exception");
     } finally {
         if (URL.equals("")) {
-            System.out.println("url is \"\"");
+
             URL = upload(text, true);
         } else {
-            System.out.println("1 "+URL);
-            System.out.println("rebuilding");
             getFallBackTypes(true); // rebuild
         }
     }
-        System.out.println(URL);
         return URL;
 
     }
