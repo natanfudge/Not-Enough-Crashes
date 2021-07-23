@@ -2,7 +2,7 @@ package fudge.notenoughcrashes.fabric;
 
 import com.google.common.collect.Lists;
 import com.google.common.net.UrlEscapers;
-import fudge.notenoughcrashes.ModConfig;
+import fudge.notenoughcrashes.NecConfig;
 import fudge.notenoughcrashes.NotEnoughCrashes;
 import fudge.notenoughcrashes.platform.NecPlatform;
 import fudge.notenoughcrashes.stacktrace.YarnVersion;
@@ -35,7 +35,7 @@ public final class StacktraceDeobfuscator {
     // No need to deobf in dev
     private static final boolean DEBUG_DEOBF = false;
     private static final boolean ENABLE_DEOBF = (!NecPlatform.instance().isDevelopmentEnvironment()
-            && ModConfig.instance().deobfuscateStackTrace) || DEBUG_DEOBF;
+            && NecConfig.instance().deobfuscateStackTrace) || DEBUG_DEOBF;
 
     public static void init() {
         if (!ENABLE_DEOBF) return;

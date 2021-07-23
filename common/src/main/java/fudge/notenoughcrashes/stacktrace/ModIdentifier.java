@@ -1,6 +1,6 @@
 package fudge.notenoughcrashes.stacktrace;
 
-import fudge.notenoughcrashes.ModConfig;
+import fudge.notenoughcrashes.NecConfig;
 import fudge.notenoughcrashes.NotEnoughCrashes;
 import fudge.notenoughcrashes.platform.CommonModMetadata;
 import fudge.notenoughcrashes.platform.NecPlatform;
@@ -64,7 +64,7 @@ public final class ModIdentifier {
     private static final boolean FORCE_DEBUG = false;
 
     private static void debug(String message) {
-        if (FORCE_DEBUG || ModConfig.instance().debugModIdentification) NotEnoughCrashes.LOGGER.info(message);
+        if (FORCE_DEBUG || NecConfig.instance().debugModIdentification) NotEnoughCrashes.LOGGER.info(message);
     }
 
     // TODO: get a list of mixin transformers that affected the class and blame those too
@@ -97,7 +97,7 @@ public final class ModIdentifier {
             return getModAt(jar, modMap);
         } catch (URISyntaxException | IOException | ClassNotFoundException | NoClassDefFoundError e) {
             debug("Ignoring class " + className + " for identification because an error occurred");
-            if (ModConfig.instance().debugModIdentification) {
+            if (NecConfig.instance().debugModIdentification) {
                 e.printStackTrace();
             }
             return Collections.emptySet(); // we cannot do it

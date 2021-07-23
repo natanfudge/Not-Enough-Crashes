@@ -1,6 +1,6 @@
 package fudge.notenoughcrashes.gui;
 
-import fudge.notenoughcrashes.ModConfig;
+import fudge.notenoughcrashes.NecConfig;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -29,7 +29,7 @@ public class CrashScreen extends ProblemScreen {
         ButtonWidget mainMenuButton = new ButtonWidget(width / 2 - 155, height / 4 + 120 + 12, 150, 20, new TranslatableText("gui.toTitle"),
                         button -> MinecraftClient.getInstance().openScreen(new TitleScreen()));
 
-        if (ModConfig.instance().disableReturnToMainMenu) {
+        if (NecConfig.instance().disableReturnToMainMenu) {
             mainMenuButton.active = false;
             mainMenuButton.setMessage(new TranslatableText("notenoughcrashes.gui.disabledByConfig"));
         }

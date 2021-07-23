@@ -1,10 +1,9 @@
 package fudge.notenoughcrashes.gui;
 
-import fudge.notenoughcrashes.ModConfig;
+import fudge.notenoughcrashes.NecConfig;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.TranslatableText;
@@ -35,7 +34,7 @@ public class InitErrorScreen extends ProblemScreen {
                 310, 20, new TranslatableText("menu.quit"),
                 button -> {
             // Prevent the game from freaking out when we try to close it
-                    ModConfig.instance().forceCrashScreen = false;
+                    NecConfig.instance().forceCrashScreen = false;
                     System.exit(-1);
                 });
 

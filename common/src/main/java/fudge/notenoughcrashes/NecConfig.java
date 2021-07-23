@@ -3,37 +3,34 @@ package fudge.notenoughcrashes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import fudge.notenoughcrashes.platform.NecPlatform;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 
-public class ModConfig {
+public class NecConfig {
 
-    public enum CrashLogUploadType {
-        GIST(5), // attempt last
+    private static final File CONFIG_FILE = new File(NecPlatform.instance().getConfigDirectory().toFile(), NotEnoughCrashes.MOD_ID + ".json");
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    private static NecConfig instance = null;
+
+    public enum CrashLogUploadDestination {
+        GIST(3), // attempt last
         HASTE(2),
-        PASTEBIN(), // requires configuration
+        PASTEBIN(null), // requires configuration
         BYTEBIN(1);
 
-        private final int defaultPriority;
+        final Integer defaultPriority;
 
-        CrashLogUploadType(int defaultPriority) { this.defaultPriority = defaultPriority; }
-        CrashLogUploadType() { this.defaultPriority = Integer.MIN_VALUE; }
-        public int getPriority() { return this.defaultPriority; }
+        CrashLogUploadDestination(@Nullable Integer defaultPriority) { this.defaultPriority = defaultPriority; }
     }
 
     public enum PastebinPrivacy {
         PUBLIC("0"), //anyone can see it, appears in recently created
         UNLISTED("1"); // only people with the link can see it
 //        PRIVATE(2) // only you can see it (doesn't make much sense). this doesn't allow for raw download, so disabling
-
-        private final String apiValue;
-
+        final String apiValue;
         PastebinPrivacy(String apiValue) {
             this.apiValue = apiValue;
-        }
-
-        public String getApiValue() {
-            return this.apiValue;
         }
     }
 
@@ -48,29 +45,25 @@ public class ModConfig {
         SIXMONTH("6M"),
         ONEYEAR("1Y");
 
-        private final String pastebinExpiryKey;
+         final String pastebinExpiryKey;
         PastebinExpiry(String pastebinExpiry) {
             this.pastebinExpiryKey = pastebinExpiry;
         }
 
-        public String getPastebinExpiryKey() {
-            return pastebinExpiryKey;
-        }
     }
-    private static final File CONFIG_FILE = new File(NecPlatform.instance().getConfigDirectory().toFile(), NotEnoughCrashes.MOD_ID + ".json");
-    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    private static ModConfig instance = null;
 
 
 
-    public CrashLogUploadType uploadCrashLogTo = CrashLogUploadType.GIST;
+
+    public CrashLogUploadDestination uploadCrashLogTo = CrashLogUploadDestination.GIST;
     public String uploadCustomUserAgent = null;
 
-    public String GISTUploadKey = "";
-    public boolean GISTUnlisted = false;
+    //TODO: first do without records, then try to make it records.
+    static record GistConfig(String uploadKey, boolean unlisted){}
+    public GistConfig gist;
+    public String HasteUrl = "https://hastebin.com/";
 
-    public String HASTEUrl = "https://hastebin.com/";
-
+    static record PastebinConfig(String uploadKey, PastebinPrivacy)
     public String PASTEBINUploadKey = "";
     public PastebinPrivacy PASTEBINPrivacy = PastebinPrivacy.PUBLIC;
     public PastebinExpiry PASTEBINExpiry = PastebinExpiry.NEVER;
@@ -83,20 +76,20 @@ public class ModConfig {
     public boolean forceCrashScreen = false;
 
 
-    public static ModConfig instance() {
+    public static NecConfig instance() {
         if (instance != null) {
             return instance;
         }
 
         if (CONFIG_FILE.exists()) {
             try {
-                return instance = new Gson().fromJson(new FileReader(CONFIG_FILE), ModConfig.class);
+                return instance = new Gson().fromJson(new FileReader(CONFIG_FILE), NecConfig.class);
             } catch (FileNotFoundException e) {
                 throw new IllegalStateException(e);
             }
         }
 
-        instance = new ModConfig();
+        instance = new NecConfig();
 
         try (FileWriter writer = new FileWriter(CONFIG_FILE)) {
             GSON.toJson(instance, writer);

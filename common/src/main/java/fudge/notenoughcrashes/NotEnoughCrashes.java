@@ -9,7 +9,6 @@ import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.security.Permission;
 
 public class NotEnoughCrashes {
 
@@ -31,8 +30,8 @@ public class NotEnoughCrashes {
     }
 
     public static void initialize() {
-        if (ModConfig.instance().forceCrashScreen) SystemExitBlock.forbidSystemExitCall();
-        ModConfig.instance();
+        if (NecConfig.instance().forceCrashScreen) SystemExitBlock.forbidSystemExitCall();
+        NecConfig.instance();
 
         if (DEBUG_GAMELOOP) TestBlock.init();
         if (DEBUG_ENTRYPOINT) throw new NullPointerException();
