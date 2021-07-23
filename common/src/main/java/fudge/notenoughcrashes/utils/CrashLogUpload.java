@@ -15,10 +15,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public final class CrashLogUpload {
     private static String GIST_ACCESS_TOKEN_PART_1() {
@@ -52,42 +49,95 @@ public final class CrashLogUpload {
         }
     }
 
-    public static String upload(String text) throws IOException {
+    private static ArrayList<ModConfig.CrashLogUploadType> fallBackTypes;
+
+    private static ArrayList<ModConfig.CrashLogUploadType> getFallBackTypes(Boolean force) {
+        if (fallBackTypes != null && !force) {
+            return fallBackTypes;
+        }
+        fallBackTypes = new ArrayList<ModConfig.CrashLogUploadType>();
+        Collections.addAll(fallBackTypes, ModConfig.CrashLogUploadType.values());
+        fallBackTypes.sort(new CrashLogUploadTypeComparator());
+        fallBackTypes.removeIf(fallbackType -> fallbackType.getPriority() < 0);
+        System.out.println(fallBackTypes);
+        return  fallBackTypes;
+    }
+    private static ArrayList<ModConfig.CrashLogUploadType> getFallBackTypes() {
+        return getFallBackTypes(false);
+    }
+
+    private static class CrashLogUploadTypeComparator implements Comparator<ModConfig.CrashLogUploadType> {
+        @Override
+        public int compare(ModConfig.CrashLogUploadType o1, ModConfig.CrashLogUploadType o2) {
+            return Integer.compare(o1.getPriority(),o2.getPriority());
+        }
+    }
+
+    public static String upload(String text) throws IOException { return upload(text,false); }
+
+    public static String upload(String text, Boolean fallBack) throws IOException {
         String URL = "";
-        ModConfig.CrashLogUploadType type = ModConfig.instance().uploadCrashLogTo;
-        switch (type) {
+        ModConfig.CrashLogUploadType uploadType;
+        System.out.println("starting upload");
+        if (fallBack && getFallBackTypes().isEmpty()) {
+            System.out.println("fallback + empty");
+            throw new IOException("no valid fallbacks");
+        } else if (fallBack) {
+            System.out.println("fallback");
+            uploadType = getFallBackTypes().remove(0);
+        } else { uploadType = ModConfig.instance().uploadCrashLogTo; }
+        System.out.println("type:" + uploadType + uploadType.getPriority());
+
+    try {
+
+        switch (uploadType) {
             case GIST:
+            default:
                 String GISTuploadKey = ModConfig.instance().GISTUploadKey;
-                if (GISTuploadKey == "") {
-                    URL = uploadToGist(text);
-                } else {
-                    URL = uploadToGist(text, GISTuploadKey);
+
+                if (GISTuploadKey == "" || fallBack) {
+                    GISTuploadKey = GIST_ACCESS_TOKEN;
                 }
+                URL = uploadToGist(text, GISTuploadKey);
                 break;
             case HASTE:
-                URL = uploadToHaste(text);
+                String hasteUrl = ModConfig.instance().HASTEUrl;
+                if (hasteUrl == "" || fallBack) {
+                    hasteUrl = "https://hastebin.com/";
+                }
+                URL = uploadToHaste(text, hasteUrl);
                 break;
             case PASTEBIN:
                 URL = uploadToPasteBin(text);
                 break;
             case BYTEBIN:
-                URL = uploadToByteBin(text);
+                String byteUrl = ModConfig.instance().BYTEBINUrl;
+                if (byteUrl == "" || fallBack) {
+                    byteUrl = "https://bytebin.lucko.me/";
+                }
+                URL = uploadToByteBin(text, byteUrl);
                 break;
-            default:
-                // Unknown provider, defaulting to gist
-                URL = uploadToGist(text);
+
         }
-        if (URL == "") {
-            URL = uploadToGist(text); // if it can't upload here, it will error
+    } catch (IOException exception) {
+        URL = "";
+        exception.printStackTrace();
+        System.out.println("caught exception");
+    } finally {
+        if (URL.equals("")) {
+            System.out.println("url is \"\"");
+            URL = upload(text, true);
+        } else {
+            System.out.println("1 "+URL);
+            System.out.println("rebuilding");
+            getFallBackTypes(true); // rebuild
         }
-        //TODO: when im not on mobile, add catching of errors
+    }
+        System.out.println(URL);
         return URL;
 
     }
 
-    private static String uploadToGist(String text) throws IOException {
-        return uploadToGist(text, GIST_ACCESS_TOKEN);
-    }
 
     /**
      * @return The link of the gist
@@ -96,8 +146,6 @@ public final class CrashLogUpload {
         HttpPost post = new HttpPost("https://api.github.com/gists");
 
         String fileName = "crash.txt";
-
-
         post.addHeader("Authorization", "token " + key);
 
         GistPost body = new GistPost(!ModConfig.instance().GISTUnlisted,
@@ -123,8 +171,8 @@ public final class CrashLogUpload {
 
     }
 
-    private static String uploadToHaste(String str) throws IOException {
-        HttpPost post = new HttpPost(ModConfig.instance().HASTEUrl + "documents");
+    private static String uploadToHaste(String str, String url) throws IOException {
+        HttpPost post = new HttpPost(url + "documents");
         post.setEntity(new StringEntity(str));
         if (ModConfig.instance().uploadCustomUserAgent != null) {
             post.setHeader("User-Agent",ModConfig.instance().uploadCustomUserAgent);
@@ -135,7 +183,7 @@ public final class CrashLogUpload {
             String responseString = EntityUtils.toString(response.getEntity());
             JsonObject responseJson = new Gson().fromJson(responseString, JsonObject.class);
             String hasteKey = responseJson.getAsJsonPrimitive("key").getAsString();
-            return ModConfig.instance().HASTEUrl + "raw/" + hasteKey;
+            return url + "raw/" + hasteKey;
         }
 
     }
@@ -167,8 +215,8 @@ public final class CrashLogUpload {
         }
     }
 
-    private static String uploadToByteBin(String text) throws IOException {
-        HttpPost post = new HttpPost(ModConfig.instance().BYTEBINUrl + "post");
+    private static String uploadToByteBin(String text, String url) throws IOException {
+        HttpPost post = new HttpPost(url + "post");
         if (ModConfig.instance().uploadCustomUserAgent == null) {
             post.setHeader("User-Agent",(String.join(" ", post.getHeaders("User-Agent").toString())
                     .concat(" NotEnoughCrashes")));
@@ -184,7 +232,7 @@ public final class CrashLogUpload {
             String responseString = EntityUtils.toString(response.getEntity());
             JsonObject responseJson = new Gson().fromJson(responseString, JsonObject.class);
             String bytebinKey = responseJson.getAsJsonPrimitive("key").getAsString();
-            return ModConfig.instance().BYTEBINUrl + bytebinKey;
+            return url + bytebinKey;
         }
     }
 }

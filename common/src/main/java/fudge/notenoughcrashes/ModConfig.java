@@ -9,10 +9,16 @@ import java.io.*;
 public class ModConfig {
 
     public enum CrashLogUploadType {
-        GIST,
-        HASTE,
-        PASTEBIN,
-        BYTEBIN
+        GIST(5), // attempt last
+        HASTE(2),
+        PASTEBIN(), // requires configuration
+        BYTEBIN(1);
+
+        private final int defaultPriority;
+
+        CrashLogUploadType(int defaultPriority) { this.defaultPriority = defaultPriority; }
+        CrashLogUploadType() { this.defaultPriority = Integer.MIN_VALUE; }
+        public int getPriority() { return this.defaultPriority; }
     }
 
     public enum PastebinPrivacy {
