@@ -1,3 +1,6 @@
+## 3.4.0
+- Provided many configuration options for uploading the crash logs, see NecConfig.java, thanks to The456Gamer!
+- The config format for uploading crash logs has changed, refer to NecConfig.java for the new format. 
 ## 3.3.1
 - Fixed mod identification not working.
 - Fixed deobfuscation sometimes not working.
