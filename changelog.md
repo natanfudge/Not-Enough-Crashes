@@ -1,3 +1,5 @@
+### 3.4.3
+- Fixed deobfuscation not working in dedicated servers, courtesy of @Fourmisain!
 ### 3.4.2
 - Prevented extreme cases where the crash log could become incredibly large. 
 - Fixed the crash screen not showing suspected mods in cases where adding them to the crash log was prevented by conflicting mods.
