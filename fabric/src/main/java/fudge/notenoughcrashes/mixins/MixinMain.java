@@ -1,5 +1,6 @@
 package fudge.notenoughcrashes.mixins;
 
+import fudge.notenoughcrashes.fabric.StacktraceDeobfuscator;
 import fudge.notenoughcrashes.platform.NecPlatformStorage;
 import fudge.notenoughcrashes.platform.fabric.FabricPlatform;
 import net.minecraft.server.Main;
@@ -13,5 +14,6 @@ public class MixinMain {
     @Inject(method = "main", at = @At("HEAD"))
     private static void createPlatformInstanceAsSoonAsPossibleOnClient(String[] args, CallbackInfo ci){
         NecPlatformStorage.INSTANCE_SET_ONLY_BY_SPECIFIC_PLATFORMS_VERY_EARLY = new FabricPlatform();
+        StacktraceDeobfuscator.init();
     }
 }
