@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -22,7 +23,7 @@ public class YarnVersion {
     public String version;
     public boolean stable;
 
-    private static final String YARN_API_ENTRYPOINT = "https://meta.fabricmc.net/v2/versions/yarn/" +  MinecraftVersion.create().getName();
+    private static final String YARN_API_ENTRYPOINT = "https://meta.fabricmc.net/v2/versions/yarn/" + MinecraftVersion.create().getName();
     private static final Path VERSION_FILE = NotEnoughCrashes.DIRECTORY.resolve("yarn-version.txt");
     private static String versionMemCache = null;
 
@@ -34,7 +35,11 @@ public class YarnVersion {
                 URLConnection request = url.openConnection();
                 request.connect();
 
-                YarnVersion[] versions = new Gson().fromJson(new InputStreamReader((InputStream) request.getContent()), YarnVersion[].class);
+                InputStream response = (InputStream) request.getContent();
+                YarnVersion[] versions = new Gson().fromJson(new InputStreamReader(response), YarnVersion[].class);
+                if (versions.length == 0) {
+                    throw new IllegalStateException("No yarn versions were received at the API endpoint. Received json: " + getString(response));
+                }
                 String version = Arrays.stream(versions).max(Comparator.comparingInt(v -> v.build)).get().version;
                 NotEnoughCrashes.ensureDirectoryExists();
                 Files.write(VERSION_FILE, version.getBytes());
@@ -45,5 +50,9 @@ public class YarnVersion {
         }
 
         return versionMemCache;
+    }
+
+    private static String getString(InputStream inputStream) throws IOException {
+        return new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
     }
 }

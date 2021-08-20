@@ -1,3 +1,5 @@
+import com.modrinth.minotaur.TaskModrinthUpload
+
 plugins {
     id "com.github.johnrengelman.shadow" version "5.2.0"
 }
@@ -87,7 +89,7 @@ curseforge {
     }
 }
 
-task publishModrinth (type: com.modrinth.minotaur.TaskModrinthUpload){ // Make sure it runs after build!
+task publishModrinth (type: TaskModrinthUpload){
     group = "upload"
     token =  project.hasProperty("modrinth_api_key") ? project.modrinth_api_key : ""
     projectId = 'yM94ont6'
@@ -96,12 +98,13 @@ task publishModrinth (type: com.modrinth.minotaur.TaskModrinthUpload){ // Make s
     uploadFile = remapJar
     addGameVersion(curseforge_mc_version)
     addLoader('fabric')
-    changelog = rootProject.file("changelog.md")
+    changelog = rootProject.file("changelog.md").text
     versionType = "RELEASE"
 
 }
 
 task publishFabric {
+    group = "publishing"
     afterEvaluate {
         dependsOn(curseforge353890)
         dependsOn(publishModrinth)

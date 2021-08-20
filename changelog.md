@@ -1,3 +1,8 @@
+### 3.4.2
+- Prevented extreme cases where the crash log could become incredibly large. 
+- Fixed the crash screen not showing suspected mods in cases where adding them to the crash log was prevented by conflicting mods.
+### 3.4.1
+- Improved internal error message.
 ## 3.4.0
 - Provided many configuration options for uploading the crash logs, see NecConfig.java, thanks to The456Gamer!
 - The config format for uploading crash logs has changed, refer to NecConfig.java for the new format. 

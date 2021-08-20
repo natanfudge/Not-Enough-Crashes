@@ -42,7 +42,15 @@ public abstract class MixinCrashReport implements PatchedCrashReport {
     @Shadow
     @Final
     private String message;
-    private Set<CommonModMetadata> suspectedMods = null;
+
+
+    private Set<CommonModMetadata> suspectedMods;
+
+    // We inject into the constructor so we can have access to the Throwable. Otherwise [cause] will be null.
+    @Inject(method = "<init>", at = @At("TAIL"))
+    private void atConstruction(String message, Throwable cause, CallbackInfo ci) {
+        suspectedMods = ModIdentifier.identifyFromStacktrace(cause);
+    }
 
     @Shadow
     private static String generateWittyComment() {
@@ -68,8 +76,6 @@ public abstract class MixinCrashReport implements PatchedCrashReport {
     private void beforeSystemDetailsAreWritten(CallbackInfo ci) {
         systemDetailsSection.addSection("Suspected Mods", () -> {
             try {
-                suspectedMods = ModIdentifier.identifyFromStacktrace(cause);
-
                 List<String> modNames = new ArrayList<>();
                 for (CommonModMetadata mod : suspectedMods) {
                     modNames.add(mod.getName() + " (" + mod.getId() + ")");

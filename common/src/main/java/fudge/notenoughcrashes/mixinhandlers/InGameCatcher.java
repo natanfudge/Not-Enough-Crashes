@@ -23,7 +23,7 @@ public class InGameCatcher {
     private static int clientCrashCount = 0;
     private static int serverCrashCount = 0;
 
-    public static void handleClientCrash(CrashReport report,  Queue<Runnable> renderTaskQueue) {
+    public static void handleClientCrash(CrashReport report, Queue<Runnable> renderTaskQueue) {
         clientCrashCount++;
         getClient().addDetailsToCrashReport(report);
         addInfoToCrash(report);
@@ -32,7 +32,7 @@ public class InGameCatcher {
         resetGameState(renderTaskQueue);
         boolean reported = report.getCause() instanceof CrashException;
         LOGGER.fatal(reported ? "Reported" : "Unreported" + " exception thrown!", report.getCause());
-        displayCrashScreen(report);
+        displayCrashScreen(report, clientCrashCount);
     }
 
     private static void resetModState() {
@@ -44,7 +44,7 @@ public class InGameCatcher {
     public static void handleServerCrash(CrashReport report) {
         serverCrashCount++;
         addInfoToCrash(report);
-        displayCrashScreen(report);
+        displayCrashScreen(report, serverCrashCount);
     }
 
     private static MinecraftClient getClient() {
@@ -56,10 +56,13 @@ public class InGameCatcher {
         report.getSystemDetailsSection().addSection("Integrated Server Crashes Since Restart", () -> String.valueOf(serverCrashCount));
     }
 
-    private static void displayCrashScreen(CrashReport report) {
+    private static void displayCrashScreen(CrashReport report, int crashCount) {
         try {
             if (EntryPointCatcher.crashedDuringStartup()) {
                 throw new IllegalStateException("Could not initialize startup crash screen");
+            }
+            if (crashCount > 20) {
+                throw new IllegalStateException("The game has crashed an excessive amount of times");
             }
 
             CrashUtils.outputReport(report);

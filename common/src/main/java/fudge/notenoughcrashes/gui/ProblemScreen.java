@@ -60,15 +60,13 @@ public abstract class ProblemScreen extends Screen {
     private Text getSuspectedModsText() {
         Set<CommonModMetadata> suspectedMods = ((PatchedCrashReport) report).getSuspectedMods();
 
+        //TODO: this shouldn't be possible to be null anymore
         if (suspectedMods == null) return new TranslatableText("notenoughcrashes.crashscreen.identificationErrored");
-//        if (suspectedMods.isEmpty()) return new TranslatableText("notenoughcrashes.crashscreen.unknownCause");
 
 
         // Minecraft exists and basically any stack trace, and loader exists in any launch,
         // it's better not to include them in the list of mods.
         suspectedMods.removeIf(mod -> IGNORED_MODS.contains(mod.getId()));
-
-//        suspectedMods.add(new ModMetadataV1())
 
         if (suspectedMods.isEmpty()) return new TranslatableText("notenoughcrashes.crashscreen.noModsErrored");
 
