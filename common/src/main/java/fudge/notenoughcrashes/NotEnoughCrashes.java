@@ -1,7 +1,6 @@
 package fudge.notenoughcrashes;
 
 import fudge.notenoughcrashes.platform.NecPlatform;
-import fudge.notenoughcrashes.test.TestBlock;
 import fudge.notenoughcrashes.utils.SystemExitBlock;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,8 +17,13 @@ public class NotEnoughCrashes {
 
     public static final Logger LOGGER = LogManager.getLogger(NAME);
 
+    public static final boolean LOG_DEBUG = false;
+
+    public static void logDebug(String message) {
+        if (LOG_DEBUG) LOGGER.info(message);
+    }
+
     private static final boolean DEBUG_ENTRYPOINT = false;
-    private static final boolean DEBUG_GAMELOOP = false;
     public static final boolean FILTER_ENTRYPOINT_CATCHER = true;
 
 
@@ -33,7 +37,6 @@ public class NotEnoughCrashes {
         if (NecConfig.instance().forceCrashScreen) SystemExitBlock.forbidSystemExitCall();
         NecConfig.instance();
 
-        if (DEBUG_GAMELOOP) TestBlock.init();
         if (DEBUG_ENTRYPOINT) throw new NullPointerException();
 //        TestKeyBinding.init();
     }

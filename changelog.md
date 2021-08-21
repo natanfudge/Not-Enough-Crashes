@@ -1,3 +1,6 @@
+### 3.4.4
+- Fixed integrated server crashes not being caught.
+- Fixed state sometimes not being cleaned up properly which could cause the game to infinitely crash.
 ### 3.4.3
 - Fixed deobfuscation not working in dedicated servers, courtesy of @Fourmisain!
 ### 3.4.2

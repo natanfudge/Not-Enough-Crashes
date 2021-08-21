@@ -6,11 +6,9 @@ import fudge.notenoughcrashes.stacktrace.ModIdentifier;
 import net.minecraft.util.SystemDetails;
 import net.minecraft.util.crash.CrashReport;
 import net.minecraft.util.crash.CrashReportSection;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -18,18 +16,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @SuppressWarnings("unused")
 @Mixin(value = CrashReport.class, priority = 500)
 public abstract class MixinCrashReport implements PatchedCrashReport {
 
-    private static final boolean ANNOYING_EASTER_EGG_DISABLED = true;
     @Shadow
     @Final
     private SystemDetails systemDetailsSection;
@@ -76,36 +71,14 @@ public abstract class MixinCrashReport implements PatchedCrashReport {
     private void beforeSystemDetailsAreWritten(CallbackInfo ci) {
         systemDetailsSection.addSection("Suspected Mods", () -> {
             try {
-                List<String> modNames = new ArrayList<>();
-                for (CommonModMetadata mod : suspectedMods) {
-                    modNames.add(mod.getName() + " (" + mod.getId() + ")");
-                }
-
-                if (!modNames.isEmpty()) return StringUtils.join(modNames, ", ");
-                else return "Unknown";
+                if (!suspectedMods.isEmpty()) {
+                    return suspectedMods.stream()
+                            .map((mod) -> mod.getName() + " (" + mod.getId() + ")")
+                            .collect(Collectors.joining(", "));
+                } else return "None";
             } catch (Throwable e) {
                 return ExceptionUtils.getStackTrace(e).replace("\t", "    ");
             }
         });
-    }
-
-
-    private String generateEasterEggComment() {
-        try {
-            String comment = generateWittyComment();
-
-            if (comment.contains("Dinnerbone")) {
-                CommonModMetadata mod = suspectedMods.iterator().next();
-                if (!mod.getAuthors().isEmpty()) {
-                    String author = mod.getAuthors().iterator().next();
-                    comment = comment.replace("Dinnerbone", author);
-                }
-            }
-
-            return comment;
-        } catch (Throwable ignored) {
-        }
-
-        return generateWittyComment();
     }
 }

@@ -25,14 +25,28 @@ public class InGameCatcher {
 
     public static void handleClientCrash(CrashReport report, Queue<Runnable> renderTaskQueue) {
         clientCrashCount++;
-        getClient().addDetailsToCrashReport(report);
         addInfoToCrash(report);
 
-        resetModState();
-        resetGameState(renderTaskQueue);
+        resetStates();
         boolean reported = report.getCause() instanceof CrashException;
         LOGGER.fatal(reported ? "Reported" : "Unreported" + " exception thrown!", report.getCause());
         displayCrashScreen(report, clientCrashCount);
+        // Continue game loop
+        MinecraftClient.getInstance().run();
+    }
+
+    private static void resetStates() {
+        GlUtil.resetState();
+        StateManager.resetStates();
+        resetModState();
+        resetCriticalGameState();
+    }
+
+    // Sometimes the game fails to reset this so we make sure it happens ourselves
+    private static void resetCriticalGameState() {
+        MinecraftClient client = MinecraftClient.getInstance();
+        client.player = null;
+        client.world = null;
     }
 
     private static void resetModState() {
@@ -51,7 +65,7 @@ public class InGameCatcher {
         return MinecraftClient.getInstance();
     }
 
-    private static void addInfoToCrash(CrashReport report) {
+    public static void addInfoToCrash(CrashReport report) {
         report.getSystemDetailsSection().addSection("Client Crashes Since Restart", () -> String.valueOf(clientCrashCount));
         report.getSystemDetailsSection().addSection("Integrated Server Crashes Since Restart", () -> String.valueOf(serverCrashCount));
     }
@@ -82,50 +96,50 @@ public class InGameCatcher {
         }
     }
 
-    public static void resetGameState(Queue<Runnable> renderTaskQueue) {
-        try {
-            // Free up memory such that this works properly in case of an OutOfMemoryError
-            Integer originalReservedMemorySize = null;
-            try { // In case another mod actually deletes the memoryReserve field
-                if (MinecraftClient.memoryReservedForCrash != null) {
-                    originalReservedMemorySize = MinecraftClient.memoryReservedForCrash.length;
-                    MinecraftClient.memoryReservedForCrash = new byte[0];
-                }
-            } catch (Throwable ignored) {
-            }
-
-            // Reset registered resettables
-            StateManager.resetStates();
-
-            // Close the world
-            if (getClient().getNetworkHandler() != null) {
-                // Fix: Close the connection to avoid receiving packets from old server
-                // when playing in another world (MC-128953)
-                getClient().getNetworkHandler().getConnection().disconnect(new LiteralText(String.format("[%s] Client crashed", NotEnoughCrashes.NAME)));
-            }
-
-            getClient().disconnect(new SaveLevelScreen(new TranslatableText("menu.savingLevel")));
-            renderTaskQueue.clear(); // Fix: method_1550(null, ...) only clears when integrated server is running
-
-            // Reset graphics
-            GlUtil.resetState();
-
-            // Re-create memory reserve so that future crashes work well too
-            if (originalReservedMemorySize != null) {
-                try {
-                    MinecraftClient.memoryReservedForCrash = new byte[originalReservedMemorySize];
-                } catch (Throwable ignored) {
-                }
-            }
-
-            System.gc();
-        } catch (Throwable t) {
-            LOGGER.error("Failed to reset state after a crash", t);
-            try {
-                StateManager.resetStates();
-                GlUtil.resetState();
-            } catch (Throwable ignored) {
-            }
-        }
-    }
+//    public static void resetGameState(Queue<Runnable> renderTaskQueue) {
+//        try {
+//            // Free up memory such that this works properly in case of an OutOfMemoryError
+//            Integer originalReservedMemorySize = null;
+//            try { // In case another mod actually deletes the memoryReserve field
+//                if (MinecraftClient.memoryReservedForCrash != null) {
+//                    originalReservedMemorySize = MinecraftClient.memoryReservedForCrash.length;
+//                    MinecraftClient.memoryReservedForCrash = new byte[0];
+//                }
+//            } catch (Throwable ignored) {
+//            }
+//
+//            // Reset registered resettables
+//
+//
+//            // Close the world
+//            if (getClient().getNetworkHandler() != null) {
+//                // Fix: Close the connection to avoid receiving packets from old server
+//                // when playing in another world (MC-128953)
+//                getClient().getNetworkHandler().getConnection().disconnect(new LiteralText(String.format("[%s] Client crashed", NotEnoughCrashes.NAME)));
+//            }
+//
+//            getClient().disconnect(new SaveLevelScreen(new TranslatableText("menu.savingLevel")));
+//            renderTaskQueue.clear(); // Fix: method_1550(null, ...) only clears when integrated server is running
+//
+//            // Reset graphics
+//            GlUtil.resetState();
+//
+//            // Re-create memory reserve so that future crashes work well too
+//            if (originalReservedMemorySize != null) {
+//                try {
+//                    MinecraftClient.memoryReservedForCrash = new byte[originalReservedMemorySize];
+//                } catch (Throwable ignored) {
+//                }
+//            }
+//
+//            System.gc();
+//        } catch (Throwable t) {
+//            LOGGER.error("Failed to reset state after a crash", t);
+//            try {
+//                StateManager.resetStates();
+//                GlUtil.resetState();
+//            } catch (Throwable ignored) {
+//            }
+//        }
+//    }
 }

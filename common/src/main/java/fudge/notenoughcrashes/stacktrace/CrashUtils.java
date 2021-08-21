@@ -24,6 +24,7 @@ public final class CrashUtils {
         }
     }
 
+    // We don't use the Mojang printCrashReport because it calls System.exit(), lol
     public static void outputReport(CrashReport report) {
         try {
             if (report.getFile() == null) {

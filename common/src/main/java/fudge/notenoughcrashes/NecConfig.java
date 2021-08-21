@@ -27,30 +27,6 @@ public class NecConfig {
     }
 
 
-    public static NecConfig instance() {
-        if (instance != null) {
-            return instance;
-        }
-
-        if (CONFIG_FILE.exists()) {
-            try {
-                return instance = new Gson().fromJson(new FileReader(CONFIG_FILE), NecConfig.class);
-            } catch (FileNotFoundException e) {
-                throw new IllegalStateException(e);
-            }
-        }
-
-        instance = new NecConfig();
-
-        try (FileWriter writer = new FileWriter(CONFIG_FILE)) {
-            GSON.toJson(instance, writer);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        return instance;
-    }
-
     public enum CrashLogUploadDestination {
         GIST(3), // attempt last
         HASTE(2),
@@ -103,6 +79,37 @@ public class NecConfig {
         public Privacy privacy = Privacy.PUBLIC;
         public Expiry expiry = Expiry.NEVER;
     }
+
+
+    public static NecConfig instance() {
+        if (instance != null) {
+            return instance;
+        }
+
+        if (CONFIG_FILE.exists()) {
+            try {
+                return instance = new Gson().fromJson(new FileReader(CONFIG_FILE), NecConfig.class);
+            } catch (FileNotFoundException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+
+        instance = new NecConfig();
+
+        try (FileWriter writer = new FileWriter(CONFIG_FILE)) {
+            GSON.toJson(instance, writer);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return instance;
+    }
+
+
+
+
+
+
 
     private static final File CONFIG_FILE = new File(NecPlatform.instance().getConfigDirectory().toFile(), NotEnoughCrashes.MOD_ID + ".json");
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
