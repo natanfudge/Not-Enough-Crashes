@@ -1,6 +1,6 @@
 # Not Enough Crashes
-Discord: [![Discord](https://img.shields.io/discord/219787567262859264.svg)](https://discord.gg/CFaCu97)
-Fabric download: [![CurseForge](http://cf.way2muchnoise.eu/not-enough-crashes.svg)](https://minecraft.curseforge.com/projects/not-enough-crashes)
+Discord:  [![Discord](https://img.shields.io/discord/219787567262859264.svg)](https://discord.gg/CFaCu97)  
+Fabric download:  [![CurseForge](http://cf.way2muchnoise.eu/not-enough-crashes.svg)](https://minecraft.curseforge.com/projects/not-enough-crashes)
 
 Forge download:  [![CurseForge](http://cf.way2muchnoise.eu/not-enough-crashes-forge.svg)](https://minecraft.curseforge.com/projects/not-enough-crashes-forge)
 
