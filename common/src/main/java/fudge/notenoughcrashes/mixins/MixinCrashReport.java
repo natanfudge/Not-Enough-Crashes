@@ -82,3 +82,5 @@ public abstract class MixinCrashReport implements PatchedCrashReport {
         });
     }
 }
+
+//                            mods.joinToString(", ") {mod -> "${mod.name} (${mod.id})"

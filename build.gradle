@@ -33,9 +33,6 @@ allprojects {
     apply plugin: "java"
     apply plugin: "architectury-plugin"
 
-    sourceCompatibility = JavaVersion.VERSION_16
-    targetCompatibility = JavaVersion.VERSION_16
-
     archivesBaseName = rootProject.archives_base_name
     ext.total_version = "$mod_version+$minecraft_version"
     version = ext.total_version
@@ -43,12 +40,12 @@ allprojects {
 
     tasks.withType(JavaCompile) {
         options.encoding = "UTF-8"
-
-        // Minecraft 1.17 (21w19a) upwards uses Java 16.
-        it.options.release = 16
     }
 
     java {
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(16))
+        }
         withSourcesJar()
     }
 
