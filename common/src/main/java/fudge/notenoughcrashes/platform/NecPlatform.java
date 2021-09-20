@@ -1,5 +1,6 @@
 package fudge.notenoughcrashes.platform;
 
+import fudge.notenoughcrashes.stacktrace.ModIdentifier;
 import net.minecraft.util.Identifier;
 
 import java.net.URI;
@@ -14,7 +15,7 @@ public interface NecPlatform {
     }
 
 
-    Map<URI, Set<CommonModMetadata>> getModsAtLocationsInDisk();
+    ModsByLocation getModsAtLocationsInDisk();
 
     Path getGameDirectory();
 
@@ -22,6 +23,9 @@ public interface NecPlatform {
 
     boolean isDevelopmentEnvironment();
 
+    /**
+     * Get be multiple metadatas because forge supports having multiple mods under one jar
+     */
     List<CommonModMetadata> getModMetadatas(String modId);
 
 }

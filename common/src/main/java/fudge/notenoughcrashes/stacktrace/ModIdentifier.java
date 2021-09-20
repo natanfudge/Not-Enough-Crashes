@@ -3,6 +3,7 @@ package fudge.notenoughcrashes.stacktrace;
 import fudge.notenoughcrashes.NecConfig;
 import fudge.notenoughcrashes.NotEnoughCrashes;
 import fudge.notenoughcrashes.platform.CommonModMetadata;
+import fudge.notenoughcrashes.platform.ModsByLocation;
 import fudge.notenoughcrashes.platform.NecPlatform;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,12 +14,13 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.CodeSource;
 import java.util.*;
 import java.util.function.Consumer;
 
 public final class ModIdentifier {
-
     private static final Logger LOGGER = LogManager.getLogger();
 
     public static Set<CommonModMetadata> identifyFromStacktrace(Throwable e) {
@@ -26,7 +28,7 @@ public final class ModIdentifier {
         // Include suppressed exceptions too
         visitChildrenThrowables(e, throwable -> {
             for (var newMod : identifyFromThrowable(throwable)) {
-                if (mods.stream().noneMatch(mod -> mod.getId().equals(newMod.getId()))) {
+                if (mods.stream().noneMatch(mod -> mod.id().equals(newMod.id()))) {
                     mods.add(newMod);
                 }
             }
@@ -40,8 +42,7 @@ public final class ModIdentifier {
     }
 
     private static Set<CommonModMetadata> identifyFromThrowable(Throwable e) {
-        Map<URI, Set<CommonModMetadata>> modMap = NecPlatform.instance().getModsAtLocationsInDisk();
-
+        ModsByLocation modMap = NecPlatform.instance().getModsAtLocationsInDisk();
 
         Set<String> involvedClasses = new LinkedHashSet<>();
         while (e != null) {
@@ -68,7 +69,7 @@ public final class ModIdentifier {
     }
 
     // TODO: get a list of mixin transformers that affected the class and blame those too
-    private static Set<CommonModMetadata> identifyFromClass(String className, Map<URI, Set<CommonModMetadata>> modMap) {
+    private static Set<CommonModMetadata> identifyFromClass(String className, ModsByLocation modMap) {
         debug("Analyzing " + className);
         // Skip identification for Mixin, one's mod copy of the library is shared with all other mods
         if (className.startsWith("org.spongepowered.asm.mixin.")) {
@@ -91,11 +92,9 @@ public final class ModIdentifier {
                 return Collections.emptySet();
             }
 
-            URI jar = jarFromUrl(url);
-
             // Get the mod containing that class
-            return getModAt(jar, modMap);
-        } catch (URISyntaxException | IOException | ClassNotFoundException | NoClassDefFoundError e) {
+            return getModAt(Paths.get(url.toURI()), modMap);
+        } catch (URISyntaxException /*| IOException*/ | ClassNotFoundException | NoClassDefFoundError e) {
             debug("Ignoring class " + className + " for identification because an error occurred");
             if (NecConfig.instance().debugModIdentification) {
                 e.printStackTrace();
@@ -105,33 +104,27 @@ public final class ModIdentifier {
     }
 
     @Nullable
-    private static Set<CommonModMetadata> getModAt(URI uri, Map<URI, Set<CommonModMetadata>> modMap) {
-        Set<CommonModMetadata> mod = modMap.get(uri);
+    private static Set<CommonModMetadata> getModAt(Path path, ModsByLocation modMap) {
+        Set<CommonModMetadata> mod = modMap.get(path);
         if (mod != null) return mod;
-        else if (uri.toString().startsWith("modjar://")) {
-            // Forge tends to give modjar://crashmod type urls, so we try to figure out the mod based on that.
-            return new HashSet<>(NecPlatform.instance().getModMetadatas(uri.toString().substring("modjar://".length())));
-        } else if (NecPlatform.instance().isDevelopmentEnvironment()) {
+        //TODO: handle forge mod jars when it's supported
+//        else if (uri.toString().startsWith("modjar://")) {
+//            // Forge tends to give modjar://crashmod type urls, so we try to figure out the mod based on that.
+//            return new HashSet<>(NecPlatform.instance().getModMetadatas(uri.toString().substring("modjar://".length())));
+//        }
+        else if (NecPlatform.instance().isDevelopmentEnvironment()) {
 
             // For some reason, in dev, the mod being tested has the 'resources' folder as the origin instead of the 'classes' folder.
-            String resourcesPath = uri.getPath()
+            String resourcesPathString = path.toString().replace("\\","/")
                     // Make it work with Architectury as well
                     .replace("common/build/classes/java/main", "fabric/build/resources/main")
                     .replace("common/build/classes/kotlin/main", "fabric/build/resources/main")
                     .replace("classes/java/main", "resources/main")
                     .replace("classes/kotlin/main", "resources/main");
-            URI resourcesUri = new File(resourcesPath).toURI();
-            return modMap.get(resourcesUri);
+            Path resourcesPath = Paths.get(resourcesPathString) ;
+            return modMap.get(resourcesPath);
         } else {
             return null;
         }
-    }
-
-
-    public static URI jarFromUrl(URL url) throws URISyntaxException, IOException {
-        if (url.getProtocol().equals("jar")) {
-            url = new URL(url.getFile().substring(0, url.getFile().indexOf('!')));
-        }
-        return url.toURI().normalize();
     }
 }

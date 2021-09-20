@@ -73,7 +73,7 @@ public abstract class MixinCrashReport implements PatchedCrashReport {
             try {
                 if (!suspectedMods.isEmpty()) {
                     return suspectedMods.stream()
-                            .map((mod) -> mod.getName() + " (" + mod.getId() + ")")
+                            .map((mod) -> mod.name() + " (" + mod.id() + ")")
                             .collect(Collectors.joining(", "));
                 } else return "None";
             } catch (Throwable e) {

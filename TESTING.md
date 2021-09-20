@@ -1,7 +1,7 @@
 # Testing Not Enough Crashes
  This documents details how to test Not Enough Crashes after making changes.  
 
-Apply these tests in the production environment. 
+Apply these tests in the production environment, with the TestMod mod (`cd TestMod && gradlew build`).
 
 
 ## Crash Handling

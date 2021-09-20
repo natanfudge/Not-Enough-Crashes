@@ -154,16 +154,12 @@ public final class StacktraceDeobfuscator {
         }
     }
 
-    private static final List<String> filteredClasses = Arrays.asList("io.github.giantnuker.fabric.loadcatcher.EntrypointCatcher$LoaderClientReplacement"
-                    , "io.github.giantnuker.fabric.loadcatcher.EntrypointCatcher");
 
     // No need to insert multiple watermarks in one exception
     public static StackTraceElement[] deobfuscateStacktrace(StackTraceElement[] stackTrace, boolean insertWatermark) {
         if (stackTrace.length == 0) return stackTrace;
 
-        // Make the stack trace nicer by removing entrypoint catcher's cruft
-        List<StackTraceElement> stackTraceList = NotEnoughCrashes.FILTER_ENTRYPOINT_CATCHER ? Arrays.stream(stackTrace).filter(element -> !filteredClasses.contains(element.getClassName()))
-                        .collect(Collectors.toList()) : Lists.newArrayList(stackTrace);
+        List<StackTraceElement> stackTraceList = Lists.newArrayList(stackTrace);
         if (ENABLE_DEOBF
                         // Check it wasn't deobfuscated already. This can happen when this is called both by DeobfuscatingRewritePolicy
                         // and then CrashReport mixin. They don't cover all cases alone though so we need both.

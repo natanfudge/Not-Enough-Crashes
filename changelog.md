@@ -1,3 +1,10 @@
+## 3.6.0
+- Should now work with the Quilt mod loader
+- Fixed Jar-in-jar mods not being blamed for crashes
+## 3.5.0
+- No longer depends on Fabric API for localization to work properly.
+### 3.4.5
+- Fixed some regressions in cleaning up after crash. This fixes not being disconnected from servers.
 ### 3.4.4
 - Fixed integrated server crashes not being caught.
 - Fixed state sometimes not being cleaned up properly which could cause the game to infinitely crash.

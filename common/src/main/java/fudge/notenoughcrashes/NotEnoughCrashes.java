@@ -1,5 +1,6 @@
 package fudge.notenoughcrashes;
 
+import fudge.notenoughcrashes.platform.CommonModMetadata;
 import fudge.notenoughcrashes.platform.NecPlatform;
 import fudge.notenoughcrashes.utils.SystemExitBlock;
 import org.apache.logging.log4j.LogManager;
@@ -8,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 public class NotEnoughCrashes {
 
@@ -24,10 +26,15 @@ public class NotEnoughCrashes {
     }
 
     private static final boolean DEBUG_ENTRYPOINT = false;
-    public static final boolean FILTER_ENTRYPOINT_CATCHER = true;
 
-
+    public static final boolean ENABLE_GAMELOOP_CATCHING = true;
     public static final boolean ENABLE_ENTRYPOINT_CATCHING = !NecPlatform.instance().isDevelopmentEnvironment() || DEBUG_ENTRYPOINT;
+
+    public static CommonModMetadata getMetadata() {
+        List<CommonModMetadata> mods = NecPlatform.instance().getModMetadatas(MOD_ID);
+        if (mods.size() != 1) throw new IllegalStateException("NEC should have exactly one mod under its ID");
+        return mods.get(0);
+    }
 
     public static void ensureDirectoryExists() throws IOException {
         Files.createDirectories(DIRECTORY);
@@ -38,7 +45,6 @@ public class NotEnoughCrashes {
         NecConfig.instance();
 
         if (DEBUG_ENTRYPOINT) throw new NullPointerException();
-//        TestKeyBinding.init();
     }
 
 

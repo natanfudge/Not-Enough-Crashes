@@ -2,40 +2,15 @@ package fudge.notenoughcrashes.platform;
 
 import org.jetbrains.annotations.Nullable;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
-public class CommonModMetadata {
-    private final String id;
-    private final String name;
-    @Nullable
-    private final String issuesPage;
-    @Nullable
-    private final List<String> authors;
+public record CommonModMetadata(
+        String id, String name, @Nullable String issuesPage, @Nullable List<String> authors, Path rootPath
+) {
 
-    public CommonModMetadata(String id, String name, @Nullable String issuesPage,@Nullable List<String> authors) {
-        this.id = id;
-        this.name = name;
-        this.issuesPage = issuesPage;
-        this.authors = authors;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    @Nullable
-    public String getIssuesPage() {
-        return issuesPage;
-    }
-
-    @Nullable
-    public List<String> getAuthors() {
-        return authors;
-    }
-
-    public static final CommonModMetadata STUB = new CommonModMetadata("","UNKNOWN",null,null);
+    public static final CommonModMetadata STUB = new CommonModMetadata(
+            "", "UNKNOWN", null, null, Paths.get("")
+    );
 }

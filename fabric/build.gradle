@@ -17,7 +17,7 @@ dependencies {
 //    minecraft("com.mojang:minecraft:${rootProject.minecraft_version}")
     mappings("net.fabricmc:yarn:${rootProject.yarn_mappings}:v2")
     modImplementation("net.fabricmc:fabric-loader:${rootProject.loader_version}")
-    modImplementation("net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_version}")
+//    modImplementation("net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_version}")
     // Remove the next line if you don't want to depend on the API
 //    modCompile("me.shedaniel:architectury:${rootProject.architectury_version}:fabric")
 
@@ -54,20 +54,17 @@ remapJar {
 
 // Asset files will otherwise be missing when debugging
 task copyAssetFilesForDebugging(type: Copy){
-    from rootProject.file("common/src/main/resources/assets/notenoughcrashes")
-    into "${project.buildDir}/resources/main/assets/notenoughcrashes"
+    def inAssets = rootProject.file("common/src/main/resources/assets/notenoughcrashes")
+    def outAssets = new File("${project.buildDir}/resources/main/assets/notenoughcrashes")
+//    inputs.dir(inAssets)
+//    outputs.dir(outAssets)
+    from inAssets
+    into outAssets
     dependsOn processResources
 }
 
 assemble.dependsOn(copyAssetFilesForDebugging)
 
-//// Shut up gradle
-//shadowJar.inputs.dir("${project.buildDir}/resources/main/assets/notenoughcrashes")
-
-
-//loom {
-//    accessWidener = file("src/main/resources/notenoughcrashes.accessWidener")
-//}
 
 curseforge {
     apiKey = project.hasProperty("curseforge_api_key") ? project.curseforge_api_key : ""

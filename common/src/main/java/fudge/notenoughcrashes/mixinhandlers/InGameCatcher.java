@@ -6,6 +6,7 @@ import fudge.notenoughcrashes.api.NotEnoughCrashesApi;
 import fudge.notenoughcrashes.gui.CrashScreen;
 import fudge.notenoughcrashes.stacktrace.CrashUtils;
 import fudge.notenoughcrashes.utils.GlUtil;
+import fudge.notenoughcrashes.utils.NecLocalization;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.SaveLevelScreen;
 import net.minecraft.text.LiteralText;
@@ -23,7 +24,7 @@ public class InGameCatcher {
     private static int clientCrashCount = 0;
     private static int serverCrashCount = 0;
 
-    public static void handleClientCrash(CrashReport report, Queue<Runnable> renderTaskQueue) {
+    public static void handleClientCrash(CrashReport report) {
         clientCrashCount++;
         addInfoToCrash(report);
 
@@ -32,7 +33,7 @@ public class InGameCatcher {
         LOGGER.fatal(reported ? "Reported" : "Unreported" + " exception thrown!", report.getCause());
         displayCrashScreen(report, clientCrashCount);
         // Continue game loop
-        MinecraftClient.getInstance().run();
+        getClient().run();
     }
 
     private static void resetStates() {
@@ -42,9 +43,21 @@ public class InGameCatcher {
         resetCriticalGameState();
     }
 
+    public static void cleanupBeforeMinecraft(Queue<Runnable> renderTaskQueue) {
+        if (getClient().getNetworkHandler() != null) {
+            // Fix: Close the connection to avoid receiving packets from old server
+            // when playing in another world (MC-128953)
+            getClient().getNetworkHandler().getConnection().disconnect(new LiteralText(String.format("[%s] Client crashed", NotEnoughCrashes.NAME)));
+        }
+
+        getClient().disconnect(new SaveLevelScreen(new TranslatableText("menu.savingLevel")));
+
+        renderTaskQueue.clear(); // Fix: method_1550(null, ...) only clears when integrated server is running
+    }
+
     // Sometimes the game fails to reset this so we make sure it happens ourselves
     private static void resetCriticalGameState() {
-        MinecraftClient client = MinecraftClient.getInstance();
+        MinecraftClient client = getClient();
         client.player = null;
         client.world = null;
     }
@@ -118,7 +131,7 @@ public class InGameCatcher {
 //                getClient().getNetworkHandler().getConnection().disconnect(new LiteralText(String.format("[%s] Client crashed", NotEnoughCrashes.NAME)));
 //            }
 //
-//            getClient().disconnect(new SaveLevelScreen(new TranslatableText("menu.savingLevel")));
+//            getClient().disconnect(new SaveLevelScreen(NecLocalization.translatableText("menu.savingLevel")));
 //            renderTaskQueue.clear(); // Fix: method_1550(null, ...) only clears when integrated server is running
 //
 //            // Reset graphics

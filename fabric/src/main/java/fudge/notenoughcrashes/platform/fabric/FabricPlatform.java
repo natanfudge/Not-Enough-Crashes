@@ -1,18 +1,14 @@
 package fudge.notenoughcrashes.platform.fabric;
 
 import fudge.notenoughcrashes.platform.CommonModMetadata;
+import fudge.notenoughcrashes.platform.ModsByLocation;
 import fudge.notenoughcrashes.platform.NecPlatform;
-import fudge.notenoughcrashes.stacktrace.ModIdentifier;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.metadata.ContactInformation;
 import net.fabricmc.loader.api.metadata.ModMetadata;
 import net.fabricmc.loader.api.metadata.Person;
-import net.minecraft.util.Identifier;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -20,21 +16,14 @@ import java.util.stream.Collectors;
 public class FabricPlatform implements NecPlatform {
 
     @Override
-    public Map<URI, Set<CommonModMetadata>> getModsAtLocationsInDisk() {
-        Map<URI, Set<CommonModMetadata>> modMap = new HashMap<>();
+    public ModsByLocation getModsAtLocationsInDisk() {
+        Map<Path, Set<CommonModMetadata>> modMap = new HashMap<>();
         for (ModContainer mod : FabricLoader.getInstance().getAllMods()) {
-            if (!(mod instanceof net.fabricmc.loader.ModContainer)) {
-                continue;
-            }
-            try {
-                URI modJar = ModIdentifier.jarFromUrl(((net.fabricmc.loader.ModContainer) mod).getOriginUrl());
-                modMap.computeIfAbsent(modJar, f -> new HashSet<>()).add(toCommon(mod.getMetadata()));
-            } catch (URISyntaxException | IOException ignored) {
-                // cannot find jar, so bruh
-            }
+            Path path = mod.getRootPath();
+            modMap.computeIfAbsent(path, f -> new HashSet<>()).add(toCommon(mod));
         }
 
-        return modMap;
+        return new ModsByLocation(modMap);
     }
 
     @Override
@@ -53,9 +42,9 @@ public class FabricPlatform implements NecPlatform {
     }
 
     @Override
-    public  List<CommonModMetadata> getModMetadatas(String modId) {
+    public List<CommonModMetadata> getModMetadatas(String modId) {
         Optional<ModContainer> mod = FabricLoader.getInstance().getModContainer(modId);
-        return mod.map(modContainer -> Collections.singletonList(toCommon(modContainer.getMetadata()))).orElse(new ArrayList<>());
+        return mod.map(modContainer -> Collections.singletonList(toCommon(modContainer))).orElse(new ArrayList<>());
     }
 
     // Earlier elements will be used first, may need to add more elements if people start using weird shit
@@ -74,8 +63,10 @@ public class FabricPlatform implements NecPlatform {
         return null;
     }
 
-    private static CommonModMetadata toCommon(ModMetadata mod) {
+    private static CommonModMetadata toCommon(ModContainer modContainer) {
+        ModMetadata mod = modContainer.getMetadata();
         return new CommonModMetadata(mod.getId(), mod.getName(), getIssuesPage(mod.getContact()),
-                mod.getAuthors().stream().map(Person::getName).collect(Collectors.toList()));
+                mod.getAuthors().stream().map(Person::getName).collect(Collectors.toList()), modContainer.getRootPath()
+        );
     }
 }
