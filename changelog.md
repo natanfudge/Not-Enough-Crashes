@@ -1,3 +1,6 @@
+### 3.6.1
+- Should now work with the Quilt mod loader, with `deobfuscateStackTrace` set to false in the config.
+  Currently, catching initialization errors and deobfuscation is not supported in Quilt.
 ## 3.6.0
 - ~~Should now work with the Quilt mod loader~~ not yet
 - Fixed Jar-in-jar mods not being blamed for crashes

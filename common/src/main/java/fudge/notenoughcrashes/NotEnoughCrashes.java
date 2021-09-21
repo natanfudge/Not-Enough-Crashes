@@ -28,7 +28,10 @@ public class NotEnoughCrashes {
     private static final boolean DEBUG_ENTRYPOINT = false;
 
     public static final boolean ENABLE_GAMELOOP_CATCHING = true;
-    public static final boolean ENABLE_ENTRYPOINT_CATCHING = !NecPlatform.instance().isDevelopmentEnvironment() || DEBUG_ENTRYPOINT;
+    public static  boolean enableEntrypointCatching() {
+        return (!NecPlatform.instance().isDevelopmentEnvironment() || DEBUG_ENTRYPOINT)
+                && NecConfig.instance().catchInitializationCrashes;
+    }
 
     public static CommonModMetadata getMetadata() {
         List<CommonModMetadata> mods = NecPlatform.instance().getModMetadatas(MOD_ID);

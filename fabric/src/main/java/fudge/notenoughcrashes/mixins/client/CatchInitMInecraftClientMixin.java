@@ -8,10 +8,7 @@ import net.fabricmc.loader.entrypoint.minecraft.hooks.EntrypointClient;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.crash.CrashReport;
 import net.minecraft.util.thread.ReentrantThreadExecutor;
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
-import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
@@ -25,9 +22,10 @@ import java.util.Queue;
 @SuppressWarnings("StaticVariableMayNotBeInitialized")
 public abstract class CatchInitMInecraftClientMixin  {
 
-    @Redirect(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/fabricmc/loader/entrypoint/minecraft/hooks/EntrypointClient;start(Ljava/io/File;Ljava/lang/Object;)V", remap = false))
+    // require = 0 to support quilt
+    @Redirect(method = "<init>", require = 0, at = @At(value = "INVOKE", target = "Lnet/fabricmc/loader/entrypoint/minecraft/hooks/EntrypointClient;start(Ljava/io/File;Ljava/lang/Object;)V", remap = false))
     private void catchFabricInit(File runDir, Object gameInstance) {
-        if(NotEnoughCrashes.ENABLE_ENTRYPOINT_CATCHING) {
+        if (NotEnoughCrashes.enableEntrypointCatching()) {
             try {
                 EntrypointClient.start(runDir, gameInstance);
             }catch (Throwable throwable) {
