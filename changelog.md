@@ -1,3 +1,5 @@
+### 3.6.2
+- Fixed text not being localized to English when the translation is not available for the chosen language.
 ### 3.6.1
 - Should now work with the Quilt mod loader, with `deobfuscateStackTrace` set to false in the config.
   Currently, catching initialization errors and deobfuscation is not supported in Quilt.
