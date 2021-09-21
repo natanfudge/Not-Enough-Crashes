@@ -1,5 +1,5 @@
 ## 3.6.0
-- Should now work with the Quilt mod loader
+- ~~Should now work with the Quilt mod loader~~ not yet
 - Fixed Jar-in-jar mods not being blamed for crashes
 ## 3.5.0
 - No longer depends on Fabric API for localization to work properly.

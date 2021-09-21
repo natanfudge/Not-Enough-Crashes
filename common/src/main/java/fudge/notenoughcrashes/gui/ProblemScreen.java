@@ -111,12 +111,12 @@ public abstract class ProblemScreen extends Screen {
 //                                uriField = Screen.class.getDeclaredField("clickedLink");
 //                                uriField.setAccessible(true);
 //                                uriField.set(ProblemScreen.this, new URI(hasteLink));
-                        MinecraftClient.getInstance().openScreen(new ConfirmChatLinkScreen(b -> {
+                        MinecraftClient.getInstance().setScreen(new ConfirmChatLinkScreen(b -> {
                             if (b) {
                                 Util.getOperatingSystem().open(hasteLink);
                             }
 
-                            MinecraftClient.getInstance().openScreen(construct(report));
+                            MinecraftClient.getInstance().setScreen(construct(report));
                         }, hasteLink, true));
                     } catch (Throwable e) {
                         LOGGER.error("Exception when crash menu button clicked:", e);

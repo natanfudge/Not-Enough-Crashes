@@ -27,7 +27,7 @@ public class CrashScreen extends ProblemScreen {
     public void init() {
         super.init();
         ButtonWidget mainMenuButton = new ButtonWidget(width / 2 - 155, height / 4 + 120 + 12, 150, 20, new TranslatableText("gui.toTitle"),
-                button -> MinecraftClient.getInstance().openScreen(new TitleScreen()));
+                button -> MinecraftClient.getInstance().setScreen(new TitleScreen()));
 
         if (NecConfig.instance().disableReturnToMainMenu) {
             mainMenuButton.active = false;

@@ -49,7 +49,7 @@ public class EntryPointCatcher {
     @Environment(EnvType.CLIENT)
     public static void displayInitErrorScreen() {
         try {
-            MinecraftClient.getInstance().openScreen(new InitErrorScreen(crashReport));
+            MinecraftClient.getInstance().setScreen(new InitErrorScreen(crashReport));
         } catch (Throwable t) {
             CrashReport additionalReport = CrashReport.create(t, "Displaying init error screen");
             LOGGER.error("An uncaught exception occured while displaying the init error screen, making normal report instead", t);

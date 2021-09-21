@@ -100,7 +100,7 @@ public class InGameCatcher {
             getClient().inGameHud.getChatHud().clear(true);
 
             // Display the crash screen
-            getClient().openScreen(new CrashScreen(report));
+            getClient().setScreen(new CrashScreen(report));
         } catch (Throwable t) {
             // The crash screen has crashed. Report it normally instead.
             LOGGER.error("An uncaught exception occured while displaying the crash screen, making normal report instead", t);
