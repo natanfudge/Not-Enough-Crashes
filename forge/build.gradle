@@ -1,4 +1,3 @@
-
 plugins {
     id "com.github.johnrengelman.shadow" version "5.0.0"
     id 'org.spongepowered.plugin' version '0.9.0'
@@ -14,8 +13,10 @@ architectury {
 }
 
 loom {
-    mixinConfigs = ["notenoughcrashes.mixins.json", "notenoughcrashes.forge.mixins.json"]
-    useFabricMixin = true
+    forge {
+        mixinConfigs = ["notenoughcrashes.mixins.json", "notenoughcrashes.forge.mixins.json"]
+        useCustomMixin = true
+    }
 }
 
 dependencies {
@@ -60,7 +61,7 @@ remapJar {
 jar {
     manifest {
         attributes([
-                "MixinConfigs"            : "notenoughcrashes.mixins.json"
+                "MixinConfigs": "notenoughcrashes.mixins.json"
         ])
     }
 }
