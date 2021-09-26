@@ -56,7 +56,7 @@ public abstract class ProblemScreen extends Screen {
     }
 
 
-    private static final Set<String> IGNORED_MODS = new HashSet<>(Arrays.asList("minecraft", "fabricloader", "loadcatcher", "jumploader"));
+    private static final Set<String> IGNORED_MODS = new HashSet<>(Arrays.asList("minecraft", "fabricloader", "loadcatcher", "jumploader", "quilt_loader"));
 
     private Text getSuspectedModsText() {
         Set<CommonModMetadata> suspectedMods = ((PatchedCrashReport) report).getSuspectedMods();

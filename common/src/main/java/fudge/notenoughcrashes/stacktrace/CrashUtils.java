@@ -13,7 +13,7 @@ import java.util.Date;
 
 public final class CrashUtils {
 
-    private static final Logger LOGGER = LogManager.getLogger("TMC");
+    private static final Logger LOGGER = LogManager.getLogger("NEC");
     private static boolean isClient;
 
     static {

@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "quilt_loader": {
+    "group": "fudge.notenoughcrashes",
+    "id": "notenoughcrashes",
+    "version": "${version}",
+    "entrypoints": {
+      "main": [
+        "fudge.notenoughcrashes.fabric.NotEnoughCrashesFabric"
+      ]
+    },
+    "depends": [
+      {
+        "id": "minecraft",
+        "versions": ">=1.17.1"
+      }
+    ],
+    "metadata": {
+      "name": "Not Enough Crashes",
+      "description": "A fork of TooManyCrashes, a port of VanillaFix's crash improvement features to Fabric and Quilt mod loaders, for Minecraft 1.15+",
+      "contributors": {
+        "Fudge": "NEC Dev",
+        "Runemoro": "TMC Dev",
+        "Siuolplex": "NEC Contributor",
+        "liach": "TMC Contributor"
+      },
+      "contact": [
+        {"issues": "https://github.com/natanfudge/Not-Enough-Crashes/issues"},
+        {"sources": "https://github.com/natanfudge/Not-Enough-Crashes"},
+        {"homepage": "https://www.curseforge.com/minecraft/mc-mods/not-enough-crashes"},
+        {"discord": "https://discord.gg/6TfUuZ2GSe"}
+      ],
+      "license": "MIT",
+      "icon": "icon.png"
+    }
+  },
+  "mixin": [
+    "notenoughcrashes.mixins.json",
+    "notenoughcrashes.fabric.mixins.json"
+  ]
+}
