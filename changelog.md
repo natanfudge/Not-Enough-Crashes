@@ -1,3 +1,5 @@
+### 3.6.3
+- Quilt now absolutely, officially, works, just as well as Fabric does. 
 ### 3.6.2
 - Fixed text not being localized to English when the translation is not available for the chosen language.
 ### 3.6.1

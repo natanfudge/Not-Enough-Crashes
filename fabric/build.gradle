@@ -13,10 +13,19 @@ architectury {
     fabric()
 }
 
+repositories {
+    maven {
+        name = "Quilt"
+        url = "https://maven.quiltmc.org/repository/release/"
+    }
+}
+
 dependencies {
 //    minecraft("com.mojang:minecraft:${rootProject.minecraft_version}")
     mappings("net.fabricmc:yarn:${rootProject.yarn_mappings}:v2")
     modImplementation("net.fabricmc:fabric-loader:${rootProject.loader_version}")
+    compileOnly("org.quiltmc:quilt-loader:0.13.2")
+
 //    modImplementation("net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_version}")
     // Remove the next line if you don't want to depend on the API
 //    modCompile("me.shedaniel:architectury:${rootProject.architectury_version}:fabric")
