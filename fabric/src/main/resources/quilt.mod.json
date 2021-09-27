@@ -17,7 +17,7 @@
     ],
     "metadata": {
       "name": "Not Enough Crashes",
-      "description": "A fork of TooManyCrashes, a port of VanillaFix's crash improvement features to Fabric and Quilt mod loaders, for Minecraft 1.15+",
+      "description": "Improves crashes in Minecraft - allows returning to title screen, blaming causing mods, and more.",
       "contributors": {
         "Fudge": "NEC Dev",
         "Runemoro": "TMC Dev",
