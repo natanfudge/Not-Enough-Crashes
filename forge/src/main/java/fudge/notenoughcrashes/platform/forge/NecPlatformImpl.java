@@ -1,16 +1,14 @@
 package fudge.notenoughcrashes.platform.forge;
 
 import fudge.notenoughcrashes.platform.CommonModMetadata;
+import fudge.notenoughcrashes.platform.ModsByLocation;
 import fudge.notenoughcrashes.platform.NecPlatform;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.FMLPaths;
-import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
-import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
+import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.forgespi.language.IModInfo;
 
-import java.net.URI;
-import java.net.URL;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -19,17 +17,17 @@ public class NecPlatformImpl implements NecPlatform {
 
 
     @Override
-    public Map<URI, Set<CommonModMetadata>> getModsAtLocationsInDisk() {
-        Map<URI, Set<CommonModMetadata>> modMap = new HashMap<>();
+    public ModsByLocation getModsAtLocationsInDisk() {
+        Map<Path, Set<CommonModMetadata>> modMap = new HashMap<>();
 
-        for (ModFileInfo modFile : ModList.get().getModFiles()) {
-            URI modJar = modFile.getFile().getFilePath().toUri();
+        for (IModFileInfo modFile : ModList.get().getModFiles()) {
+            Path modJar = modFile.getFile().getFilePath();
             for (IModInfo modInfo : modFile.getMods()) {
                 modMap.computeIfAbsent(modJar, f -> new HashSet<>()).add(toCommon(modInfo));
             }
         }
 
-        return modMap;
+        return new ModsByLocation(modMap);
     }
 
     @Override
@@ -49,17 +47,20 @@ public class NecPlatformImpl implements NecPlatform {
 
     @Override
     public List<CommonModMetadata> getModMetadatas(String modId) {
-        ModFileInfo mod = ModList.get().getModFileById(modId);
-        if (mod == null) return Collections.emptyList();
-        return mod.getMods().stream().map(NecPlatformImpl::toCommon).collect(Collectors.toList());
+        IModFileInfo file = ModList.get().getModFileById(modId);
+        if (file == null) return Collections.emptyList();
+        return file.getMods().stream().map(NecPlatformImpl::toCommon).collect(Collectors.toList());
     }
 
     private static CommonModMetadata toCommon(IModInfo imod) {
-        if (!(imod instanceof ModInfo)) return CommonModMetadata.STUB;
-        ModInfo mod = (ModInfo) imod;
-        URL issueUrl = mod.getOwningFile().getIssueURL();
-        Object authorsObj = mod.getConfigElement("authors").orElse(null);
+        Optional<String> issueUrl = imod.getOwningFile().getConfig().getConfigElement("issueTrackerURL");
+        Object authorsObj = imod.getConfig().getConfigElement("authors").orElse(null);
         List<String> authors = authorsObj instanceof String ? Collections.singletonList((String) authorsObj) : (List<String>) authorsObj;
-        return new CommonModMetadata(mod.getModId(), mod.getDisplayName(), issueUrl == null ? null : issueUrl.toExternalForm(), authors);
+        return new CommonModMetadata(imod.getModId(),
+                imod.getDisplayName(),
+                issueUrl.orElse(null),
+                authors,
+                imod.getOwningFile().getFile().getFilePath()
+        );
     }
 }

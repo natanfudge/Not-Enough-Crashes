@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Main.class)
 public class MixinMain {
-    @Inject(method = "main", at = @At("HEAD"))
+    @Inject(method = "main", at = @At("HEAD"), remap = false)
     private static void createPlatformInstanceAsSoonAsPossibleOnClient(String[] args, CallbackInfo ci){
         NecPlatformStorage.INSTANCE_SET_ONLY_BY_SPECIFIC_PLATFORMS_VERY_EARLY = new NecPlatformImpl();
     }

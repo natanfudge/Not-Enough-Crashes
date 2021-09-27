@@ -22,7 +22,6 @@ repositories {
 
 dependencies {
 //    minecraft("com.mojang:minecraft:${rootProject.minecraft_version}")
-    mappings("net.fabricmc:yarn:${rootProject.yarn_mappings}:v2")
     modImplementation("net.fabricmc:fabric-loader:${rootProject.loader_version}")
     compileOnly("org.quiltmc:quilt-loader:0.13.2")
 
@@ -30,10 +29,10 @@ dependencies {
     // Remove the next line if you don't want to depend on the API
 //    modCompile("me.shedaniel:architectury:${rootProject.architectury_version}:fabric")
 
-    implementation(project(path: ":common")) {
+    implementation(project(path: ":common", configuration: "dev")) {
         transitive = false
     }
-    developmentFabric(project(path: ":common")) {
+    developmentFabric(project(path: ":common", configuration: "dev")) {
         transitive = false
     }
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) {

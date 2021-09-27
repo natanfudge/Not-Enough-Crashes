@@ -9,20 +9,20 @@ version = "${version}"
 displayName = "Not Enough Crashes"
 authors = "Fudge"
 description = '''
-A port of VanillaFix's crash improvement features for Minecraft 1.16+
+Improves crashes in Minecraft - allows returning to title screen, blaming causing mods, and more.
 '''
 logoFile = "icon.png"
 
 [[dependencies.notenoughcrashes]]
 modId = "forge"
 mandatory = true
-versionRange = "[35,)"
+versionRange = "[37.0.59,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.notenoughcrashes]]
 modId = "minecraft"
 mandatory = true
-versionRange = "[1.16.2,)"
+versionRange = "[1.17.1,)"
 ordering = "NONE"
 side = "BOTH"
