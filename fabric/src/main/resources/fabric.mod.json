@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "notenoughcrashes",
   "name": "Not Enough Crashes",
-  "description": "A fork of TooManyCrashes, a port of VanillaFix's crash improvement features to Fabric, for Minecraft 1.15+",
+  "description": "Improves crashes in Minecraft - allows returning to title screen, blaming causing mods, and more.",
   "version": "${version}",
   "license": "MIT",
   "contact": {

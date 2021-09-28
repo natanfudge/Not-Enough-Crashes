@@ -49,6 +49,4 @@ public class NotEnoughCrashes {
 
         if (DEBUG_ENTRYPOINT) throw new NullPointerException();
     }
-
-
 }

@@ -16,6 +16,7 @@ public class NecConfig {
     public boolean catchInitializationCrashes = true;
     public boolean debugModIdentification = false;
     public boolean forceCrashScreen = false;
+    public int crashLimit = 20;
     public CrashUpload crashlogUpload = new CrashUpload();
 
     public static class CrashUpload {
@@ -81,7 +82,6 @@ public class NecConfig {
         public Expiry expiry = Expiry.NEVER;
     }
 
-
     public static NecConfig instance() {
         if (instance != null) {
             return instance;
@@ -106,15 +106,7 @@ public class NecConfig {
         return instance;
     }
 
-
-
-
-
-
-
     private static final File CONFIG_FILE = new File(NecPlatform.instance().getConfigDirectory().toFile(), NotEnoughCrashes.MOD_ID + ".json");
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static NecConfig instance = null;
-
-
 }
