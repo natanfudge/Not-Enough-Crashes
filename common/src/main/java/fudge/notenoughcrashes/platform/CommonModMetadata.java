@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Objects;
 
+public final class CommonModMetadata {
 
     public static final CommonModMetadata STUB = new CommonModMetadata(
             "", "UNKNOWN", null, null, Paths.get("")
