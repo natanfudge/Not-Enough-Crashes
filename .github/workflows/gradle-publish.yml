@@ -8,7 +8,7 @@ jobs:
     strategy:
       matrix:
         java: [ 16 ]
-        os: [ ubuntu-latest, windows-latest]
+        os: [windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - name: 1 - Checkout repository
@@ -23,7 +23,7 @@ jobs:
       - name: 4 - Build
         run: ./gradlew build
       - name: 5 - Capture & upload build artifacts
-        if: ${{ runner.os == 'Linux' }}
+        if: ${{ runner.os == 'windows-latest' }}
         uses: actions/upload-artifact@v2
         with:
           name: Artifacts
