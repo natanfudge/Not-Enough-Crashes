@@ -1,3 +1,5 @@
+### 3.6.4
+- Added some Quilt-specific features, courtesy of @Siuolthepic!
 ### 3.6.3
 - Quilt now absolutely, officially, works, just as well as Fabric does. 
 ### 3.6.2

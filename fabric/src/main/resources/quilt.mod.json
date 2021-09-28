@@ -19,10 +19,14 @@
       "name": "Not Enough Crashes",
       "description": "Improves crashes in Minecraft - allows returning to title screen, blaming causing mods, and more.",
       "contributors": {
-        "Fudge": "NEC Maintainer",
+        "Fudge": "Maintainer",
         "Runemoro": "TMC Dev",
-        "Siuolplex": "NEC Contributor",
-        "liach": "TMC Contributor"
+        "Liach": "TMC Contributor",
+        "Siuolplex": "Contributor",
+        "the456gamer" : "Contributor",
+        "WuzgXY" : "Translator",
+        "Madis0" : "Translator",
+        "Fourmisain": "Contributor"
       },
       "contact": [
         {"issues": "https://github.com/natanfudge/Not-Enough-Crashes/issues"},
