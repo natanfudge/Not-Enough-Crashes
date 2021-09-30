@@ -1,4 +1,4 @@
-package fudge.notenoughcrashes.mixins;
+package fudge.notenoughcrashes.fabric.mixins;
 
 import fudge.notenoughcrashes.patches.PatchedCrashReport;
 import fudge.notenoughcrashes.fabric.StacktraceDeobfuscator;

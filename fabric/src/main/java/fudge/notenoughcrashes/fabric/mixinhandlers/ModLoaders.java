@@ -1,4 +1,4 @@
-package fudge.notenoughcrashes.mixinhandlers;
+package fudge.notenoughcrashes.fabric.mixinhandlers;
 
 import net.fabricmc.loader.entrypoint.minecraft.hooks.EntrypointClient;
 

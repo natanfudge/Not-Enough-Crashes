@@ -1,4 +1,4 @@
-package fudge.notenoughcrashes.platform.forge;
+package fudge.notenoughcrashes.forge.platform;
 
 import fudge.notenoughcrashes.platform.CommonModMetadata;
 import fudge.notenoughcrashes.platform.ModsByLocation;

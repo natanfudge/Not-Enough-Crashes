@@ -1,8 +1,8 @@
-package fudge.notenoughcrashes.mixins.client;
+package fudge.notenoughcrashes.fabric.mixins.client;
 
 import fudge.notenoughcrashes.NotEnoughCrashes;
+import fudge.notenoughcrashes.fabric.mixinhandlers.ModLoaders;
 import fudge.notenoughcrashes.mixinhandlers.EntryPointCatcher;
-import fudge.notenoughcrashes.mixinhandlers.ModLoaders;
 import net.minecraft.client.MinecraftClient;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

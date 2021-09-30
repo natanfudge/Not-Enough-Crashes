@@ -1,8 +1,8 @@
-package fudge.notenoughcrashes.mixins.client;
+package fudge.notenoughcrashes.fabric.mixins.client;
 
 import fudge.notenoughcrashes.fabric.StacktraceDeobfuscator;
 import fudge.notenoughcrashes.platform.NecPlatformStorage;
-import fudge.notenoughcrashes.platform.fabric.FabricPlatform;
+import fudge.notenoughcrashes.fabric.platform.FabricPlatform;
 import net.minecraft.client.main.Main;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
