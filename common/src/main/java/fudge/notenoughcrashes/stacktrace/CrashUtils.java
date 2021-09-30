@@ -1,5 +1,6 @@
 package fudge.notenoughcrashes.stacktrace;
 
+import fudge.notenoughcrashes.NotEnoughCrashes;
 import fudge.notenoughcrashes.platform.NecPlatform;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
@@ -13,7 +14,6 @@ import java.util.Date;
 
 public final class CrashUtils {
 
-    private static final Logger LOGGER = LogManager.getLogger("TMC");
     private static boolean isClient;
 
     static {
@@ -39,10 +39,10 @@ public final class CrashUtils {
                 report.writeToFile(reportFile);
             }
         } catch (Throwable e) {
-            LOGGER.fatal("Failed saving report", e);
+            NotEnoughCrashes.LOGGER.fatal("Failed saving report", e);
         }
 
-        LOGGER.fatal("Minecraft ran into a problem! " + (report.getFile() != null ? "Report saved to: " + report.getFile() :
+        NotEnoughCrashes.LOGGER.fatal("Minecraft ran into a problem! " + (report.getFile() != null ? "Report saved to: " + report.getFile() :
                 "Crash report could not be saved.") + "\n" +
                 report.asString());
     }

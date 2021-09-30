@@ -47,6 +47,10 @@ processResources {
     filesMatching("fabric.mod.json") {
         expand "version": project.version
     }
+
+    filesMatching("quilt.mod.json") {
+        expand "version": project.version
+    }
 }
 
 shadowJar {
