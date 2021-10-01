@@ -103,7 +103,6 @@ task copyAssetFilesForDebugging(type: Copy) {
     dependsOn rootProject.processResources
 }
 
-//TODO: now we need to fix mods paths
 classes.dependsOn(copyAssetFilesForDebugging)
 
 //runClient.dependsOn(assemble)

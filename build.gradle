@@ -42,8 +42,6 @@ allprojects {
         options.encoding = "UTF-8"
     }
 
-//    sourceCompatibility = 16
-//    targetCompatibility = 16
     java {
         toolchain {
             languageVersion.set(JavaLanguageVersion.of(16))

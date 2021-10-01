@@ -74,7 +74,6 @@ task copyAssetFilesForDebugging(type: Copy) {
     dependsOn rootProject.processResources
 }
 
-//TODO: it crashes, but it's probably related to localization.
 classes.dependsOn(copyAssetFilesForDebugging)
 
 

@@ -48,8 +48,6 @@ public class NotEnoughCrashes {
     }
 
     public static void initialize() {
-//        logDebug("alo debug?");
-//        System.out.println("ALO????");
         if (NecConfig.instance().forceCrashScreen) SystemExitBlock.forbidSystemExitCall();
         NecConfig.instance();
 

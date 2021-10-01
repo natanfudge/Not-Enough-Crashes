@@ -42,12 +42,6 @@ public abstract class MixinCrashReport implements PatchedCrashReport {
 
     private Set<CommonModMetadata> suspectedMods;
 
-    // We inject into the constructor so we can have access to the Throwable. Otherwise [cause] will be null.
-//    @Inject(method = "<init>", at = @At("TAIL"))
-//    private void atConstruction(String message, Throwable cause, CallbackInfo ci) {
-//        suspectedMods
-//    }
-
     @Shadow
     private static String generateWittyComment() {
         return null;
