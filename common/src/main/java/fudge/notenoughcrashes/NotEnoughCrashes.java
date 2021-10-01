@@ -17,18 +17,22 @@ public class NotEnoughCrashes {
     public static final String NAME = "Not Enough Crashes";
     public static final String MOD_ID = "notenoughcrashes";
 
-    public static final Logger LOGGER = LogManager.getLogger(NAME);
+    public static Logger getLogger() {
+        // Create a new logger every time because Forge blocks loggers created in one context from working in another context.
+        return LogManager.getLogger(NAME);
+    }
 
-    public static final boolean LOG_DEBUG = false;
+    private static final boolean LOG_DEBUG = false;
 
     public static void logDebug(String message) {
-        if (LOG_DEBUG) LOGGER.info(message);
+        if (LOG_DEBUG) getLogger().error(message);
     }
 
     private static final boolean DEBUG_ENTRYPOINT = false;
 
     public static final boolean ENABLE_GAMELOOP_CATCHING = true;
-    public static  boolean enableEntrypointCatching() {
+
+    public static boolean enableEntrypointCatching() {
         return (!NecPlatform.instance().isDevelopmentEnvironment() || DEBUG_ENTRYPOINT)
                 && NecConfig.instance().catchInitializationCrashes;
     }

@@ -1,8 +1,12 @@
 # Testing Not Enough Crashes
  This documents details how to test Not Enough Crashes after making changes.  
 
-Apply these tests in the production environment, with the TestMod mod (`cd TestMod && gradlew build`).
-
+Apply these tests in the production environment, with the test mod:
+- Fabric: `cd TestFabricMod`, Forge: `cd TestForgeMod`
+- `gradlew build`
+For dev use:
+- Fabric: copy production jar to `run/mods/`
+- Forge: copy dev jar to `run/mods/` (there is no support for automatic remapping)
 
 ## Crash Handling
 
@@ -24,8 +28,8 @@ Apply these tests in the production environment, with the TestMod mod (`cd TestM
 
   - Click 'Back to title screen' and re-enter the world.
   - Verify the game is working fine.
-### Client Reported Crashes
 
+### Client Reported Crashes
 - Open a Minecraft world.
 - Press the left square bracket key.
 - Verify:

@@ -7,6 +7,7 @@ import fudge.notenoughcrashes.platform.ModsByLocation;
 import fudge.notenoughcrashes.platform.NecPlatform;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -23,6 +24,7 @@ import java.util.function.Consumer;
 public final class ModIdentifier {
     private static final Logger LOGGER = LogManager.getLogger();
 
+    @NotNull
     public static Set<CommonModMetadata> identifyFromStacktrace(Throwable e) {
         Set<CommonModMetadata> mods = new HashSet<>();
         // Include suppressed exceptions too
@@ -65,7 +67,7 @@ public final class ModIdentifier {
     private static final boolean FORCE_DEBUG = false;
 
     private static void debug(String message) {
-        if (FORCE_DEBUG || NecConfig.instance().debugModIdentification) NotEnoughCrashes.LOGGER.info(message);
+        if (FORCE_DEBUG || NecConfig.instance().debugModIdentification) NotEnoughCrashes.getLogger().info(message);
     }
 
     // TODO: get a list of mixin transformers that affected the class and blame those too
@@ -107,11 +109,6 @@ public final class ModIdentifier {
     private static Set<CommonModMetadata> getModAt(Path path, ModsByLocation modMap) {
         Set<CommonModMetadata> mod = modMap.get(path);
         if (mod != null) return mod;
-        //TODO: handle forge mod jars when it's supported
-//        else if (uri.toString().startsWith("modjar://")) {
-//            // Forge tends to give modjar://crashmod type urls, so we try to figure out the mod based on that.
-//            return new HashSet<>(NecPlatform.instance().getModMetadatas(uri.toString().substring("modjar://".length())));
-//        }
         else if (NecPlatform.instance().isDevelopmentEnvironment()) {
 
             // For some reason, in dev, the mod being tested has the 'resources' folder as the origin instead of the 'classes' folder.

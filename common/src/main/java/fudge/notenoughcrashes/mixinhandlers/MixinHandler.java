@@ -28,6 +28,6 @@ public class MixinHandler {
                                 "\n Biome Registry Name : " + (biomeID != null ? biomeID : "Wait what? How is the biome not registered and has no registry name!?!? This should be impossible!!!"));
 
         // Log it to the latest.log file as well.
-        NotEnoughCrashes.LOGGER.log(Level.ERROR, crashreport.getMessage());
+        NotEnoughCrashes.getLogger().log(Level.ERROR, crashreport.getMessage());
     }
 }
