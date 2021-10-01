@@ -1,8 +1,7 @@
-import org.gradle.api.tasks.Copy
 
 plugins {
-    id "com.github.johnrengelman.shadow" version "7.0.0"
-    id "com.dorongold.task-tree" version "2.1.0"
+    id "com.github.johnrengelman.shadow" version "5.0.0"
+    id 'org.spongepowered.plugin' version '0.9.0'
 }
 
 configurations {
@@ -15,18 +14,22 @@ architectury {
 }
 
 loom {
-    forge {
-        mixinConfigs = ["notenoughcrashes.mixins.json", "notenoughcrashes.forge.mixins.json"]
-    }
+    mixinConfigs = ["notenoughcrashes.mixins.json", "notenoughcrashes.forge.mixins.json"]
+    useFabricMixin = true
 }
 
 dependencies {
+//    minecraft("com.mojang:minecraft:${rootProject.minecraft_version}")
+    mappings("net.fabricmc:yarn:${rootProject.yarn_mappings}:v2")
     forge("net.minecraftforge:forge:${rootProject.minecraft_version}-${rootProject.forge_version}")
+//    modRuntime(files("testmods/modid-1.0.jar"))
+    // Remove the next line if you don't want to depend on the API
+//    modCompile("me.shedaniel:architectury:${rootProject.architectury_version}:forge")
 
-    compileOnly(project(path: ":common", configuration: "dev")) {
+    compileOnly(project(path: ":common")) {
         transitive = false
     }
-    developmentForge(project(path: ":common", configuration: "dev")) {
+    developmentForge(project(path: ":common")) {
         transitive = false
     }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) {
@@ -57,12 +60,14 @@ remapJar {
 jar {
     manifest {
         attributes([
-                "MixinConfigs": "notenoughcrashes.mixins.json"
+                "MixinConfigs"            : "notenoughcrashes.mixins.json"
         ])
     }
-    classifier "dev"
 }
 
+jar {
+    classifier "dev"
+}
 
 java {
     withSourcesJar()
@@ -93,17 +98,3 @@ curseforge {
         forgeGradleIntegration = false
     }
 }
-
-// Asset files will otherwise be missing when debugging
-task copyAssetFilesForDebugging(type: Copy) {
-    def inAssets = rootProject.file("common/src/main/resources/assets/notenoughcrashes")
-    def outAssets = new File("${project.buildDir}/resources/main/assets/notenoughcrashes")
-    from inAssets
-    into outAssets
-    dependsOn rootProject.processResources
-}
-
-//TODO: now we need to fix mods paths
-classes.dependsOn(copyAssetFilesForDebugging)
-
-//runClient.dependsOn(assemble)

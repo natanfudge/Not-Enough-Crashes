@@ -4,16 +4,8 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${rootProject.loader_version}"
 }
 
-configurations {
-    dev
-}
-
-artifacts {
-    dev(jar)
-}
-
 architectury {
-    common()
+    common(false)
 }
 
 //loom {

@@ -56,18 +56,22 @@ public abstract class ProblemScreen extends Screen {
     }
 
 
-    private static final Set<String> IGNORED_MODS = new HashSet<>(Arrays.asList("minecraft", "fabricloader", "loadcatcher", "jumploader", "quilt_loader", "forge"));
+    private static final Set<String> IGNORED_MODS = new HashSet<>(Arrays.asList("minecraft", "fabricloader", "loadcatcher", "jumploader", "quilt_loader"));
 
     private Text getSuspectedModsText() {
         Set<CommonModMetadata> suspectedMods = ((PatchedCrashReport) report).getSuspectedMods();
+
+        //TODO: this shouldn't be possible to be null anymore
+        if (suspectedMods == null)
+            return NecLocalization.translatedText("notenoughcrashes.crashscreen.identificationErrored");
+
 
         // Minecraft exists and basically any stack trace, and loader exists in any launch,
         // it's better not to include them in the list of mods.
         suspectedMods.removeIf(mod -> IGNORED_MODS.contains(mod.id()));
 
-        if (suspectedMods.isEmpty()) {
+        if (suspectedMods.isEmpty())
             return NecLocalization.translatedText("notenoughcrashes.crashscreen.noModsErrored");
-        }
 
         Text text = suspectedMods.stream()
                 .sorted(Comparator.comparing(CommonModMetadata::name))
