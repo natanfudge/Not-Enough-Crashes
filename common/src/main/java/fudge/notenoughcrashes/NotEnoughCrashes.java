@@ -19,7 +19,7 @@ public class NotEnoughCrashes {
 
     public static final Logger LOGGER = LogManager.getLogger(NAME);
 
-    public static final boolean LOG_DEBUG = false;
+    public static final boolean LOG_DEBUG = true;
 
     public static void logDebug(String message) {
         if (LOG_DEBUG) LOGGER.info(message);
@@ -28,7 +28,8 @@ public class NotEnoughCrashes {
     private static final boolean DEBUG_ENTRYPOINT = false;
 
     public static final boolean ENABLE_GAMELOOP_CATCHING = true;
-    public static  boolean enableEntrypointCatching() {
+
+    public static boolean enableEntrypointCatching() {
         return (!NecPlatform.instance().isDevelopmentEnvironment() || DEBUG_ENTRYPOINT)
                 && NecConfig.instance().catchInitializationCrashes;
     }

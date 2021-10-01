@@ -1,4 +1,5 @@
 import com.modrinth.minotaur.TaskModrinthUpload
+import org.gradle.api.tasks.Copy
 
 plugins {
     id "com.github.johnrengelman.shadow" version "5.2.0"
@@ -65,17 +66,16 @@ remapJar {
 }
 
 // Asset files will otherwise be missing when debugging
-task copyAssetFilesForDebugging(type: Copy){
+task copyAssetFilesForDebugging(type: Copy) {
     def inAssets = rootProject.file("common/src/main/resources/assets/notenoughcrashes")
     def outAssets = new File("${project.buildDir}/resources/main/assets/notenoughcrashes")
-//    inputs.dir(inAssets)
-//    outputs.dir(outAssets)
     from inAssets
     into outAssets
-    dependsOn processResources
+    dependsOn rootProject.processResources
 }
 
-assemble.dependsOn(copyAssetFilesForDebugging)
+//TODO: it crashes, but it's probably related to localization.
+classes.dependsOn(copyAssetFilesForDebugging)
 
 
 curseforge {

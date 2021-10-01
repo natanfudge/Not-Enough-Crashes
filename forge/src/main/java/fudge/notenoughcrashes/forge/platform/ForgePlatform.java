@@ -12,15 +12,14 @@ import net.minecraftforge.forgespi.language.IModInfo;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
-
-public class NecPlatformImpl implements NecPlatform {
-
-
+public class ForgePlatform implements NecPlatform {
     @Override
     public ModsByLocation getModsAtLocationsInDisk() {
         Map<Path, Set<CommonModMetadata>> modMap = new HashMap<>();
+        var mods = ModList.get();
+        if (mods == null) return new ModsByLocation(modMap);
 
-        for (IModFileInfo modFile : ModList.get().getModFiles()) {
+        for (IModFileInfo modFile : mods.getModFiles()) {
             Path modJar = modFile.getFile().getFilePath();
             for (IModInfo modInfo : modFile.getMods()) {
                 modMap.computeIfAbsent(modJar, f -> new HashSet<>()).add(toCommon(modInfo));
@@ -49,7 +48,7 @@ public class NecPlatformImpl implements NecPlatform {
     public List<CommonModMetadata> getModMetadatas(String modId) {
         IModFileInfo file = ModList.get().getModFileById(modId);
         if (file == null) return Collections.emptyList();
-        return file.getMods().stream().map(NecPlatformImpl::toCommon).collect(Collectors.toList());
+        return file.getMods().stream().map(ForgePlatform::toCommon).collect(Collectors.toList());
     }
 
     private static CommonModMetadata toCommon(IModInfo imod) {

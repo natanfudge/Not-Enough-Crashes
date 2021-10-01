@@ -4,7 +4,6 @@
   "target": "@env(DEFAULT)",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
-    "MixinBiome",
     "MixinCrashReport",
     "MixinEntity",
     "MixinTileEntity"

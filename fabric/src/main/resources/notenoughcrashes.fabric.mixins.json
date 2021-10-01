@@ -6,8 +6,7 @@
   "mixins": [
     "DeobfCrashReportMixin",
     "DeobfCrashReportSectionMixin",
-    "MixinMain",
-    "MixinBiomeStructureDetails"
+    "MixinMain"
   ],
   "client": [
     "client.MixinMain",
