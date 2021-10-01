@@ -1,4 +1,4 @@
-package net.examplemod.forge;
+package io.github.natanfudge.nectest;
 
 import net.minecraft.block.Blocks;
 import net.minecraft.client.option.KeyBinding;
@@ -16,6 +16,14 @@ import org.lwjgl.glfw.GLFW;
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod("nec_testmod")
 public class NecTestMod {
+    public static String getTestMode() {
+        String value = System.getProperty("nec_test");
+        if (value == null) {
+            return "none";
+        } else return value;
+    }
+
+
     // Directly reference a log4j logger.
     private static final Logger LOGGER = LogManager.getLogger();
     private static final KeyBinding key = new KeyBinding("key.nec_test.crash", GLFW.GLFW_KEY_LEFT_BRACKET, "category.nec_test");

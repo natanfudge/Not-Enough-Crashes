@@ -8,10 +8,15 @@ import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.forgespi.language.IModInfo;
+import org.jetbrains.annotations.Nullable;
 
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
+
 public class ForgePlatform implements NecPlatform {
     @Override
     public ModsByLocation getModsAtLocationsInDisk() {
@@ -42,6 +47,17 @@ public class ForgePlatform implements NecPlatform {
     @Override
     public boolean isDevelopmentEnvironment() {
         return !FMLLoader.isProduction();
+    }
+
+    @Override
+    public @Nullable Path getResource(Path relativePath) {
+        URL url = ForgePlatform.class.getResource("/" + relativePath);
+        if (url == null) return null;
+        try {
+            return Paths.get(url.toURI());
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("Can't parse resource URI", e);
+        }
     }
 
     @Override

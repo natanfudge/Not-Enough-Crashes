@@ -1,4 +1,4 @@
-package net.examplemod.forge;
+package io.github.natanfudge.nectest;
 
 public class NecTestCrash extends RuntimeException{
     public NecTestCrash(String message){

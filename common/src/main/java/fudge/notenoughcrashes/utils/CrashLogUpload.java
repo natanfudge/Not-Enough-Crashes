@@ -66,7 +66,7 @@ public final class CrashLogUpload {
                 case BYTEBIN -> uploadToByteBin(text);
             };
         } catch (IOException e) {
-            NotEnoughCrashes.LOGGER.error(
+            NotEnoughCrashes.getLogger().error(
                     "Uploading to " + uploadDestination + " failed, using another destination as fallback.", e
             );
 

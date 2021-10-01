@@ -39,10 +39,10 @@ public final class CrashUtils {
                 report.writeToFile(reportFile);
             }
         } catch (Throwable e) {
-            NotEnoughCrashes.LOGGER.fatal("Failed saving report", e);
+            NotEnoughCrashes.getLogger().fatal("Failed saving report", e);
         }
 
-        NotEnoughCrashes.LOGGER.fatal("Minecraft ran into a problem! " + (report.getFile() != null ? "Report saved to: " + report.getFile() :
+        NotEnoughCrashes.getLogger().fatal("Minecraft ran into a problem! " + (report.getFile() != null ? "Report saved to: " + report.getFile() :
                 "Crash report could not be saved.") + "\n" +
                 report.asString());
     }

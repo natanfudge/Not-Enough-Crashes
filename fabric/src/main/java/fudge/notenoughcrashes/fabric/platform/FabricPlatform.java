@@ -1,5 +1,6 @@
 package fudge.notenoughcrashes.fabric.platform;
 
+import fudge.notenoughcrashes.NotEnoughCrashes;
 import fudge.notenoughcrashes.platform.CommonModMetadata;
 import fudge.notenoughcrashes.platform.ModsByLocation;
 import fudge.notenoughcrashes.platform.NecPlatform;
@@ -8,7 +9,9 @@ import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.metadata.ContactInformation;
 import net.fabricmc.loader.api.metadata.ModMetadata;
 import net.fabricmc.loader.api.metadata.Person;
+import org.jetbrains.annotations.Nullable;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -39,6 +42,15 @@ public class FabricPlatform implements NecPlatform {
     @Override
     public boolean isDevelopmentEnvironment() {
         return FabricLoader.getInstance().isDevelopmentEnvironment();
+    }
+
+    @Override
+    @Nullable
+    public Path getResource(Path relativePath) {
+        // Don't resolve the root path directly with a normal Path, they are incompatible because the root path is often in a Zip FS
+        Path path = NotEnoughCrashes.getMetadata().rootPath().resolve(relativePath.toString());
+        if (!Files.exists(path)) return null;
+        else return path;
     }
 
     @Override

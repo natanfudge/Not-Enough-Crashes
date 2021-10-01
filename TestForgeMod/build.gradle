@@ -10,6 +10,9 @@ configurations {
 }
 
 loom {
+    forge {
+        mixinConfigs = ["nec_testmod.mixins.json"]
+    }
     silentMojangMappingsLicense()
 }
 
