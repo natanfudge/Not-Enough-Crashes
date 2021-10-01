@@ -3,7 +3,7 @@ package fudge.notenoughcrashes.utils;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import fudge.notenoughcrashes.NotEnoughCrashes;
-import fudge.notenoughcrashes.platform.CommonModMetadata;
+import fudge.notenoughcrashes.platform.NecPlatform;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -68,17 +69,25 @@ public class NecLocalization {
     private static LanguageTranslations loadLanguage(String code) {
         Map<String, String> translations;
         try {
-            CommonModMetadata nec = NotEnoughCrashes.getMetadata();
-            String fileName = code + ".json";
-            // Don't resolve the root path with a normal Path, they are incompatible because the root path is often in a Zip FS
-            Path localizationsPath = nec.rootPath().resolve("assets").resolve(NotEnoughCrashes.MOD_ID).resolve("lang").resolve(fileName);
-            String content = Files.readString(localizationsPath);
-            translations = parseTranslations(content);
+            Path localizationsPath = getLocalizationPath(code);
+            if (localizationsPath == null) {
+                translations = new HashMap<>();
+                NotEnoughCrashes.logDebug("No localization for language code: " + code);
+            } else {
+                String content = Files.readString(localizationsPath);
+                translations = parseTranslations(content);
+            }
         } catch (IOException e) {
-            NotEnoughCrashes.LOGGER.error("Could not load translations: ", e);
+            NotEnoughCrashes.getLogger().error("Could not load translations: ", e);
             translations = new HashMap<>();
         }
         return new LanguageTranslations(translations);
+    }
+
+    @Nullable
+    private static Path getLocalizationPath(String code) {
+        Path relativePath = Paths.get("assets", NotEnoughCrashes.MOD_ID, "lang", code + ".json");
+        return NecPlatform.instance().getResource(relativePath);
     }
 
     private static final Gson gson = new Gson();

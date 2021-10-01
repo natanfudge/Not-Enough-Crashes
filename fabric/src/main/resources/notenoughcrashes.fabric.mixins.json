@@ -1,13 +1,12 @@
 {
-  "package": "fudge.notenoughcrashes.mixins",
+  "package": "fudge.notenoughcrashes.fabric.mixins",
   "required": true,
   "target": "@env(DEFAULT)",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
     "DeobfCrashReportMixin",
     "DeobfCrashReportSectionMixin",
-    "MixinMain",
-    "MixinBiomeStructureDetails"
+    "MixinMain"
   ],
   "client": [
     "client.MixinMain",

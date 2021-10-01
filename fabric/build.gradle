@@ -1,4 +1,5 @@
 import com.modrinth.minotaur.TaskModrinthUpload
+import org.gradle.api.tasks.Copy
 
 plugins {
     id "com.github.johnrengelman.shadow" version "5.2.0"
@@ -22,7 +23,6 @@ repositories {
 
 dependencies {
 //    minecraft("com.mojang:minecraft:${rootProject.minecraft_version}")
-    mappings("net.fabricmc:yarn:${rootProject.yarn_mappings}:v2")
     modImplementation("net.fabricmc:fabric-loader:${rootProject.loader_version}")
     compileOnly("org.quiltmc:quilt-loader:0.13.2")
 
@@ -30,10 +30,10 @@ dependencies {
     // Remove the next line if you don't want to depend on the API
 //    modCompile("me.shedaniel:architectury:${rootProject.architectury_version}:fabric")
 
-    implementation(project(path: ":common")) {
+    implementation(project(path: ":common", configuration: "dev")) {
         transitive = false
     }
-    developmentFabric(project(path: ":common")) {
+    developmentFabric(project(path: ":common", configuration: "dev")) {
         transitive = false
     }
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) {
@@ -66,17 +66,16 @@ remapJar {
 }
 
 // Asset files will otherwise be missing when debugging
-task copyAssetFilesForDebugging(type: Copy){
+task copyAssetFilesForDebugging(type: Copy) {
     def inAssets = rootProject.file("common/src/main/resources/assets/notenoughcrashes")
     def outAssets = new File("${project.buildDir}/resources/main/assets/notenoughcrashes")
-//    inputs.dir(inAssets)
-//    outputs.dir(outAssets)
     from inAssets
     into outAssets
-    dependsOn processResources
+    dependsOn rootProject.processResources
 }
 
-assemble.dependsOn(copyAssetFilesForDebugging)
+//TODO: it crashes, but it's probably related to localization.
+classes.dependsOn(copyAssetFilesForDebugging)
 
 
 curseforge {

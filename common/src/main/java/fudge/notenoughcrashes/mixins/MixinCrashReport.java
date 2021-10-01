@@ -7,6 +7,7 @@ import net.minecraft.util.SystemDetails;
 import net.minecraft.util.crash.CrashReport;
 import net.minecraft.util.crash.CrashReportSection;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -42,10 +43,10 @@ public abstract class MixinCrashReport implements PatchedCrashReport {
     private Set<CommonModMetadata> suspectedMods;
 
     // We inject into the constructor so we can have access to the Throwable. Otherwise [cause] will be null.
-    @Inject(method = "<init>", at = @At("TAIL"))
-    private void atConstruction(String message, Throwable cause, CallbackInfo ci) {
-        suspectedMods = ModIdentifier.identifyFromStacktrace(cause);
-    }
+//    @Inject(method = "<init>", at = @At("TAIL"))
+//    private void atConstruction(String message, Throwable cause, CallbackInfo ci) {
+//        suspectedMods
+//    }
 
     @Shadow
     private static String generateWittyComment() {
@@ -59,7 +60,9 @@ public abstract class MixinCrashReport implements PatchedCrashReport {
     }
 
     @Override
+    @NotNull
     public Set<CommonModMetadata> getSuspectedMods() {
+        if (suspectedMods == null) suspectedMods = ModIdentifier.identifyFromStacktrace(cause);
         return suspectedMods;
     }
 
@@ -71,8 +74,8 @@ public abstract class MixinCrashReport implements PatchedCrashReport {
     private void beforeSystemDetailsAreWritten(CallbackInfo ci) {
         systemDetailsSection.addSection("Suspected Mods", () -> {
             try {
-                if (!suspectedMods.isEmpty()) {
-                    return suspectedMods.stream()
+                if (!getSuspectedMods().isEmpty()) {
+                    return getSuspectedMods().stream()
                             .map((mod) -> mod.name() + " (" + mod.id() + ")")
                             .collect(Collectors.joining(", "));
                 } else return "None";

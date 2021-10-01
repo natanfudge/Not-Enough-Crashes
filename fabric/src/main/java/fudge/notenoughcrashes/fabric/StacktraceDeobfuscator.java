@@ -39,13 +39,13 @@ public final class StacktraceDeobfuscator {
 
     public static void init() {
         if (!ENABLE_DEOBF) return;
-        NotEnoughCrashes.LOGGER.info("Initializing StacktraceDeobfuscator");
+        NotEnoughCrashes.getLogger().info("Initializing StacktraceDeobfuscator");
         try {
             if (!Files.exists(CACHED_MAPPINGS)) downloadAndCacheMappings();
         } catch (Exception e) {
-            NotEnoughCrashes.LOGGER.error("Failed to load mappings!", e);
+            NotEnoughCrashes.getLogger().error("Failed to load mappings!", e);
         }
-        NotEnoughCrashes.LOGGER.info("Done initializing StacktraceDeobfuscator");
+        NotEnoughCrashes.getLogger().info("Done initializing StacktraceDeobfuscator");
 
         // Install the log exception deobfuscation rewrite policy
         DeobfuscatingRewritePolicy.install();
@@ -57,11 +57,11 @@ public final class StacktraceDeobfuscator {
         try {
             yarnVersion = YarnVersion.getLatestBuildForCurrentVersion();
         } catch (IOException e) {
-            NotEnoughCrashes.LOGGER.error("Could not get latest yarn build for version", e);
+            NotEnoughCrashes.getLogger().error("Could not get latest yarn build for version", e);
             return;
         }
 
-        NotEnoughCrashes.LOGGER.info("Downloading deobfuscation mappings: " + yarnVersion + " for the first launch");
+        NotEnoughCrashes.getLogger().info("Downloading deobfuscation mappings: " + yarnVersion + " for the first launch");
 
         String encodedYarnVersion = UrlEscapers.urlFragmentEscaper().escape(yarnVersion);
         // Download V2 jar
@@ -70,7 +70,7 @@ public final class StacktraceDeobfuscator {
         try {
             Files.createDirectories(NotEnoughCrashes.DIRECTORY);
         } catch (IOException e) {
-            NotEnoughCrashes.LOGGER.error("Could not create " + NotEnoughCrashes.NAME + " directory!", e);
+            NotEnoughCrashes.getLogger().error("Could not create " + NotEnoughCrashes.NAME + " directory!", e);
             return;
         }
 
@@ -79,7 +79,7 @@ public final class StacktraceDeobfuscator {
         try {
             FileUtils.copyURLToFile(new URL(artifactUrl), jarFile);
         } catch (IOException e) {
-            NotEnoughCrashes.LOGGER.error("Failed to downloads mappings!", e);
+            NotEnoughCrashes.getLogger().error("Failed to downloads mappings!", e);
             return;
         }
 
@@ -87,14 +87,14 @@ public final class StacktraceDeobfuscator {
             NotEnoughCrashes.ensureDirectoryExists();
             Files.copy(jar.getPath(MAPPINGS_JAR_LOCATION), CACHED_MAPPINGS, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
-            NotEnoughCrashes.LOGGER.error("Failed to extract mappings!", e);
+            NotEnoughCrashes.getLogger().error("Failed to extract mappings!", e);
         }
     }
 
 
     private static void loadMappings() {
         if (!Files.exists(CACHED_MAPPINGS)) {
-            NotEnoughCrashes.LOGGER.warn("Could not download mappings, stack trace won't be deobfuscated");
+            NotEnoughCrashes.getLogger().warn("Could not download mappings, stack trace won't be deobfuscated");
             return;
         }
 
@@ -132,7 +132,7 @@ public final class StacktraceDeobfuscator {
             });
 
         } catch (IOException e) {
-            NotEnoughCrashes.LOGGER.error("Could not load mappings", e);
+            NotEnoughCrashes.getLogger().error("Could not load mappings", e);
         }
 
         StacktraceDeobfuscator.mappings = mappings;
@@ -172,7 +172,7 @@ public final class StacktraceDeobfuscator {
                     stackTraceList.add(0, new StackTraceElement(NotEnoughCrashes.NAME + " deobfuscated stack trace",
                                     "", YarnVersion.getLatestBuildForCurrentVersion(), -1));
                 } catch (IOException e) {
-                    NotEnoughCrashes.LOGGER.error("Could not get used yarn version", e);
+                    NotEnoughCrashes.getLogger().error("Could not get used yarn version", e);
                     return stackTrace;
                 }
             }

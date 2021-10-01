@@ -1,3 +1,5 @@
+### 3.6.5
+- Forge for 1.17.1! As this is the first Forge version in a while it may have some issues, so comment if you've encountered anything (or better, open a Github issue).
 ### 3.6.4
 - Added some Quilt-specific features, courtesy of @Siuolthepic!
 ### 3.6.3
