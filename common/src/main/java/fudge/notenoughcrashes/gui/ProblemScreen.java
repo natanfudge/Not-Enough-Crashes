@@ -40,7 +40,7 @@ public abstract class ProblemScreen extends Screen {
     public abstract ProblemScreen construct(CrashReport report);
 
     protected CrashReport report;
-    private String hasteLink = null;
+    private String uploadedCrashLink = null;
     protected int xLeft = Integer.MAX_VALUE;
     protected int xRight = Integer.MIN_VALUE;
     protected int yTop = Integer.MAX_VALUE;
@@ -99,8 +99,8 @@ public abstract class ProblemScreen extends Screen {
         this.getLinkButton = new ButtonWidget(width / 2 - 155 + 160, height / 4 + 120 + 12, 150, 20, NecLocalization.translatedText("notenoughcrashes.gui.getLink"),
                 buttonWidget -> {
                     try {
-                        if (hasteLink == null) {
-                            hasteLink = CrashLogUpload.upload(report.asString());
+                        if (uploadedCrashLink == null) {
+                            uploadedCrashLink = CrashLogUpload.upload(report.asString());
                         }
 //                                Field uriField;
 //                                //noinspection JavaReflectionMemberAccess
@@ -109,11 +109,11 @@ public abstract class ProblemScreen extends Screen {
 //                                uriField.set(ProblemScreen.this, new URI(hasteLink));
                         MinecraftClient.getInstance().setScreen(new ConfirmChatLinkScreen(b -> {
                             if (b) {
-                                Util.getOperatingSystem().open(hasteLink);
+                                Util.getOperatingSystem().open(uploadedCrashLink);
                             }
 
                             MinecraftClient.getInstance().setScreen(construct(report));
-                        }, hasteLink, true));
+                        }, uploadedCrashLink, true));
                     } catch (Throwable e) {
                         LOGGER.error("Exception when crash menu button clicked:", e);
                         buttonWidget.setMessage(NecLocalization.translatedText("notenoughcrashes.gui.failed"));

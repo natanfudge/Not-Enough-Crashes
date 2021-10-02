@@ -33,7 +33,8 @@ public class NecConfig {
         GIST(3), // attempt last
         HASTE(2),
         PASTEBIN(null), // requires configuration
-        BYTEBIN(1);
+        BYTEBIN(1),
+        CRASHY(0);
 
         public final Integer defaultPriority;
 

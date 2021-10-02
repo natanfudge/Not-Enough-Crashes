@@ -60,6 +60,7 @@ public final class CrashLogUpload {
 
         try {
             return switch (uploadDestination) {
+                case CRASHY ->
                 case GIST -> uploadToGist(text);
                 case HASTE -> uploadToHaste(text);
                 case PASTEBIN -> uploadToPasteBin(text);
@@ -86,6 +87,25 @@ public final class CrashLogUpload {
                 .min(Comparator.comparingInt(destination -> destination.defaultPriority));
 
         return selectedDestination.orElseThrow(() -> new IOException("All upload destinations failed!"));
+    }
+
+    private static String uploadToCrashy(String text) throws IOException {
+        String domain = "https://europe-west1-crashy-9dd87.cloudfunctions.net/uploadCrash";
+
+        HttpPost post = new HttpPost(url + "documents");
+        post.setEntity(new StringEntity(str));
+
+        if (!customUserAgent.isEmpty()) {
+            post.setHeader("User-Agent", customUserAgent);
+        }
+
+        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            CloseableHttpResponse response = httpClient.execute(post);
+            String responseString = EntityUtils.toString(response.getEntity());
+            JsonObject responseJson = new Gson().fromJson(responseString, JsonObject.class);
+            String hasteKey = responseJson.getAsJsonPrimitive("key").getAsString();
+            return url + "raw/" + hasteKey;
+        }
     }
 
 
