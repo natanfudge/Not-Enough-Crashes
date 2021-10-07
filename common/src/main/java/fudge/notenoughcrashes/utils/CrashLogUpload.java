@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.annotations.SerializedName;
 import fudge.notenoughcrashes.NecConfig;
 import fudge.notenoughcrashes.NotEnoughCrashes;
+import org.apache.commons.lang3.NotImplementedException;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -16,6 +17,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public final class CrashLogUpload {
@@ -60,7 +62,7 @@ public final class CrashLogUpload {
 
         try {
             return switch (uploadDestination) {
-                case CRASHY ->
+                case CRASHY -> throw new NotImplementedException("TODO");
                 case GIST -> uploadToGist(text);
                 case HASTE -> uploadToHaste(text);
                 case PASTEBIN -> uploadToPasteBin(text);
@@ -89,24 +91,24 @@ public final class CrashLogUpload {
         return selectedDestination.orElseThrow(() -> new IOException("All upload destinations failed!"));
     }
 
-    private static String uploadToCrashy(String text) throws IOException {
-        String domain = "https://europe-west1-crashy-9dd87.cloudfunctions.net/uploadCrash";
-
-        HttpPost post = new HttpPost(url + "documents");
-        post.setEntity(new StringEntity(str));
-
-        if (!customUserAgent.isEmpty()) {
-            post.setHeader("User-Agent", customUserAgent);
-        }
-
-        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-            CloseableHttpResponse response = httpClient.execute(post);
-            String responseString = EntityUtils.toString(response.getEntity());
-            JsonObject responseJson = new Gson().fromJson(responseString, JsonObject.class);
-            String hasteKey = responseJson.getAsJsonPrimitive("key").getAsString();
-            return url + "raw/" + hasteKey;
-        }
-    }
+//    private static String uploadToCrashy(String text) throws IOException {
+//        String domain = "https://europe-west1-crashy-9dd87.cloudfunctions.net/uploadCrash";
+//
+////        HttpPost post = new HttpPost(url + "documents");
+//        post.setEntity(new StringEntity(str));
+//
+//        if (!customUserAgent.isEmpty()) {
+//            post.setHeader("User-Agent", customUserAgent);
+//        }
+//
+//        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+//            CloseableHttpResponse response = httpClient.execute(post);
+//            String responseString = EntityUtils.toString(response.getEntity());
+//            JsonObject responseJson = new Gson().fromJson(responseString, JsonObject.class);
+//            String hasteKey = responseJson.getAsJsonPrimitive("key").getAsString();
+//            return url + "raw/" + hasteKey;
+//        }
+//    }
 
 
     /**
@@ -126,7 +128,7 @@ public final class CrashLogUpload {
                     put(fileName, new GistFile(text));
                 }}
         );
-        post.setEntity(new StringEntity(new Gson().toJson(body)));
+        post.setEntity(createStringEntity(new Gson().toJson(body)));
 
         final String customUserAgent = NecConfig.instance().crashlogUpload.customUserAgent;
         if (!customUserAgent.isEmpty()) {
@@ -149,7 +151,7 @@ public final class CrashLogUpload {
         String url = NecConfig.instance().crashlogUpload.hasteUrl;
         String customUserAgent = NecConfig.instance().crashlogUpload.customUserAgent;
         HttpPost post = new HttpPost(url + "documents");
-        post.setEntity(new StringEntity(str));
+        post.setEntity(createStringEntity(str));
 
         if (!customUserAgent.isEmpty()) {
             post.setHeader("User-Agent", customUserAgent);
@@ -202,7 +204,7 @@ public final class CrashLogUpload {
 
         post.setHeader("User-Agent", userAgent);
         post.addHeader("Content-Type", "text/plain");
-        post.setEntity(new StringEntity(text));
+        post.setEntity(createStringEntity(text));
 
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             CloseableHttpResponse response = httpClient.execute(post);
@@ -211,5 +213,9 @@ public final class CrashLogUpload {
             String bytebinKey = responseJson.getAsJsonPrimitive("key").getAsString();
             return url + bytebinKey;
         }
+    }
+
+    private static StringEntity createStringEntity(String text){
+        return new StringEntity(text, StandardCharsets.UTF_16);
     }
 }

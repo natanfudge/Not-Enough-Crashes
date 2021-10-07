@@ -1,4 +1,4 @@
-package io.github.natanfudge.nectest.mixin;
+package io.github.natanfudge.mixin;
 
 import io.github.natanfudge.NecTestCrash;
 import io.github.natanfudge.NecTestMod;
