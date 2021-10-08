@@ -5,8 +5,9 @@ import com.google.gson.JsonObject;
 import com.google.gson.annotations.SerializedName;
 import fudge.notenoughcrashes.NecConfig;
 import fudge.notenoughcrashes.NotEnoughCrashes;
-import org.apache.commons.lang3.NotImplementedException;
+import org.apache.http.Header;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.GzipCompressingEntity;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -16,9 +17,15 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.zip.GZIPOutputStream;
 
 public final class CrashLogUpload {
     private static String GIST_ACCESS_TOKEN_PART_1() {
@@ -62,16 +69,14 @@ public final class CrashLogUpload {
 
         try {
             return switch (uploadDestination) {
-                case CRASHY -> throw new NotImplementedException("TODO");
+                case CRASHY -> uploadToCrashy(text);
                 case GIST -> uploadToGist(text);
                 case HASTE -> uploadToHaste(text);
                 case PASTEBIN -> uploadToPasteBin(text);
                 case BYTEBIN -> uploadToByteBin(text);
             };
         } catch (IOException e) {
-            NotEnoughCrashes.getLogger().error(
-                    "Uploading to " + uploadDestination + " failed, using another destination as fallback.", e
-            );
+            NotEnoughCrashes.getLogger().error("Uploading to " + uploadDestination + " failed, using another destination as fallback.", e);
 
             // If uploading failed, attempt the other destination options
             failedUploadDestinations.add(uploadDestination);
@@ -85,30 +90,58 @@ public final class CrashLogUpload {
         // When priority is null, the destination cannot be used as a fallback.
         var selectedDestination = Arrays.stream(NecConfig.CrashLogUploadDestination.values())
                 // When priority is null, the destination cannot be used as a fallback.
-                .filter(destination -> destination.defaultPriority != null && !failedUploadTypes.contains(destination))
-                .min(Comparator.comparingInt(destination -> destination.defaultPriority));
+                .filter(destination -> destination.defaultPriority != null && !failedUploadTypes.contains(destination)).min(Comparator.comparingInt(destination -> destination.defaultPriority));
 
         return selectedDestination.orElseThrow(() -> new IOException("All upload destinations failed!"));
     }
+    //TODO: stop the lagu when we upload.
 
-//    private static String uploadToCrashy(String text) throws IOException {
-//        String domain = "https://europe-west1-crashy-9dd87.cloudfunctions.net/uploadCrash";
-//
-////        HttpPost post = new HttpPost(url + "documents");
-//        post.setEntity(new StringEntity(str));
-//
-//        if (!customUserAgent.isEmpty()) {
-//            post.setHeader("User-Agent", customUserAgent);
-//        }
-//
-//        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-//            CloseableHttpResponse response = httpClient.execute(post);
-//            String responseString = EntityUtils.toString(response.getEntity());
-//            JsonObject responseJson = new Gson().fromJson(responseString, JsonObject.class);
-//            String hasteKey = responseJson.getAsJsonPrimitive("key").getAsString();
-//            return url + "raw/" + hasteKey;
-//        }
-//    }
+    //TODO: make upload to crashy a seperate button
+    //TODO: auto swap domain to localhost:3000 in dev
+    private static String uploadToCrashy(String text) throws IOException {
+        try {
+            var response = java11SyncPost("http://localhost:5001/crashy-9dd87/europe-west1/uploadCrash", gzip(text));
+            int statusCode = response.statusCode();
+            String responseBody = response.body();
+            return switch (statusCode) {
+                case HttpURLConnection.HTTP_OK -> {
+                    UploadCrashSuccess responseObject = new Gson().fromJson(responseBody, UploadCrashSuccess.class);
+                    //TODO: make sure to store code somewhere
+                    yield responseObject.crashUrl;
+                }
+                case HttpURLConnection.HTTP_BAD_REQUEST -> throw new UploadToCrashyError.InvalidCrash();
+                case HttpURLConnection.HTTP_ENTITY_TOO_LARGE -> throw new UploadToCrashyError.TooLarge();
+                default -> throw new IllegalStateException("Unexpected status code when uploading to crashy: " + statusCode + " message: " + responseBody);
+            };
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    //TODO: make async, the non-crashy stuff leave as laggy, apache-specific stuff.
+    private static java.net.http.HttpResponse<String> java11SyncPost(String url, byte[] body) throws IOException, InterruptedException {
+        var client = HttpClient.newHttpClient();
+        var request = java.net.http.HttpRequest.newBuilder(URI.create(url))
+                .setHeader("content-type","application/gzip")
+                .POST( java.net.http.HttpRequest.BodyPublishers.ofByteArray(body))
+                .build();
+        return client.send(request, HttpResponse.BodyHandlers.ofString());
+    }
+
+    private static byte[] gzip(String string) throws IOException {
+        try (var baos = new ByteArrayOutputStream()) {
+            try (var gzos = new GZIPOutputStream(baos)) {
+                gzos.write(string.getBytes(StandardCharsets.UTF_8));
+            }
+            return baos.toByteArray();
+        }
+    }
+
+    static class UploadCrashSuccess {
+        String crashId;
+        String key;
+        String crashUrl;
+    }
 
 
     /**
@@ -123,11 +156,9 @@ public final class CrashLogUpload {
         String fileName = "crash.txt";
         post.addHeader("Authorization", "token " + uploadKey);
 
-        GistPost body = new GistPost(!config.unlisted,
-                new HashMap<>() {{
-                    put(fileName, new GistFile(text));
-                }}
-        );
+        GistPost body = new GistPost(!config.unlisted, new HashMap<>() {{
+            put(fileName, new GistFile(text));
+        }});
         post.setEntity(createStringEntity(new Gson().toJson(body)));
 
         final String customUserAgent = NecConfig.instance().crashlogUpload.customUserAgent;
@@ -139,10 +170,7 @@ public final class CrashLogUpload {
             CloseableHttpResponse response = httpClient.execute(post);
             String responseString = EntityUtils.toString(response.getEntity());
             JsonObject responseJson = new Gson().fromJson(responseString, JsonObject.class);
-            return responseJson.getAsJsonObject("files")
-                    .getAsJsonObject(fileName)
-                    .getAsJsonPrimitive("raw_url")
-                    .getAsString();
+            return responseJson.getAsJsonObject("files").getAsJsonObject(fileName).getAsJsonPrimitive("raw_url").getAsString();
         }
 
     }
@@ -174,15 +202,10 @@ public final class CrashLogUpload {
         String pastebinPrivacy = config.privacy.apiValue;
         String pastebinExpiryKey = config.expiry.pastebinExpiryKey;
 
-        List<NameValuePair> params = Arrays.asList(
-                new BasicNameValuePair("api_dev_key", pastebinUploadKey),
-                new BasicNameValuePair("api_option", "paste"), // to create
-                new BasicNameValuePair("api_paste_code", text),
-                new BasicNameValuePair("api_paste_name", "crash.txt"), // mirroring gist
+        List<NameValuePair> params = Arrays.asList(new BasicNameValuePair("api_dev_key", pastebinUploadKey), new BasicNameValuePair("api_option", "paste"), // to create
+                new BasicNameValuePair("api_paste_code", text), new BasicNameValuePair("api_paste_name", "crash.txt"), // mirroring gist
                 new BasicNameValuePair("api_paste_format", "yaml"), // hl.js auto detects mc crashes as this
-                new BasicNameValuePair("api_paste_expire_date", pastebinExpiryKey),
-                new BasicNameValuePair("api_paste_private", pastebinPrivacy)
-        );
+                new BasicNameValuePair("api_paste_expire_date", pastebinExpiryKey), new BasicNameValuePair("api_paste_private", pastebinPrivacy));
         post.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
 
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
@@ -198,9 +221,7 @@ public final class CrashLogUpload {
         final var config = NecConfig.instance().crashlogUpload;
         String url = NecConfig.instance().crashlogUpload.bytebinUrl;
         HttpPost post = new HttpPost(url + "post");
-        String userAgent = config.customUserAgent.isEmpty() ?
-                String.join(" ", Arrays.toString(post.getHeaders("User-Agent"))).concat(" NotEnoughCrashes")
-                : config.customUserAgent;
+        String userAgent = config.customUserAgent.isEmpty() ? String.join(" ", Arrays.toString(post.getHeaders("User-Agent"))).concat(" NotEnoughCrashes") : config.customUserAgent;
 
         post.setHeader("User-Agent", userAgent);
         post.addHeader("Content-Type", "text/plain");
@@ -215,7 +236,7 @@ public final class CrashLogUpload {
         }
     }
 
-    private static StringEntity createStringEntity(String text){
+    private static StringEntity createStringEntity(String text) {
         return new StringEntity(text, StandardCharsets.UTF_16);
     }
 }
