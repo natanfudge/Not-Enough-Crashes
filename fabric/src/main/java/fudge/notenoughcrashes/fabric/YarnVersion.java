@@ -1,4 +1,4 @@
-package fudge.notenoughcrashes.stacktrace;
+package fudge.notenoughcrashes.fabric;
 
 import com.google.gson.Gson;
 import fudge.notenoughcrashes.NotEnoughCrashes;

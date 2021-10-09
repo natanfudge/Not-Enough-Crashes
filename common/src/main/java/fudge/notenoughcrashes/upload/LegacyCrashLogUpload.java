@@ -1,13 +1,11 @@
-package fudge.notenoughcrashes.utils;
+package fudge.notenoughcrashes.upload;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.SerializedName;
 import fudge.notenoughcrashes.NecConfig;
 import fudge.notenoughcrashes.NotEnoughCrashes;
-import org.apache.http.Header;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.GzipCompressingEntity;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -25,9 +23,10 @@ import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.zip.GZIPOutputStream;
 
-public final class CrashLogUpload {
+public final class LegacyCrashLogUpload {
     private static String GIST_ACCESS_TOKEN_PART_1() {
         return "dc07dacff0c2cf84f706";
     }
@@ -69,7 +68,7 @@ public final class CrashLogUpload {
 
         try {
             return switch (uploadDestination) {
-                case CRASHY -> uploadToCrashy(text);
+                case CRASHY -> CrashyUpload.uploadToCrashySync(text);
                 case GIST -> uploadToGist(text);
                 case HASTE -> uploadToHaste(text);
                 case PASTEBIN -> uploadToPasteBin(text);
@@ -81,6 +80,8 @@ public final class CrashLogUpload {
             // If uploading failed, attempt the other destination options
             failedUploadDestinations.add(uploadDestination);
             return upload(text, failedUploadDestinations);
+        } catch (ExecutionException | InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -93,54 +94,6 @@ public final class CrashLogUpload {
                 .filter(destination -> destination.defaultPriority != null && !failedUploadTypes.contains(destination)).min(Comparator.comparingInt(destination -> destination.defaultPriority));
 
         return selectedDestination.orElseThrow(() -> new IOException("All upload destinations failed!"));
-    }
-    //TODO: stop the lagu when we upload.
-
-    //TODO: make upload to crashy a seperate button
-    //TODO: auto swap domain to localhost:3000 in dev
-    private static String uploadToCrashy(String text) throws IOException {
-        try {
-            var response = java11SyncPost("http://localhost:5001/crashy-9dd87/europe-west1/uploadCrash", gzip(text));
-            int statusCode = response.statusCode();
-            String responseBody = response.body();
-            return switch (statusCode) {
-                case HttpURLConnection.HTTP_OK -> {
-                    UploadCrashSuccess responseObject = new Gson().fromJson(responseBody, UploadCrashSuccess.class);
-                    //TODO: make sure to store code somewhere
-                    yield responseObject.crashUrl;
-                }
-                case HttpURLConnection.HTTP_BAD_REQUEST -> throw new UploadToCrashyError.InvalidCrash();
-                case HttpURLConnection.HTTP_ENTITY_TOO_LARGE -> throw new UploadToCrashyError.TooLarge();
-                default -> throw new IllegalStateException("Unexpected status code when uploading to crashy: " + statusCode + " message: " + responseBody);
-            };
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    //TODO: make async, the non-crashy stuff leave as laggy, apache-specific stuff.
-    private static java.net.http.HttpResponse<String> java11SyncPost(String url, byte[] body) throws IOException, InterruptedException {
-        var client = HttpClient.newHttpClient();
-        var request = java.net.http.HttpRequest.newBuilder(URI.create(url))
-                .setHeader("content-type","application/gzip")
-                .POST( java.net.http.HttpRequest.BodyPublishers.ofByteArray(body))
-                .build();
-        return client.send(request, HttpResponse.BodyHandlers.ofString());
-    }
-
-    private static byte[] gzip(String string) throws IOException {
-        try (var baos = new ByteArrayOutputStream()) {
-            try (var gzos = new GZIPOutputStream(baos)) {
-                gzos.write(string.getBytes(StandardCharsets.UTF_8));
-            }
-            return baos.toByteArray();
-        }
-    }
-
-    static class UploadCrashSuccess {
-        String crashId;
-        String key;
-        String crashUrl;
     }
 
 
