@@ -1,3 +1,9 @@
+## 3.7.0
+- Introducing: [Crashy](https://crashy.net/)! Crashy is a crash hosting site designed specifically for Not Enough Crashes and Minecraft crashes in general. 
+It shows crashes in an organized GUI that is easily readable, and has some other nice features. [Example](https://crashy.net/2c2vAe5oUVgiNck3NfXU).  
+There is now a button for uploading directly to crashy in the crash screen. 
+- Fixed UTF-specific characters turning into '?' when uploading crash logs.
+- Fixed 'Continuing the game after crashing will cause a crash report to be logged later when the game exits normally'.
 ### 3.6.5
 - Forge for 1.17.1! As this is the first Forge version in a while it may have some issues, so comment if you've encountered anything (or better, open a Github issue).
 ### 3.6.4

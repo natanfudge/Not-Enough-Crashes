@@ -16,17 +16,28 @@ public class NecTestMod implements ModInitializer {
         } else return value;
     }
 
-    private static KeyBinding keyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+    private static final KeyBinding keyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
             "key.nec_test.crash", // The translation key of the keybinding's name
             InputUtil.Type.KEYSYM, // The type of the keybinding, KEYSYM for keyboard, MOUSE for mouse.
             GLFW.GLFW_KEY_LEFT_BRACKET, // The keycode of the key
             "category.nec_test" // The translation key of the keybinding's category.
     ));
+
+    private static final KeyBinding localeKeyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+            "key.nec_test.crash_locale", // The translation key of the keybinding's name
+            InputUtil.Type.KEYSYM, // The type of the keybinding, KEYSYM for keyboard, MOUSE for mouse.
+            GLFW.GLFW_KEY_RIGHT_BRACKET, // The keycode of the key
+            "category.nec_test" // The translation key of the keybinding's category.
+    ));
+//            throw new RuntimeException("שלופ");
     @Override
     public void onInitialize() {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (keyBinding.wasPressed()) {
                 throw new NecTestCrash("Test Game Loop Crash");
+            }
+            if (localeKeyBinding.wasPressed()) {
+                throw new NecTestCrash("שלום עולם");
             }
         });
     }

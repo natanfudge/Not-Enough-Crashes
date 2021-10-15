@@ -4,7 +4,8 @@ import fudge.notenoughcrashes.gui.util.TextWidget;
 import fudge.notenoughcrashes.gui.util.Widget;
 import fudge.notenoughcrashes.patches.PatchedCrashReport;
 import fudge.notenoughcrashes.platform.CommonModMetadata;
-import fudge.notenoughcrashes.utils.CrashLogUpload;
+import fudge.notenoughcrashes.upload.CrashyUpload;
+import fudge.notenoughcrashes.upload.LegacyCrashLogUpload;
 import fudge.notenoughcrashes.utils.NecLocalization;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -12,12 +13,8 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ConfirmChatLinkScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.ClickEvent;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
+import net.minecraft.text.*;
 import net.minecraft.util.Util;
 import net.minecraft.util.crash.CrashReport;
 import org.apache.logging.log4j.LogManager;
@@ -40,7 +37,7 @@ public abstract class ProblemScreen extends Screen {
     public abstract ProblemScreen construct(CrashReport report);
 
     protected CrashReport report;
-    private String hasteLink = null;
+    private String uploadedCrashLink = null;
     protected int xLeft = Integer.MAX_VALUE;
     protected int xRight = Integer.MIN_VALUE;
     protected int yTop = Integer.MAX_VALUE;
@@ -90,38 +87,68 @@ public abstract class ProblemScreen extends Screen {
         addWidget(new TextWidget(getSuspectedModsText(), TextWidget.CLICKABLE_TEXT_COLOR, textRenderer, width / 2, y + 29));
     }
 
-    protected ClickableWidget getLinkButton = null;
+    private void handleLegacyLinkClick(ButtonWidget buttonWidget) {
+        try {
+            if (uploadedCrashLink == null) {
+                uploadedCrashLink = LegacyCrashLogUpload.upload(report.asString());
+            }
+            MinecraftClient.getInstance().setScreen(new ConfirmChatLinkScreen(b -> {
+                if (b) {
+                    Util.getOperatingSystem().open(uploadedCrashLink);
+                }
+
+                MinecraftClient.getInstance().setScreen(construct(report));
+            }, uploadedCrashLink, true));
+        } catch (Throwable e) {
+            LOGGER.error("Exception when crash menu button clicked:", e);
+            buttonWidget.setMessage(NecLocalization.translatedText("notenoughcrashes.gui.failed"));
+            buttonWidget.active = false;
+        }
+    }
+
+
+    private static final int GREEN = 0x00FF00;
+    private static final Text uploadToCrashyText = NecLocalization.translatedText("notenoughcrashes.gui.uploadToCrashy")
+            .copy().setStyle(Style.EMPTY.withColor(GREEN));
+    private static final Text uploadToCrashyLoadingText = NecLocalization.translatedText("notenoughcrashes.gui.loadingCrashyUpload");
+
+    private String crashyLink = null;
+
+    private void handleCrashyUploadClick(ButtonWidget buttonWidget) {
+        try {
+            if (crashyLink == null) {
+                buttonWidget.active = false;
+                buttonWidget.setMessage(uploadToCrashyLoadingText);
+                CrashyUpload.uploadToCrashy(report.asString()).thenAccept(link -> {
+                    crashyLink = link;
+                    buttonWidget.active = true;
+                    buttonWidget.setMessage(uploadToCrashyText);
+                    Util.getOperatingSystem().open(crashyLink);
+                });
+            } else {
+                Util.getOperatingSystem().open(crashyLink);
+            }
+        } catch (Throwable e) {
+            LOGGER.error("Exception uploading to crashy", e);
+            buttonWidget.setMessage(NecLocalization.translatedText("notenoughcrashes.gui.failed"));
+            buttonWidget.active = false;
+        }
+    }
 
     @Override
     public void init() {
         widgets = new ArrayList<>();
 
-        this.getLinkButton = new ButtonWidget(width / 2 - 155 + 160, height / 4 + 120 + 12, 150, 20, NecLocalization.translatedText("notenoughcrashes.gui.getLink"),
-                buttonWidget -> {
-                    try {
-                        if (hasteLink == null) {
-                            hasteLink = CrashLogUpload.upload(report.asString());
-                        }
-//                                Field uriField;
-//                                //noinspection JavaReflectionMemberAccess
-//                                uriField = Screen.class.getDeclaredField("clickedLink");
-//                                uriField.setAccessible(true);
-//                                uriField.set(ProblemScreen.this, new URI(hasteLink));
-                        MinecraftClient.getInstance().setScreen(new ConfirmChatLinkScreen(b -> {
-                            if (b) {
-                                Util.getOperatingSystem().open(hasteLink);
-                            }
+        addDrawableChild(
+                new ButtonWidget(width / 2 - 155 + 160, height / 4 + 132 + 12, 150, 20,
+                        NecLocalization.translatedText("notenoughcrashes.gui.getLink"),
+                        this::handleLegacyLinkClick)
+        );
 
-                            MinecraftClient.getInstance().setScreen(construct(report));
-                        }, hasteLink, true));
-                    } catch (Throwable e) {
-                        LOGGER.error("Exception when crash menu button clicked:", e);
-                        buttonWidget.setMessage(NecLocalization.translatedText("notenoughcrashes.gui.failed"));
-                        buttonWidget.active = false;
-                    }
-                });
+        addDrawableChild(
+                new ButtonWidget(width / 2 - 155 + 160, height / 4 + 108 + 12, 150, 20, uploadToCrashyText, this::handleCrashyUploadClick)
+        );
 
-        addDrawableChild(getLinkButton);
 
         x = width / 2 - 155;
         y = height / 4;

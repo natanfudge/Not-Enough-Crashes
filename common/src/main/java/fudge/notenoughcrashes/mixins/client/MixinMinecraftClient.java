@@ -73,6 +73,12 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
         return report;
     }
 
+    // Prevent calling printCrashReport which is not needed
+    @Inject(method = "run()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;printCrashReport(Lnet/minecraft/util/crash/CrashReport;)V"), cancellable = true)
+    private void cancelRunLoopAfterCrash(CallbackInfo ci) {
+        if (NotEnoughCrashes.ENABLE_GAMELOOP_CATCHING) ci.cancel();
+    }
+
     @Inject(method = "cleanUpAfterCrash()V", at = @At("HEAD"))
     private void beforeCleanUpAfterCrash(CallbackInfo info) {
         InGameCatcher.cleanupBeforeMinecraft(renderTaskQueue);

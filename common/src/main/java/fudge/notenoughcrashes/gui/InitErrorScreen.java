@@ -26,12 +26,8 @@ public class InitErrorScreen extends ProblemScreen {
     @Override
     public void init() {
         super.init();
-        getLinkButton.x = width / 2 - 155;
-        getLinkButton.y = height / 4 + 120 + 6;
-        getLinkButton.setWidth(310);
 
-        ButtonWidget exitButton = new ButtonWidget(width / 2 - 155, height / 4 + 120 + 12 + 18,
-                310, 20, new TranslatableText("menu.quit"),
+        ButtonWidget exitButton = new ButtonWidget(width / 2 - 155, height / 4 + 120 + 12, 150, 20, new TranslatableText("menu.quit"),
                 button -> {
                     // Prevent the game from freaking out when we try to close it
                     NecConfig.instance().forceCrashScreen = false;

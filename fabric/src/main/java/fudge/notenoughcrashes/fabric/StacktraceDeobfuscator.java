@@ -5,7 +5,6 @@ import com.google.common.net.UrlEscapers;
 import fudge.notenoughcrashes.NecConfig;
 import fudge.notenoughcrashes.NotEnoughCrashes;
 import fudge.notenoughcrashes.platform.NecPlatform;
-import fudge.notenoughcrashes.stacktrace.YarnVersion;
 import net.fabricmc.mapping.reader.v2.MappingGetter;
 import net.fabricmc.mapping.reader.v2.TinyMetadata;
 import net.fabricmc.mapping.reader.v2.TinyV2Factory;
@@ -20,7 +19,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.*;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public final class StacktraceDeobfuscator {
 
