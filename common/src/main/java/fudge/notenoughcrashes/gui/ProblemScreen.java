@@ -114,7 +114,6 @@ public abstract class ProblemScreen extends Screen {
 
     private String crashyLink = null;
 
-    //    private  boolean uploadingToCrashy = false;
     private void handleCrashyUploadClick(ButtonWidget buttonWidget) {
         try {
             if (crashyLink == null) {
