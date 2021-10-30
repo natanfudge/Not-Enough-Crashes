@@ -14,6 +14,7 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.crash.CrashException;
 import net.minecraft.util.crash.CrashReport;
+import net.minecraft.util.profiler.DummyRecorder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -62,6 +63,7 @@ public class InGameCatcher {
         // Turn off profiler because it will crash the game if the world is closed
         if (((MinecraftClientAccess) client).getRecorder().isActive()) {
             client.toggleDebugProfiler(null);
+            ((MinecraftClientAccess) client).setRecorder(DummyRecorder.INSTANCE);
         }
         client.player = null;
         client.world = null;

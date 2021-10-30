@@ -38,6 +38,11 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
         return recorder;
     }
 
+    @Override
+    public void setRecorder(Recorder recorder) {
+        this.recorder = recorder;
+    }
+
     public MixinMinecraftClient(String string_1) {
         super(string_1);
     }

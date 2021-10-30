@@ -1,3 +1,5 @@
+### 3.7.1
+- Fixed ['Exiting world while F3+L profiling is active crashes recursively.'](https://github.com/natanfudge/Not-Enough-Crashes/issues/83).
 ## 3.7.0
 - Introducing: [Crashy](https://crashy.net/)! Crashy is a crash hosting site designed specifically for Not Enough Crashes and Minecraft crashes in general. 
 It shows crashes in an organized GUI that is easily readable, and has some other nice features. [Example](https://crashy.net/2c2vAe5oUVgiNck3NfXU).  
