@@ -13,7 +13,8 @@ public class DeobfCrashReportSectionMixin {
     private StackTraceElement[] stackTrace;
 
     /**
-     * @reason Disable stack trace pruning
+     * @reason Deobfsucate stack trace
+     * @author Fudge
      */
     @Overwrite
     public void trimStackTraceEnd(int size) {
