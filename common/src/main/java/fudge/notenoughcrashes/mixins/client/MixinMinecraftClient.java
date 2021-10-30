@@ -3,9 +3,11 @@ package fudge.notenoughcrashes.mixins.client;
 import fudge.notenoughcrashes.NotEnoughCrashes;
 import fudge.notenoughcrashes.mixinhandlers.EntryPointCatcher;
 import fudge.notenoughcrashes.mixinhandlers.InGameCatcher;
+import fudge.notenoughcrashes.patches.MinecraftClientAccess;
 import fudge.notenoughcrashes.stacktrace.CrashUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.crash.CrashReport;
+import net.minecraft.util.profiler.Recorder;
 import net.minecraft.util.thread.ReentrantThreadExecutor;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -20,13 +22,21 @@ import java.util.Queue;
 
 
 @Mixin(MinecraftClient.class)
-public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runnable> {
+public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runnable> implements MinecraftClientAccess {
     @Shadow
     private CrashReport crashReport;
 
     @Shadow
     @Final
     private Queue<Runnable> renderTaskQueue;
+
+    @Shadow
+    private Recorder recorder;
+
+    @Override
+    public Recorder getRecorder() {
+        return recorder;
+    }
 
     public MixinMinecraftClient(String string_1) {
         super(string_1);

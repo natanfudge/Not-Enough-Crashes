@@ -1,6 +1,6 @@
-package fudge.notenoughcrashes.patches;
-
-public interface PatchedIntegratedServer {
-
-    void setCrashNextTick();
-}
+//package fudge.notenoughcrashes.patches;
+//
+//public interface PatchedIntegratedServer {
+//
+//    void setCrashNextTick();
+//}

@@ -5,14 +5,12 @@ import fudge.notenoughcrashes.NotEnoughCrashes;
 import fudge.notenoughcrashes.platform.CommonModMetadata;
 import fudge.notenoughcrashes.platform.ModsByLocation;
 import fudge.notenoughcrashes.platform.NecPlatform;
+import net.minecraft.util.crash.CrashReport;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
@@ -24,8 +22,14 @@ import java.util.function.Consumer;
 public final class ModIdentifier {
     private static final Logger LOGGER = LogManager.getLogger();
 
+    private static final Map<CrashReport, Set<CommonModMetadata>> suspectedModsCache = new HashMap<>();
+
+    public static Set<CommonModMetadata> getSuspectedModsOf(CrashReport report) {
+        return suspectedModsCache.computeIfAbsent(report, (ignored) -> identifyFromStacktrace(report.getCause()));
+    }
+
     @NotNull
-    public static Set<CommonModMetadata> identifyFromStacktrace(Throwable e) {
+    private static Set<CommonModMetadata> identifyFromStacktrace(Throwable e) {
         Set<CommonModMetadata> mods = new HashSet<>();
         // Include suppressed exceptions too
         visitChildrenThrowables(e, throwable -> {
@@ -112,13 +116,13 @@ public final class ModIdentifier {
         else if (NecPlatform.instance().isDevelopmentEnvironment()) {
 
             // For some reason, in dev, the mod being tested has the 'resources' folder as the origin instead of the 'classes' folder.
-            String resourcesPathString = path.toString().replace("\\","/")
+            String resourcesPathString = path.toString().replace("\\", "/")
                     // Make it work with Architectury as well
                     .replace("common/build/classes/java/main", "fabric/build/resources/main")
                     .replace("common/build/classes/kotlin/main", "fabric/build/resources/main")
                     .replace("classes/java/main", "resources/main")
                     .replace("classes/kotlin/main", "resources/main");
-            Path resourcesPath = Paths.get(resourcesPathString) ;
+            Path resourcesPath = Paths.get(resourcesPathString);
             return modMap.get(resourcesPath);
         } else {
             return null;

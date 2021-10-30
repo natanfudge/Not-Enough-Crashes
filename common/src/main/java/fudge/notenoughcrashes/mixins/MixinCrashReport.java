@@ -1,13 +1,11 @@
 package fudge.notenoughcrashes.mixins;
 
-import fudge.notenoughcrashes.patches.PatchedCrashReport;
 import fudge.notenoughcrashes.platform.CommonModMetadata;
 import fudge.notenoughcrashes.stacktrace.ModIdentifier;
 import net.minecraft.util.SystemDetails;
 import net.minecraft.util.crash.CrashReport;
 import net.minecraft.util.crash.CrashReportSection;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -24,7 +22,7 @@ import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
 @Mixin(value = CrashReport.class, priority = 500)
-public abstract class MixinCrashReport implements PatchedCrashReport {
+public abstract class MixinCrashReport /*implements PatchedCrashReport*/ {
 
     @Shadow
     @Final
@@ -53,12 +51,16 @@ public abstract class MixinCrashReport implements PatchedCrashReport {
         return writer.toString();
     }
 
-    @Override
-    @NotNull
-    public Set<CommonModMetadata> getSuspectedMods() {
-        if (suspectedMods == null) suspectedMods = ModIdentifier.identifyFromStacktrace(cause);
-        return suspectedMods;
+    private CrashReport getThis() {
+        return (CrashReport) (Object) this;
     }
+
+//    @Override
+//    @NotNull
+//    public Set<CommonModMetadata> getSuspectedMods() {
+//        if (suspectedMods == null) suspectedMods = ModIdentifier.identifyFromStacktrace(cause);
+//        return suspectedMods;
+//    }
 
 
     /**
@@ -68,8 +70,9 @@ public abstract class MixinCrashReport implements PatchedCrashReport {
     private void beforeSystemDetailsAreWritten(CallbackInfo ci) {
         systemDetailsSection.addSection("Suspected Mods", () -> {
             try {
-                if (!getSuspectedMods().isEmpty()) {
-                    return getSuspectedMods().stream()
+                var suspectedMods = ModIdentifier.getSuspectedModsOf(getThis());
+                if (!suspectedMods.isEmpty()) {
+                    return suspectedMods.stream()
                             .map((mod) -> mod.name() + " (" + mod.id() + ")")
                             .collect(Collectors.joining(", "));
                 } else return "None";

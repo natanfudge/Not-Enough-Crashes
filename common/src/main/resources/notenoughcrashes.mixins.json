@@ -10,7 +10,6 @@
   ],
   "client": [
     "client.MixinBufferBuilder",
-    "client.MixinIntegratedServer",
     "client.MixinMinecraftClient"
   ]
 }

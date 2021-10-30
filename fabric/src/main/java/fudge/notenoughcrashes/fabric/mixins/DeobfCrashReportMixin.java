@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = CrashReport.class, priority = 500)
 //TODO: test deobfuscation
-public abstract class DeobfCrashReportMixin implements PatchedCrashReport {
+public abstract class DeobfCrashReportMixin/* implements PatchedCrashReport */{
     @Shadow
     @Final
     private Throwable cause;
