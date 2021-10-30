@@ -5,9 +5,9 @@ import fudge.notenoughcrashes.NotEnoughCrashes;
 import fudge.notenoughcrashes.StateManager;
 import fudge.notenoughcrashes.api.NotEnoughCrashesApi;
 import fudge.notenoughcrashes.gui.CrashScreen;
+import fudge.notenoughcrashes.patches.MinecraftClientAccess;
 import fudge.notenoughcrashes.stacktrace.CrashUtils;
 import fudge.notenoughcrashes.utils.GlUtil;
-import fudge.notenoughcrashes.utils.NecLocalization;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.SaveLevelScreen;
 import net.minecraft.text.LiteralText;
@@ -59,6 +59,10 @@ public class InGameCatcher {
     // Sometimes the game fails to reset this so we make sure it happens ourselves
     private static void resetCriticalGameState() {
         MinecraftClient client = getClient();
+        // Turn off profiler because it will crash the game if the world is closed
+        if (((MinecraftClientAccess) client).getRecorder().isActive()) {
+            client.toggleDebugProfiler(null);
+        }
         client.player = null;
         client.world = null;
     }

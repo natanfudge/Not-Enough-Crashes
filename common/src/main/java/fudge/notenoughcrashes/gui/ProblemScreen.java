@@ -2,8 +2,8 @@ package fudge.notenoughcrashes.gui;
 
 import fudge.notenoughcrashes.gui.util.TextWidget;
 import fudge.notenoughcrashes.gui.util.Widget;
-import fudge.notenoughcrashes.patches.PatchedCrashReport;
 import fudge.notenoughcrashes.platform.CommonModMetadata;
+import fudge.notenoughcrashes.stacktrace.ModIdentifier;
 import fudge.notenoughcrashes.upload.CrashyUpload;
 import fudge.notenoughcrashes.upload.LegacyCrashLogUpload;
 import fudge.notenoughcrashes.utils.NecLocalization;
@@ -56,7 +56,7 @@ public abstract class ProblemScreen extends Screen {
     private static final Set<String> IGNORED_MODS = new HashSet<>(Arrays.asList("minecraft", "fabricloader", "loadcatcher", "jumploader", "quilt_loader", "forge"));
 
     private Text getSuspectedModsText() {
-        Set<CommonModMetadata> suspectedMods = ((PatchedCrashReport) report).getSuspectedMods();
+        Set<CommonModMetadata> suspectedMods = ModIdentifier.getSuspectedModsOf(report);
 
         // Minecraft exists and basically any stack trace, and loader exists in any launch,
         // it's better not to include them in the list of mods.
