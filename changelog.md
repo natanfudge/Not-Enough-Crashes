@@ -1,3 +1,5 @@
+# 4.0.0
+- **All version from 4.0.0 onwards only support Fabric Loader 0.12.0 and above**.
 ### 3.7.2
 All version from 2.0.0 to 3.7.2 only support Fabric Loader versions from 0.9.0 to 0.11.7.
 This will now be validated by Fabric Loader.

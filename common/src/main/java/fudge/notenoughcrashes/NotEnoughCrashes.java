@@ -28,13 +28,10 @@ public class NotEnoughCrashes {
         if (LOG_DEBUG) getLogger().error(message);
     }
 
-    private static final boolean DEBUG_ENTRYPOINT = false;
-
     public static final boolean ENABLE_GAMELOOP_CATCHING = true;
 
     public static boolean enableEntrypointCatching() {
-        return (!NecPlatform.instance().isDevelopmentEnvironment() || DEBUG_ENTRYPOINT)
-                && NecConfig.instance().catchInitializationCrashes;
+        return NecConfig.instance().catchInitializationCrashes;
     }
 
     public static CommonModMetadata getMetadata() {
@@ -50,7 +47,5 @@ public class NotEnoughCrashes {
     public static void initialize() {
         if (NecConfig.instance().forceCrashScreen) SystemExitBlock.forbidSystemExitCall();
         NecConfig.instance();
-
-        if (DEBUG_ENTRYPOINT) throw new NullPointerException();
     }
 }

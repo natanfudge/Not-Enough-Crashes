@@ -11,11 +11,11 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import java.io.File;
 
 @Mixin(MinecraftClient.class)
-@SuppressWarnings("StaticVariableMayNotBeInitialized")
+@SuppressWarnings({"StaticVariableMayNotBeInitialized", "MixinAnnotationTarget", "InvalidInjectorMethodSignature", "UnresolvedMixinReference"})
 public abstract class CatchInitMInecraftClientMixin {
 
     // require = 0 to support quilt
-    @Redirect(method = "<init>", require = 0, at = @At(value = "INVOKE", target = "Lnet/fabricmc/loader/entrypoint/minecraft/hooks/EntrypointClient;start(Ljava/io/File;Ljava/lang/Object;)V", remap = false))
+    @Redirect(method = "<init>", require = 0, at = @At(value = "INVOKE", target = "Lnet/fabricmc/loader/impl/game/minecraft/Hooks;startClient(Ljava/io/File;Ljava/lang/Object;)V", remap = false))
     private void catchFabricInit(File runDir, Object gameInstance) {
         if (NotEnoughCrashes.enableEntrypointCatching()) {
             try {
