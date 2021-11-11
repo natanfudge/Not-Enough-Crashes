@@ -34,7 +34,7 @@ public class InitErrorScreen extends ProblemScreen {
                     System.exit(-1);
                 });
 
-        addChild(exitButton);
+        addButton(exitButton);
     }
 
     @Override

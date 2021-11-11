@@ -10,15 +10,28 @@ For dev use:
 
 ## Crash Handling
 
-### Client Initialization Crashes
+### Client Initialization Crashes 
+  - Start the game
+  - Hold the equals key until the game crashes
+  - Verify:
+    - The game crashes.
+    - The crash screen appears.
+    - 'Not Enough Crashes Test Mod' is blamed.
+    - In the terminal, no information is repeated.
+    - Click 'Get link' and verify in the log:
+      - No information is repeated.
+      - System details are present.
+      - Suspected Mods: Not Enough Crashes Test Mod (nec_testmod)
+    
+  - Click 'Quit Game' and verify the game closes without any exceptions being logged.
 ### Integrated Server Crashes
-- Run with -Dnec_test=server_crash.
-
   - Open a Minecraft World.
+  - Hold the plus key.
   - Verify:
     - The game crashes.
     - The crash screen appears.
     - No mods are blamed.
+    - In the terminal, no information is repeated.
     - Click 'Get link' and verify in the log:
       - No information is repeated.
       - System details are present.
@@ -28,6 +41,8 @@ For dev use:
 
   - Click 'Back to title screen' and re-enter the world.
   - Verify the game is working fine.
+
+### Dedicated Server Crashes
 
 ### Client Reported Crashes
 - Open a Minecraft world.

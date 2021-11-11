@@ -1,3 +1,7 @@
+### 3.7.2
+- All version from 2.0.0 to 3.7.2 only support Fabric Loader versions from 0.9.0 to 0.11.7. 
+- This will now be validated by Fabric Loader. 
+- Crashy uploading is currently not supported in 1.16.5. 
 ### 3.7.1
 - Fixed ['Exiting world while F3+L profiling is active crashes recursively.'](https://github.com/natanfudge/Not-Enough-Crashes/issues/83).
 ## 3.7.0

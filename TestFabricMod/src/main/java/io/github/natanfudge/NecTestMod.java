@@ -3,20 +3,31 @@ package io.github.natanfudge;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.text.LiteralText;
 import org.lwjgl.glfw.GLFW;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class NecTestMod implements ModInitializer {
     public static String getTestMode() {
-        String value = System.getProperty("nec_test");
-        if (value == null) {
-            return "none";
-        } else return value;
+        Path configDig = FabricLoader.getInstance().getConfigDir();
+        Path testModePath = configDig.resolve("nec_test_mode.txt");
+        try {
+            Files.createDirectories(testModePath.getParent());
+            if (!Files.exists(testModePath)) {
+                Files.createFile(testModePath);
+            }
+            return new String(Files.readAllBytes(testModePath));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    private static final KeyBinding keyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+    private static final KeyBinding tickKeyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
             "key.nec_test.crash", // The translation key of the keybinding's name
             InputUtil.Type.KEYSYM, // The type of the keybinding, KEYSYM for keyboard, MOUSE for mouse.
             GLFW.GLFW_KEY_LEFT_BRACKET, // The keycode of the key
@@ -29,11 +40,17 @@ public class NecTestMod implements ModInitializer {
             GLFW.GLFW_KEY_RIGHT_BRACKET, // The keycode of the key
             "category.nec_test" // The translation key of the keybinding's category.
     ));
-//            throw new RuntimeException("שלופ");
+
+    //TODO: update TESTING with new strats
+
+
     @Override
     public void onInitialize() {
+        if (getTestMode().equals("init_crash")) {
+            throw new NecTestCrash("Test Init Crash");
+        }
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            if (keyBinding.wasPressed()) {
+            if (tickKeyBinding.wasPressed()) {
                 throw new NecTestCrash("Test Game Loop Crash");
             }
             if (localeKeyBinding.wasPressed()) {

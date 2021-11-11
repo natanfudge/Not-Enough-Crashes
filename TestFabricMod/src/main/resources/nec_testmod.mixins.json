@@ -2,8 +2,9 @@
   "required": true,
   "minVersion": "0.8",
   "package": "io.github.natanfudge.mixin",
-  "compatibilityLevel": "JAVA_16",
+  "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "ExampleMixin",
     "MixinMinecraftServer"
   ],
   "client": [
