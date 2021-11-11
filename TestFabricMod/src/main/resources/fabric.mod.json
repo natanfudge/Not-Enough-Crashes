@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "nec_testmod",
+  "version": "${version}",
+
+  "name": "Not Enough Crashes Test Mod",
+  "description": "Tests Not Enough Crashes",
+  "authors": [
+    "Fudge"
+  ],
+  "contact": {
+    "sources": "https://github.com/natanfudge/Not-Enough-Crashes"
+  },
+
+  "license": "MIT",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "io.github.natanfudge.NecTestMod"
+    ]
+  },
+  "mixins": [
+    "nec_testmod.mixins.json"
+  ],
+
+  "depends": {
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
+}

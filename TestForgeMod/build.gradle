@@ -1,0 +1,58 @@
+plugins {
+    id "com.github.johnrengelman.shadow" version "7.0.0"
+    id "dev.architectury.loom" version "0.10.0-SNAPSHOT"
+}
+archivesBaseName = rootProject.archives_base_name
+version = rootProject.mod_version
+group = rootProject.maven_group
+configurations {
+    shadowCommon // Don't use shadow from the shadow plugin because we don't want IDEA to index this.
+}
+
+loom {
+    forge {
+        mixinConfigs = ["nec_testmod.mixins.json"]
+    }
+    silentMojangMappingsLicense()
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
+    // The following line declares the mojmap mappings, you may use other mappings as well
+    mappings "net.fabricmc:yarn:${rootProject.yarn_mappings}:v2"
+    forge "net.minecraftforge:forge:${rootProject.minecraft_version}-${rootProject.forge_version}"
+    // Remove the next line if you don't want to depend on the API
+    modApi "dev.architectury:architectury-forge:${rootProject.architectury_version}"
+
+}
+
+processResources {
+    inputs.property "version", project.version
+
+    filesMatching("META-INF/mods.toml") {
+        expand "version": project.version
+    }
+}
+
+shadowJar {
+    exclude "fabric.mod.json"
+
+    configurations = [project.configurations.shadowCommon]
+    classifier "dev-shadow"
+}
+
+remapJar {
+    input.set shadowJar.archiveFile
+    dependsOn shadowJar
+    classifier "forge"
+}
+
+jar {
+    classifier "dev"
+}
+
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+    options.release = 16
+}

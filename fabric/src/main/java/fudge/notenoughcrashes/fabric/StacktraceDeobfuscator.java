@@ -2,8 +2,9 @@ package fudge.notenoughcrashes.fabric;
 
 import com.google.common.collect.Lists;
 import com.google.common.net.UrlEscapers;
+import fudge.notenoughcrashes.NecConfig;
 import fudge.notenoughcrashes.NotEnoughCrashes;
-import fudge.notenoughcrashes.stacktrace.YarnVersion;
+import fudge.notenoughcrashes.platform.NecPlatform;
 import net.fabricmc.mapping.reader.v2.MappingGetter;
 import net.fabricmc.mapping.reader.v2.TinyMetadata;
 import net.fabricmc.mapping.reader.v2.TinyV2Factory;
@@ -18,7 +19,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.*;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public final class StacktraceDeobfuscator {
 
@@ -30,17 +30,36 @@ public final class StacktraceDeobfuscator {
 
     private static Map<String, String> mappings = null;
 
+    // No need to deobf in dev
+    private static final boolean DEBUG_DEOBF = false;
+    private static final boolean ENABLE_DEOBF = (!NecPlatform.instance().isDevelopmentEnvironment()
+            && NecConfig.instance().deobfuscateStackTrace) || DEBUG_DEOBF;
+
+    public static void init() {
+        if (!ENABLE_DEOBF) return;
+        NotEnoughCrashes.getLogger().info("Initializing StacktraceDeobfuscator");
+        try {
+            if (!Files.exists(CACHED_MAPPINGS)) downloadAndCacheMappings();
+        } catch (Exception e) {
+            NotEnoughCrashes.getLogger().error("Failed to load mappings!", e);
+        }
+        NotEnoughCrashes.getLogger().info("Done initializing StacktraceDeobfuscator");
+
+        // Install the log exception deobfuscation rewrite policy
+        DeobfuscatingRewritePolicy.install();
+    }
+
 
     private static void downloadAndCacheMappings() {
         String yarnVersion;
         try {
             yarnVersion = YarnVersion.getLatestBuildForCurrentVersion();
         } catch (IOException e) {
-            NotEnoughCrashes.LOGGER.error("Could not get latest yarn build for version", e);
+            NotEnoughCrashes.getLogger().error("Could not get latest yarn build for version", e);
             return;
         }
 
-        NotEnoughCrashes.LOGGER.info("Downloading deobfuscation mappings: " + yarnVersion + " for the first launch");
+        NotEnoughCrashes.getLogger().info("Downloading deobfuscation mappings: " + yarnVersion + " for the first launch");
 
         String encodedYarnVersion = UrlEscapers.urlFragmentEscaper().escape(yarnVersion);
         // Download V2 jar
@@ -49,7 +68,7 @@ public final class StacktraceDeobfuscator {
         try {
             Files.createDirectories(NotEnoughCrashes.DIRECTORY);
         } catch (IOException e) {
-            NotEnoughCrashes.LOGGER.error("Could not create " + NotEnoughCrashes.NAME + " directory!", e);
+            NotEnoughCrashes.getLogger().error("Could not create " + NotEnoughCrashes.NAME + " directory!", e);
             return;
         }
 
@@ -58,7 +77,7 @@ public final class StacktraceDeobfuscator {
         try {
             FileUtils.copyURLToFile(new URL(artifactUrl), jarFile);
         } catch (IOException e) {
-            NotEnoughCrashes.LOGGER.error("Failed to downloads mappings!", e);
+            NotEnoughCrashes.getLogger().error("Failed to downloads mappings!", e);
             return;
         }
 
@@ -66,17 +85,14 @@ public final class StacktraceDeobfuscator {
             NotEnoughCrashes.ensureDirectoryExists();
             Files.copy(jar.getPath(MAPPINGS_JAR_LOCATION), CACHED_MAPPINGS, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
-            NotEnoughCrashes.LOGGER.error("Failed to extract mappings!", e);
+            NotEnoughCrashes.getLogger().error("Failed to extract mappings!", e);
         }
     }
 
-    public static void init() {
-        if (!Files.exists(CACHED_MAPPINGS)) downloadAndCacheMappings();
-    }
 
     private static void loadMappings() {
         if (!Files.exists(CACHED_MAPPINGS)) {
-            NotEnoughCrashes.LOGGER.warn("Could not download mappings, stack trace won't be deobfuscated");
+            NotEnoughCrashes.getLogger().warn("Could not download mappings, stack trace won't be deobfuscated");
             return;
         }
 
@@ -114,7 +130,7 @@ public final class StacktraceDeobfuscator {
             });
 
         } catch (IOException e) {
-            NotEnoughCrashes.LOGGER.error("Could not load mappings", e);
+            NotEnoughCrashes.getLogger().error("Could not load mappings", e);
         }
 
         StacktraceDeobfuscator.mappings = mappings;
@@ -136,17 +152,13 @@ public final class StacktraceDeobfuscator {
         }
     }
 
-    private static final List<String> filteredClasses = Arrays.asList("io.github.giantnuker.fabric.loadcatcher.EntrypointCatcher$LoaderClientReplacement"
-                    , "io.github.giantnuker.fabric.loadcatcher.EntrypointCatcher");
 
     // No need to insert multiple watermarks in one exception
     public static StackTraceElement[] deobfuscateStacktrace(StackTraceElement[] stackTrace, boolean insertWatermark) {
         if (stackTrace.length == 0) return stackTrace;
 
-        // Make the stack trace nicer by removing entrypoint catcher's cruft
-        List<StackTraceElement> stackTraceList = NotEnoughCrashes.FILTER_ENTRYPOINT_CATCHER ? Arrays.stream(stackTrace).filter(element -> !filteredClasses.contains(element.getClassName()))
-                        .collect(Collectors.toList()) : Lists.newArrayList(stackTrace);
-        if (NotEnoughCrashesFabric.ENABLE_DEOBF
+        List<StackTraceElement> stackTraceList = Lists.newArrayList(stackTrace);
+        if (ENABLE_DEOBF
                         // Check it wasn't deobfuscated already. This can happen when this is called both by DeobfuscatingRewritePolicy
                         // and then CrashReport mixin. They don't cover all cases alone though so we need both.
                         && !StringUtils.startsWith(stackTrace[0].getClassName(), NotEnoughCrashes.NAME)) {
@@ -158,7 +170,7 @@ public final class StacktraceDeobfuscator {
                     stackTraceList.add(0, new StackTraceElement(NotEnoughCrashes.NAME + " deobfuscated stack trace",
                                     "", YarnVersion.getLatestBuildForCurrentVersion(), -1));
                 } catch (IOException e) {
-                    NotEnoughCrashes.LOGGER.error("Could not get used yarn version", e);
+                    NotEnoughCrashes.getLogger().error("Could not get used yarn version", e);
                     return stackTrace;
                 }
             }

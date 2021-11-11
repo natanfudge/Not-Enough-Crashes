@@ -1,8 +1,12 @@
+import org.gradle.api.tasks.compile.JavaCompile
+import org.gradle.jvm.toolchain.JavaLanguageVersion
+
 plugins {
-    id "architectury-plugin"
-    id "forgified-fabric-loom" apply false
+    id "architectury-plugin" version "3.4-SNAPSHOT"
+    id "dev.architectury.loom" version "0.10.0-SNAPSHOT" apply false
     id 'maven-publish'
     id 'com.matthewprenger.cursegradle'
+    id "com.modrinth.minotaur" version "1.2.1" apply false
 }
 
 architectury {
@@ -10,18 +14,15 @@ architectury {
 }
 
 subprojects {
-    apply plugin: "forgified-fabric-loom"
+    apply plugin: "dev.architectury.loom"
     apply plugin: 'maven-publish'
     apply plugin: 'com.matthewprenger.cursegradle'
-
-    loom {
-        silentMojangMappingsLicense()
-    }
-
-    ext.total_version = "$mod_version+$minecraft_version"
+    apply plugin: "com.modrinth.minotaur"
 
     dependencies {
         minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
+        // The following line declares the mojmap mappings, you may use other mappings as well
+        mappings "net.fabricmc:yarn:${rootProject.yarn_mappings}:v2"
     }
 }
 
@@ -30,27 +31,26 @@ allprojects {
     apply plugin: "architectury-plugin"
 
     archivesBaseName = rootProject.archives_base_name
-    version = rootProject.mod_version
+    ext.total_version = "$mod_version+$minecraft_version"
+    version = ext.total_version
     group = rootProject.maven_group
 
     tasks.withType(JavaCompile) {
         options.encoding = "UTF-8"
-
-        // The Minecraft launcher currently installs Java 8 for users, so your mod probably wants to target Java 8 too
-        // JDK 9 introduced a new way of specifying this that will make sure no newer classes or methods are used.
-        // We'll use that if it's available, but otherwise we'll use the older option.
-        def targetVersion = 8
-        if (JavaVersion.current().isJava9Compatible()) {
-            options.release = targetVersion
-        }
     }
 
     java {
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(8))
+        }
         withSourcesJar()
     }
+
 }
 
 task publishAll {
-    dependsOn("fabric:curseforge353890")
+    group = "upload"
+    dependsOn("fabric:publishFabric")
     dependsOn("forge:curseforge442354")
 }
+
