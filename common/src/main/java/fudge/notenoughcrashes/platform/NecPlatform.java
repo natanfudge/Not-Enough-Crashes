@@ -1,13 +1,9 @@
 package fudge.notenoughcrashes.platform;
 
-import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
-import java.net.URI;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 public interface NecPlatform {
     static NecPlatform instance() {
@@ -15,7 +11,7 @@ public interface NecPlatform {
     }
 
 
-    Map<URI, Set<CommonModMetadata>> getModsAtLocationsInDisk();
+    ModsByLocation getModsAtLocationsInDisk();
 
     Path getGameDirectory();
 
@@ -23,6 +19,15 @@ public interface NecPlatform {
 
     boolean isDevelopmentEnvironment();
 
+    /**
+     * Returns null if no such resource exists at resources/relativePath
+     */
+    @Nullable
+    Path getResource(Path relativePath);
+
+    /**
+     * Get be multiple metadatas because forge supports having multiple mods under one jar
+     */
     List<CommonModMetadata> getModMetadatas(String modId);
 
 }

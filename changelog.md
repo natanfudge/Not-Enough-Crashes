@@ -1,4 +1,49 @@
-
+### 3.7.1
+- Fixed ['Exiting world while F3+L profiling is active crashes recursively.'](https://github.com/natanfudge/Not-Enough-Crashes/issues/83).
+## 3.7.0
+- Introducing: [Crashy](https://crashy.net/)! Crashy is a crash hosting site designed specifically for Not Enough Crashes and Minecraft crashes in general. 
+It shows crashes in an organized GUI that is easily readable, and has some other nice features. [Example](https://crashy.net/2c2vAe5oUVgiNck3NfXU).  
+There is now a button for uploading directly to crashy in the crash screen. 
+- Fixed UTF-specific characters turning into '?' when uploading crash logs.
+- Fixed 'Continuing the game after crashing will cause a crash report to be logged later when the game exits normally'.
+### 3.6.5
+- Forge for 1.17.1! As this is the first Forge version in a while it may have some issues, so comment if you've encountered anything (or better, open a Github issue).
+### 3.6.4
+- Added some Quilt-specific features, courtesy of @Siuolthepic!
+### 3.6.3
+- Quilt now absolutely, officially, works, just as well as Fabric does. 
+### 3.6.2
+- Fixed text not being localized to English when the translation is not available for the chosen language.
+### 3.6.1
+- Should now work with the Quilt mod loader, with `deobfuscateStackTrace` set to false in the config.
+  Currently, catching initialization errors and deobfuscation is not supported in Quilt.
+## 3.6.0
+- ~~Should now work with the Quilt mod loader~~ not yet
+- Fixed Jar-in-jar mods not being blamed for crashes
+## 3.5.0
+- No longer depends on Fabric API for localization to work properly.
+### 3.4.5
+- Fixed some regressions in cleaning up after crash. This fixes not being disconnected from servers.
+### 3.4.4
+- Fixed integrated server crashes not being caught.
+- Fixed state sometimes not being cleaned up properly which could cause the game to infinitely crash.
+### 3.4.3
+- Fixed deobfuscation not working in dedicated servers, courtesy of @Fourmisain!
+### 3.4.2
+- Prevented extreme cases where the crash log could become incredibly large. 
+- Fixed the crash screen not showing suspected mods in cases where adding them to the crash log was prevented by conflicting mods.
+### 3.4.1
+- Improved internal error message.
+## 3.4.0
+- Provided many configuration options for uploading the crash logs, see NecConfig.java, thanks to The456Gamer!
+- The config format for uploading crash logs has changed, refer to NecConfig.java for the new format. 
+## 3.3.1
+- Fixed mod identification not working.
+- Fixed deobfuscation sometimes not working.
+- Promoted to Release!
+## 3.3.0
+- Updated to Minecraft 1.17, Java 16. 
+- Currently buggy, this is a minimum viable alpha release.
 ## 3.2.0
 - Added a new option `forceCrashScreen` that will prevent cases in which the game closes with no crash log. Instead, the game will crash normally.
 ### 3.1.9

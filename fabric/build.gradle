@@ -1,5 +1,8 @@
+import com.modrinth.minotaur.TaskModrinthUpload
+import org.gradle.api.tasks.Copy
+
 plugins {
-    id "com.github.johnrengelman.shadow" version "5.0.0"
+    id "com.github.johnrengelman.shadow" version "5.2.0"
 }
 
 configurations {
@@ -11,18 +14,26 @@ architectury {
     fabric()
 }
 
+repositories {
+    maven {
+        name = "Quilt"
+        url = "https://maven.quiltmc.org/repository/release/"
+    }
+}
+
 dependencies {
 //    minecraft("com.mojang:minecraft:${rootProject.minecraft_version}")
-    mappings("net.fabricmc:yarn:${rootProject.yarn_mappings}:v2")
-//    modCompile("net.fabricmc:fabric-loader:${rootProject.loader_version}")
-    modApi ("net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_version}")
+    modImplementation("net.fabricmc:fabric-loader:${rootProject.loader_version}")
+    compileOnly("org.quiltmc:quilt-loader:0.13.2")
+
+//    modImplementation("net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_version}")
     // Remove the next line if you don't want to depend on the API
 //    modCompile("me.shedaniel:architectury:${rootProject.architectury_version}:fabric")
 
-    implementation(project(path: ":common")) {
+    implementation(project(path: ":common", configuration: "dev")) {
         transitive = false
     }
-    developmentFabric(project(path: ":common")) {
+    developmentFabric(project(path: ":common", configuration: "dev")) {
         transitive = false
     }
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) {
@@ -35,6 +46,10 @@ processResources {
     inputs.property "version", project.version
 
     filesMatching("fabric.mod.json") {
+        expand "version": project.version
+    }
+
+    filesMatching("quilt.mod.json") {
         expand "version": project.version
     }
 }
@@ -50,19 +65,17 @@ remapJar {
     classifier "fabric"
 }
 
-jar {
-    classifier "dev"
+// Asset files will otherwise be missing when debugging
+task copyAssetFilesForDebugging(type: Copy) {
+    def inAssets = rootProject.file("common/src/main/resources/assets/notenoughcrashes")
+    def outAssets = new File("${project.buildDir}/resources/main/assets/notenoughcrashes")
+    from inAssets
+    into outAssets
+    dependsOn rootProject.processResources
 }
 
-java {
-    withSourcesJar()
-}
+classes.dependsOn(copyAssetFilesForDebugging)
 
-sourcesJar {
-    def commonSources = project(":common").remapSourcesJar
-    dependsOn commonSources
-    from zipTree(commonSources.output)
-}
 
 curseforge {
     apiKey = project.hasProperty("curseforge_api_key") ? project.curseforge_api_key : ""
@@ -81,5 +94,27 @@ curseforge {
 
     options {
         forgeGradleIntegration = false
+    }
+}
+
+task publishModrinth (type: TaskModrinthUpload){
+    group = "upload"
+    token =  project.hasProperty("modrinth_api_key") ? project.modrinth_api_key : ""
+    projectId = 'yM94ont6'
+    versionNumber = total_version // Will fail if Modrinth has this version already
+    versionName = "$mod_name $total_version Fabric"
+    uploadFile = remapJar
+    addGameVersion(curseforge_mc_version)
+    addLoader('fabric')
+    changelog = rootProject.file("changelog.md").text
+    versionType = "RELEASE"
+
+}
+
+task publishFabric {
+    group = "publishing"
+    afterEvaluate {
+        dependsOn(curseforge353890)
+        dependsOn(publishModrinth)
     }
 }
