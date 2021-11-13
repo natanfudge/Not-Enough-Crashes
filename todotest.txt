@@ -1,0 +1,1 @@
+- Check text in crash screen works fine

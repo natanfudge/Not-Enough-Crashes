@@ -16,10 +16,6 @@ architectury {
     common()
 }
 
-//loom {
-//    accessWidener = gradle.rootProject.project("fabric").file("src/main/resources/notenoughcrashes.accessWidener")
-//}
-
 remapJar {
     afterEvaluate {
         remapAccessWidener.set(false)
