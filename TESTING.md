@@ -1,24 +1,37 @@
 # Testing Not Enough Crashes
- This documents details how to test Not Enough Crashes after making changes.  
+This documents details how to test Not Enough Crashes after making changes.
 
 Apply these tests in the production environment, with the test mod:
 - Fabric: `cd TestFabricMod`, Forge: `cd TestForgeMod`
 - `gradlew build`
-For dev use:
+  For dev use:
 - Fabric: copy production jar to `run/mods/`
 - Forge: copy dev jar to `run/mods/` (there is no support for automatic remapping)
 
 ## Crash Handling
 
 ### Client Initialization Crashes
-### Integrated Server Crashes
-- Run with -Dnec_test=server_crash.
+- In the game config folder, have a file named `nec_test_mode.txt` with the content `init_crash`.
+  - Start the game
+  - Verify:
+    - The game crashes.
+    - The crash screen appears.
+    - 'Not Enough Crashes Test Mod' is blamed.
+    - In the terminal, no information is repeated.
+    - Click 'Get link' and verify in the log:
+      - No information is repeated.
+      - System details are present.
+      - Suspected Mods: Not Enough Crashes Test Mod (nec_testmod)
 
+  - Click 'Quit Game' and verify the game closes without any exceptions being logged.
+### Integrated Server Crashes
+- In the game config folder, have a file named `nec_test_mode.txt` with the content `server_crash`.
   - Open a Minecraft World.
   - Verify:
     - The game crashes.
     - The crash screen appears.
     - No mods are blamed.
+    - In the terminal, no information is repeated.
     - Click 'Get link' and verify in the log:
       - No information is repeated.
       - System details are present.
@@ -28,6 +41,8 @@ For dev use:
 
   - Click 'Back to title screen' and re-enter the world.
   - Verify the game is working fine.
+
+### Dedicated Server Crashes
 
 ### Client Reported Crashes
 - Open a Minecraft world.

@@ -4,6 +4,7 @@
   "package": "io.github.natanfudge.mixin",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
+    "ExampleMixin",
     "MixinMinecraftServer"
   ],
   "client": [

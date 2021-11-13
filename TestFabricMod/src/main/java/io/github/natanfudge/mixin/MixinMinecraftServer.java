@@ -18,6 +18,6 @@ public class MixinMinecraftServer {
             crashed = true;
             throw new NecTestCrash("Test server crash");
         }
-
     }
+
 }
