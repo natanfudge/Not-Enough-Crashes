@@ -11,8 +11,8 @@ For dev use:
 ## Crash Handling
 
 ### Client Initialization Crashes 
+- In the game config folder, have a file named `nec_test_mode.txt` with the content `init_crash`.
   - Start the game
-  - Hold the equals key until the game crashes
   - Verify:
     - The game crashes.
     - The crash screen appears.
@@ -25,8 +25,8 @@ For dev use:
     
   - Click 'Quit Game' and verify the game closes without any exceptions being logged.
 ### Integrated Server Crashes
+- In the game config folder, have a file named `nec_test_mode.txt` with the content `server_crash`.
   - Open a Minecraft World.
-  - Hold the plus key.
   - Verify:
     - The game crashes.
     - The crash screen appears.
