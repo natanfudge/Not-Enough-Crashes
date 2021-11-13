@@ -5,7 +5,6 @@ import fudge.notenoughcrashes.NecConfig;
 import java.security.Permission;
 
 public class SystemExitBlock {
-
     public static void forbidSystemExitCall() {
         final SecurityManager securityManager = new SecurityManager() {
             public void checkPermission( Permission permission ) {
@@ -16,9 +15,5 @@ public class SystemExitBlock {
             }
         } ;
         System.setSecurityManager( securityManager ) ;
-    }
-
-    private static void enableSystemExitCall() {
-        System.setSecurityManager( null ) ;
     }
 }

@@ -18,9 +18,9 @@ public class StateManager {
     public static void resetStates() {
         Iterator<WeakReference<IResettable>> iterator = resettableRefs.iterator();
         while (iterator.hasNext()) {
-            WeakReference<IResettable> ref = iterator.next();
-            if (ref.get() != null) {
-                ref.get().resetState();
+            IResettable ref = iterator.next().get();
+            if (ref != null) {
+                ref.resetState();
             } else {
                 iterator.remove();
             }

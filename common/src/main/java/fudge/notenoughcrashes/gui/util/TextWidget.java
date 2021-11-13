@@ -4,6 +4,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
@@ -24,17 +25,10 @@ public class TextWidget implements Widget {
     private final int y;
 
     private final int width;
-    private final int height = 8;
 
     final int startX;
 
-    public static final int DEFAULT_TEXT_COLOR = 0x404040;
     public static final int CLICKABLE_TEXT_COLOR = 0xE0E000;
-
-
-    private Screen getScreen() {
-        return MinecraftClient.getInstance().currentScreen;
-    }
 
     public TextWidget(Text text, int color, TextRenderer font, int x, int y) {
         this.text = text;
@@ -49,7 +43,7 @@ public class TextWidget implements Widget {
 
     @Override
     public void draw(MatrixStack stack) {
-        getScreen().drawCenteredText(stack,font, translated, x, y, color);
+        DrawableHelper.drawCenteredText(stack,font, translated, x, y, color);
     }
 
     @Override
@@ -65,6 +59,7 @@ public class TextWidget implements Widget {
 
     private boolean isWithinBounds(double mouseX, double mouseY) {
         final int endX = x + width / 2;
+        int height = 8;
         final int startY = y - height / 2;
         final int endY = y + height / 2;
 

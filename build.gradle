@@ -1,11 +1,10 @@
 plugins {
     id "architectury-plugin" version "3.4-SNAPSHOT"
     id "dev.architectury.loom" version "0.10.0-SNAPSHOT" apply false
-//    id "com.github.fudge.forgedflowerloom" version "2.0.0" apply false
     id 'maven-publish'
     id 'com.matthewprenger.cursegradle'
     id "com.modrinth.minotaur" version "1.2.1" apply false
-//    id 'io.github.juuxel.loom-quiltflower' version '1.3.0' apply false
+    id("io.github.juuxel.loom-quiltflower-mini") version "1.1.0" apply false
 }
 
 
@@ -15,11 +14,10 @@ architectury {
 
 subprojects {
     apply plugin: "dev.architectury.loom"
-//    apply plugin: "com.github.fudge.forgedflowerloom"
     apply plugin: 'maven-publish'
     apply plugin: 'com.matthewprenger.cursegradle'
     apply plugin: "com.modrinth.minotaur"
-//    apply plugin: "io.github.juuxel.loom-quiltflower"
+    apply plugin: "io.github.juuxel.loom-quiltflower-mini"
 
     dependencies {
         minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
