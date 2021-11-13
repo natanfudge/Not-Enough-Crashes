@@ -1,12 +1,10 @@
-import org.gradle.api.tasks.compile.JavaCompile
-import org.gradle.jvm.toolchain.JavaLanguageVersion
-
 plugins {
     id "architectury-plugin" version "3.4-SNAPSHOT"
     id "dev.architectury.loom" version "0.10.0-SNAPSHOT" apply false
     id 'maven-publish'
     id 'com.matthewprenger.cursegradle'
     id "com.modrinth.minotaur" version "1.2.1" apply false
+    id("io.github.juuxel.loom-quiltflower-mini") version "1.1.0" apply false
 }
 
 architectury {
@@ -18,6 +16,7 @@ subprojects {
     apply plugin: 'maven-publish'
     apply plugin: 'com.matthewprenger.cursegradle'
     apply plugin: "com.modrinth.minotaur"
+    apply plugin: "io.github.juuxel.loom-quiltflower-mini"
 
     dependencies {
         minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"

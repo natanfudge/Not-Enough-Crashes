@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import java.io.File;
 
 @Mixin(MinecraftClient.class)
-@SuppressWarnings({"StaticVariableMayNotBeInitialized", "MixinAnnotationTarget", "InvalidInjectorMethodSignature", "UnresolvedMixinReference"})
+@SuppressWarnings({"StaticVariableMayNotBeInitialized", "MixinAnnotationTarget"})
 public abstract class CatchInitMInecraftClientMixin {
 
     // require = 0 to support quilt

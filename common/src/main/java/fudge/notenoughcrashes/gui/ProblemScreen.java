@@ -1,5 +1,6 @@
 package fudge.notenoughcrashes.gui;
 
+import fudge.notenoughcrashes.NotEnoughCrashes;
 import fudge.notenoughcrashes.gui.util.TextWidget;
 import fudge.notenoughcrashes.gui.util.Widget;
 import fudge.notenoughcrashes.platform.CommonModMetadata;
@@ -17,22 +18,26 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.*;
 import net.minecraft.util.Util;
 import net.minecraft.util.crash.CrashReport;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.util.*;
 
 @Environment(EnvType.CLIENT)
 public abstract class ProblemScreen extends Screen {
+    private static final Set<String> IGNORED_MODS = new HashSet<>(Arrays.asList(
+            "minecraft", "fabricloader", "loadcatcher", "jumploader", "quilt_loader", "forge"
+    ));
+
+    private static final int GREEN = 0x00FF00;
+    private static final Text uploadToCrashyText = NecLocalization.translatedText("notenoughcrashes.gui.uploadToCrashy")
+            .copy().setStyle(Style.EMPTY.withColor(GREEN));
+    private static final Text uploadToCrashyLoadingText = NecLocalization.translatedText("notenoughcrashes.gui.loadingCrashyUpload");
 
     private List<Widget> widgets = new ArrayList<>();
 
     protected void addWidget(Widget widget) {
         widgets.add(widget);
     }
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     public abstract ProblemScreen construct(CrashReport report);
 
@@ -53,8 +58,6 @@ public abstract class ProblemScreen extends Screen {
     }
 
 
-    private static final Set<String> IGNORED_MODS = new HashSet<>(Arrays.asList("minecraft", "fabricloader", "loadcatcher", "jumploader", "quilt_loader", "forge"));
-
     private Text getSuspectedModsText() {
         Set<CommonModMetadata> suspectedMods = ModIdentifier.getSuspectedModsOf(report);
 
@@ -66,7 +69,7 @@ public abstract class ProblemScreen extends Screen {
             return NecLocalization.translatedText("notenoughcrashes.crashscreen.noModsErrored");
         }
 
-        Text text = suspectedMods.stream()
+        return suspectedMods.stream()
                 .sorted(Comparator.comparing(CommonModMetadata::name))
                 .map(mod -> {
                     String issuesPage = mod.issuesPage();
@@ -79,8 +82,6 @@ public abstract class ProblemScreen extends Screen {
                 })
                 .reduce((existing, next) -> existing.append(new LiteralText(", ")).append(next))
                 .get();
-
-        return text;
     }
 
     private void addSuspectedModsWidget() {
@@ -100,17 +101,12 @@ public abstract class ProblemScreen extends Screen {
                 MinecraftClient.getInstance().openScreen(construct(report));
             }, uploadedCrashLink, true));
         } catch (Throwable e) {
-            LOGGER.error("Exception when crash menu button clicked:", e);
+            NotEnoughCrashes.getLogger().error("Exception when crash menu button clicked:", e);
             buttonWidget.setMessage(NecLocalization.translatedText("notenoughcrashes.gui.failed"));
             buttonWidget.active = false;
         }
     }
 
-
-    private static final int GREEN = 0x00FF00;
-    private static final Text uploadToCrashyText = NecLocalization.translatedText("notenoughcrashes.gui.uploadToCrashy")
-            .copy().setStyle(Style.EMPTY.withColor(TextColor.fromRgb(GREEN)));
-    private static final Text uploadToCrashyLoadingText = NecLocalization.translatedText("notenoughcrashes.gui.loadingCrashyUpload");
 
     private String crashyLink = null;
 
@@ -129,7 +125,7 @@ public abstract class ProblemScreen extends Screen {
                 Util.getOperatingSystem().open(crashyLink);
             }
         } catch (Throwable e) {
-            LOGGER.error("Exception uploading to crashy", e);
+            NotEnoughCrashes.getLogger().error("Exception uploading to crashy", e);
             buttonWidget.setMessage(NecLocalization.translatedText("notenoughcrashes.gui.failed"));
             buttonWidget.active = false;
         }
@@ -186,9 +182,9 @@ public abstract class ProblemScreen extends Screen {
     }
 
     @Override
-    public void render(MatrixStack matrixStack, int mouseY, int i, float f) {
+    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float delta) {
         for (Widget widget : widgets) widget.draw(matrixStack);
-        super.render(matrixStack, mouseY, i, f);
+        super.render(matrixStack, mouseX, mouseY, delta);
     }
 
 }

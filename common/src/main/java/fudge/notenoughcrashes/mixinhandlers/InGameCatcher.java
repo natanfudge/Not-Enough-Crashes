@@ -3,7 +3,6 @@ package fudge.notenoughcrashes.mixinhandlers;
 import fudge.notenoughcrashes.NecConfig;
 import fudge.notenoughcrashes.NotEnoughCrashes;
 import fudge.notenoughcrashes.StateManager;
-import fudge.notenoughcrashes.api.NotEnoughCrashesApi;
 import fudge.notenoughcrashes.gui.CrashScreen;
 import fudge.notenoughcrashes.stacktrace.CrashUtils;
 import fudge.notenoughcrashes.utils.GlUtil;
@@ -63,9 +62,9 @@ public class InGameCatcher {
     }
 
     private static void resetModState() {
-        NotEnoughCrashesApi.permanentDisposers.forEach(Runnable::run);
-        NotEnoughCrashesApi.oneTimeDisposers.forEach(Runnable::run);
-        NotEnoughCrashesApi.oneTimeDisposers.clear();
+//        NotEnoughCrashesApi.permanentDisposers.forEach(Runnable::run);
+//        NotEnoughCrashesApi.oneTimeDisposers.forEach(Runnable::run);
+//        NotEnoughCrashesApi.oneTimeDisposers.clear();
     }
 
     public static void handleServerCrash(CrashReport report) {
@@ -108,51 +107,4 @@ public class InGameCatcher {
             System.exit(report.getFile() != null ? -1 : -2);
         }
     }
-
-//    public static void resetGameState(Queue<Runnable> renderTaskQueue) {
-//        try {
-//            // Free up memory such that this works properly in case of an OutOfMemoryError
-//            Integer originalReservedMemorySize = null;
-//            try { // In case another mod actually deletes the memoryReserve field
-//                if (MinecraftClient.memoryReservedForCrash != null) {
-//                    originalReservedMemorySize = MinecraftClient.memoryReservedForCrash.length;
-//                    MinecraftClient.memoryReservedForCrash = new byte[0];
-//                }
-//            } catch (Throwable ignored) {
-//            }
-//
-//            // Reset registered resettables
-//
-//
-//            // Close the world
-//            if (getClient().getNetworkHandler() != null) {
-//                // Fix: Close the connection to avoid receiving packets from old server
-//                // when playing in another world (MC-128953)
-//                getClient().getNetworkHandler().getConnection().disconnect(new LiteralText(String.format("[%s] Client crashed", NotEnoughCrashes.NAME)));
-//            }
-//
-//            getClient().disconnect(new SaveLevelScreen(NecLocalization.translatableText("menu.savingLevel")));
-//            renderTaskQueue.clear(); // Fix: method_1550(null, ...) only clears when integrated server is running
-//
-//            // Reset graphics
-//            GlUtil.resetState();
-//
-//            // Re-create memory reserve so that future crashes work well too
-//            if (originalReservedMemorySize != null) {
-//                try {
-//                    MinecraftClient.memoryReservedForCrash = new byte[originalReservedMemorySize];
-//                } catch (Throwable ignored) {
-//                }
-//            }
-//
-//            System.gc();
-//        } catch (Throwable t) {
-//            LOGGER.error("Failed to reset state after a crash", t);
-//            try {
-//                StateManager.resetStates();
-//                GlUtil.resetState();
-//            } catch (Throwable ignored) {
-//            }
-//        }
-//    }
 }

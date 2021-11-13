@@ -20,7 +20,6 @@ import java.util.*;
 import java.util.function.Consumer;
 
 public final class ModIdentifier {
-    private static final Logger LOGGER = LogManager.getLogger();
 
     private static final Map<CrashReport, Set<CommonModMetadata>> suspectedModsCache = new HashMap<>();
 
@@ -94,7 +93,7 @@ public final class ModIdentifier {
             URL url = codeSource.getLocation();
 
             if (url == null) {
-                LOGGER.warn("Failed to identify mod for " + className);
+                NotEnoughCrashes.getLogger().warn("Failed to identify mod for " + className);
                 return Collections.emptySet();
             }
 
