@@ -22,6 +22,7 @@ import org.apache.http.util.EntityUtils;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 
 public final class LegacyCrashLogUpload {
     private static String GIST_ACCESS_TOKEN_PART_1() {
@@ -65,7 +66,8 @@ public final class LegacyCrashLogUpload {
 
         try {
             switch (uploadDestination) {
-//todo                case CRASHY -> CrashyUpload.uploadToCrashySync(text);
+                case CRASHY:
+                    return CrashyUpload.uploadToCrashySync(text);
                 case GIST:
                     return uploadToGist(text);
                 case HASTE:
@@ -83,6 +85,8 @@ public final class LegacyCrashLogUpload {
             // If uploading failed, attempt the other destination options
             failedUploadDestinations.add(uploadDestination);
             return upload(text, failedUploadDestinations);
+        } catch (ExecutionException | InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -190,7 +194,7 @@ public final class LegacyCrashLogUpload {
         }
     }
 
-    private static StringEntity createStringEntity(String text) {
+    public static StringEntity createStringEntity(String text) {
         return new StringEntity(text, StandardCharsets.UTF_16);
     }
 }

@@ -41,8 +41,6 @@ public class NecTestMod implements ModInitializer {
             "category.nec_test" // The translation key of the keybinding's category.
     ));
 
-    //TODO: update TESTING with new strats
-
 
     @Override
     public void onInitialize() {

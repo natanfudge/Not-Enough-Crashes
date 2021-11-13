@@ -4,6 +4,7 @@ import fudge.notenoughcrashes.gui.util.TextWidget;
 import fudge.notenoughcrashes.gui.util.Widget;
 import fudge.notenoughcrashes.platform.CommonModMetadata;
 import fudge.notenoughcrashes.stacktrace.ModIdentifier;
+import fudge.notenoughcrashes.upload.CrashyUpload;
 import fudge.notenoughcrashes.upload.LegacyCrashLogUpload;
 import fudge.notenoughcrashes.utils.NecLocalization;
 import net.fabricmc.api.EnvType;
@@ -112,26 +113,26 @@ public abstract class ProblemScreen extends Screen {
     private static final Text uploadToCrashyLoadingText = NecLocalization.translatedText("notenoughcrashes.gui.loadingCrashyUpload");
 
     private String crashyLink = null;
-//TODO
+
     private void handleCrashyUploadClick(ButtonWidget buttonWidget) {
-//        try {
-//            if (crashyLink == null) {
-//                buttonWidget.active = false;
-//                buttonWidget.setMessage(uploadToCrashyLoadingText);
-//                CrashyUpload.uploadToCrashy(report.asString()).thenAccept(link -> {
-//                    crashyLink = link;
-//                    buttonWidget.active = true;
-//                    buttonWidget.setMessage(uploadToCrashyText);
-//                    Util.getOperatingSystem().open(crashyLink);
-//                });
-//            } else {
-//                Util.getOperatingSystem().open(crashyLink);
-//            }
-//        } catch (Throwable e) {
-//            LOGGER.error("Exception uploading to crashy", e);
-//            buttonWidget.setMessage(NecLocalization.translatedText("notenoughcrashes.gui.failed"));
-//            buttonWidget.active = false;
-//        }
+        try {
+            if (crashyLink == null) {
+                buttonWidget.active = false;
+                buttonWidget.setMessage(uploadToCrashyLoadingText);
+                CrashyUpload.uploadToCrashy(report.asString()).thenAccept(link -> {
+                    crashyLink = link;
+                    buttonWidget.active = true;
+                    buttonWidget.setMessage(uploadToCrashyText);
+                    Util.getOperatingSystem().open(crashyLink);
+                });
+            } else {
+                Util.getOperatingSystem().open(crashyLink);
+            }
+        } catch (Throwable e) {
+            LOGGER.error("Exception uploading to crashy", e);
+            buttonWidget.setMessage(NecLocalization.translatedText("notenoughcrashes.gui.failed"));
+            buttonWidget.active = false;
+        }
     }
 
     @Override
@@ -147,7 +148,6 @@ public abstract class ProblemScreen extends Screen {
         ButtonWidget crashyButton = new ButtonWidget(
                 width / 2 - 155 + 160, height / 4 + 108 + 12, 150, 20, uploadToCrashyText, this::handleCrashyUploadClick
         );
-        crashyButton.active = false;
         addButton(crashyButton);
 
 

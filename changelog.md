@@ -1,3 +1,5 @@
+## 4.1.0
+[Crashy](https://crashy.net/) is now supported in 1.16.5.
 # 4.0.0
 - **All version from 4.0.0 onwards only support Fabric Loader 0.12.0 and above**.
 ### 3.7.2
