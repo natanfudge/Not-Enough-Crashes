@@ -5,8 +5,7 @@ Apply these tests in the production environment, with the test mod:
 - Fabric: `cd TestFabricMod`, Forge: `cd TestForgeMod`
 - `gradlew build`
   For dev use:
-- Fabric: copy production jar to `run/mods/`
-- Forge: copy dev jar to `run/mods/` (there is no support for automatic remapping)
+- `gradlew addTestMods`
 
 ## Crash Handling
 

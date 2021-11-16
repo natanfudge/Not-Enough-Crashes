@@ -45,7 +45,8 @@ public class NotEnoughCrashes {
     }
 
     public static void initialize() {
-        if (NecConfig.instance().forceCrashScreen) SystemExitBlock.forbidSystemExitCall();
-        NecConfig.instance();
+//        var x = 2;
+//        if (NecConfig.instance().forceCrashScreen) SystemExitBlock.forbidSystemExitCall();
+//        NecConfig.instance();
     }
 }
