@@ -1,6 +1,7 @@
 package io.github.natanfudge.nectest;
 
 import net.minecraft.block.Blocks;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
@@ -8,19 +9,31 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.fmlclient.registry.ClientRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.glfw.GLFW;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod("nec_testmod")
 public class NecTestMod {
     public static String getTestMode() {
-        String value = System.getProperty("nec_test");
-        if (value == null) {
-            return "none";
-        } else return value;
+        Path configDig =  FMLPaths.CONFIGDIR.get();
+        Path testModePath = configDig.resolve("nec_test_mode.txt");
+        try {
+            Files.createDirectories(testModePath.getParent());
+            if (!Files.exists(testModePath)) {
+                Files.createFile(testModePath);
+            }
+            return new String(Files.readAllBytes(testModePath));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 
@@ -29,6 +42,10 @@ public class NecTestMod {
     private static final KeyBinding key = new KeyBinding("key.nec_test.crash", GLFW.GLFW_KEY_LEFT_BRACKET, "category.nec_test");
 
     public NecTestMod() {
+        if (getTestMode().equals("init_crash")) {
+            throw new NecTestCrash("Test Init Crash");
+        }
+
         // Register the setup method for modloading
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
 
