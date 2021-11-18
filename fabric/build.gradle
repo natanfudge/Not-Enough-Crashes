@@ -99,7 +99,7 @@ task publishModrinth (type: TaskModrinthUpload){
     group = "upload"
     token =  project.hasProperty("modrinth_api_key") ? project.modrinth_api_key : ""
     projectId = 'yM94ont6'
-    versionNumber = total_version // Will fail if Modrinth has this version already
+    versionNumber = total_version + "-fabric" // Will fail if Modrinth has this version already
     versionName = "$mod_name $total_version Fabric"
     uploadFile = remapJar
     addGameVersion(curseforge_mc_version)
