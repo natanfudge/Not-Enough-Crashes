@@ -53,3 +53,29 @@ task publishAll {
     dependsOn("forge:curseforge442354")
 }
 
+task buildTestFabricMod(type: Exec) {
+    workingDir "${project.projectDir}/TestFabricMod"
+    commandLine "gradlew.bat", "build"
+}
+
+task addTestFabricMod(type: Copy) {
+    dependsOn buildTestFabricMod
+    from "TestFabricMod/build/libs/nec_testmod-1.0.0.jar"
+    into "fabric/run/mods"
+}
+
+task buildTestForgeMod(type: Exec) {
+    workingDir "${project.projectDir}/TestForgeMod"
+    commandLine "gradlew.bat", "build"
+}
+
+task addTestForgeMod(type: Copy) {
+    dependsOn buildTestForgeMod
+//   Copy dev jar because there is no support for automatic remapping
+    from "TestForgeMod/build/libs/nec_testmod-1.0.0-dev.jar"
+    into "forge/run/mods"
+}
+
+task addTestMods {
+    dependsOn addTestFabricMod, addTestForgeMod
+}
