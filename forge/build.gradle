@@ -1,3 +1,4 @@
+import com.modrinth.minotaur.TaskModrinthUpload
 import org.gradle.api.tasks.Copy
 
 plugins {
@@ -92,6 +93,19 @@ curseforge {
     options {
         forgeGradleIntegration = false
     }
+}
+
+task publishModrinth (type: TaskModrinthUpload){
+    group = "upload"
+    token =  project.hasProperty("modrinth_api_key") ? project.modrinth_api_key : ""
+    projectId = 'yM94ont6'
+    versionNumber = total_version + "-forge" // Will fail if Modrinth has this version already
+    versionName = "$mod_name $total_version Fabric"
+    uploadFile = remapJar
+    addGameVersion(curseforge_mc_version)
+    addLoader('fabric')
+    changelog = rootProject.file("changelog.md").text
+    versionType = "RELEASE"
 }
 
 // Asset files will otherwise be missing when debugging
