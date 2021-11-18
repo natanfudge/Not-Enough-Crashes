@@ -20,7 +20,7 @@ Apply these tests in the production environment, with the test mod:
     - Click 'Get link' and verify in the log:
       - No information is repeated.
       - System details are present.
-      - Suspected Mods: Not Enough Crashes Test Mod (nec_testmod)
+      - Suspected Mods contains Not Enough Crashes Test Mod (nec_testmod)
 
   - Click 'Quit Game' and verify the game closes without any exceptions being logged.
 ### Integrated Server Crashes
@@ -34,7 +34,7 @@ Apply these tests in the production environment, with the test mod:
     - Click 'Get link' and verify in the log:
       - No information is repeated.
       - System details are present.
-      - Suspected Mods: None
+      - Suspected Mods: None (Other than Minecraft or fabricloader and similar)
       - Client Crashes Since Restart: 0
       - Integrated Server Crashes Since Restart: 1
 
@@ -53,7 +53,7 @@ Apply these tests in the production environment, with the test mod:
   - Click 'Get link' and verify in the log:
     - No information is repeated.
     - System details are present.
-    - Suspected Mods: Not Enough Crashes Test Mod (nec_testmod)
+    - Suspected Mods contains Not Enough Crashes Test Mod (nec_testmod)
     - Client Crashes Since Restart: 1
     - Integrated Server Crashes Since Restart: 0
 - Click 'Back to title screen' and re-enter the world.
