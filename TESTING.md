@@ -31,12 +31,13 @@ Apply these tests in the production environment, with the test mod:
     - The crash screen appears.
     - No mods are blamed.
     - In the terminal, no information is repeated.
-    - Click 'Get link' and verify in the log:
+    - Verify in the **Log**, **TXT File**, and **Get Link Site**:
       - No information is repeated.
       - System details are present.
       - Suspected Mods: None (Other than Minecraft or fabricloader and similar)
       - Client Crashes Since Restart: 0
       - Integrated Server Crashes Since Restart: 1
+    - Verify the txt file has a -server ending
 
   - Click 'Back to title screen' and re-enter the world.
   - Verify the game is working fine.

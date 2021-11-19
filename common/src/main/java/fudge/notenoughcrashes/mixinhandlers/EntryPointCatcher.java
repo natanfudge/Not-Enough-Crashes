@@ -27,7 +27,7 @@ public class EntryPointCatcher {
         crashReport = CrashReport.create(e, "Initializing game");
         crashReport.addElement("Initialization");
         MinecraftClient.addSystemDetailsToCrashReport(null, null, MinecraftVersion.create().getName(), null, crashReport);
-        CrashUtils.outputReport(crashReport);
+        CrashUtils.outputClientReport(crashReport);
 
         // Make GL shuttup about any GL error that occurred
         Window.acceptError((integer, stringx) -> {
@@ -42,7 +42,7 @@ public class EntryPointCatcher {
         } catch (Throwable t) {
             CrashReport additionalReport = CrashReport.create(t, "Displaying init error screen");
             LOGGER.error("An uncaught exception occured while displaying the init error screen, making normal report instead", t);
-            CrashUtils.outputReport(additionalReport);
+            CrashUtils.outputClientReport(additionalReport);
             System.exit(additionalReport.getFile() != null ? -1 : -2);
         }
     }
