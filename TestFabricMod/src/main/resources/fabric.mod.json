@@ -17,7 +17,10 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "io.github.natanfudge.NecTestMod"
+      "io.github.natanfudge.nectest.NecTestMod"
+    ],
+    "client": [
+      "io.github.natanfudge.nectest.NecTestModClient"
     ]
   },
   "mixins": [

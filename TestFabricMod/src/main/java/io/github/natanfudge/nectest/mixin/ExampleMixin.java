@@ -1,4 +1,4 @@
-package io.github.natanfudge.mixin;
+package io.github.natanfudge.nectest.mixin;
 
 import net.minecraft.client.gui.screen.TitleScreen;
 import org.spongepowered.asm.mixin.Mixin;
