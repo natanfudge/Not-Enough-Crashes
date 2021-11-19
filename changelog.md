@@ -1,3 +1,6 @@
+### 4.1.1
+- Fixed the crash report being printed to the log twice on integrated server crashes
+- Fixed the crash report txt file missing information on dedicated server crashes
 # 4.0.0
 - **All version from 4.0.0 onwards only support Fabric Loader 0.12.0 and above**.
 ### 3.7.2

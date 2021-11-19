@@ -14,18 +14,22 @@ import java.util.Date;
 
 public final class CrashUtils {
 
-    private static boolean isClient;
+//    private static boolean isClient;
+//
+//    static {
+//        try {
+//            isClient = MinecraftClient.getInstance() != null;
+//        } catch (NoClassDefFoundError e) {
+//            isClient = false;
+//        }
+//    }
 
-    static {
-        try {
-            isClient = MinecraftClient.getInstance() != null;
-        } catch (NoClassDefFoundError e) {
-            isClient = false;
-        }
+    public static void outputClientReport(CrashReport report) {
+        outputReport(report,true);
     }
 
     // We don't use the Mojang printCrashReport because it calls System.exit(), lol
-    public static void outputReport(CrashReport report) {
+    public static void outputReport(CrashReport report, boolean isClient) {
         try {
             if (report.getFile() == null) {
                 String reportName = "crash-";
