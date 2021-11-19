@@ -1,13 +1,13 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "io.github.natanfudge.mixin",
+  "package": "io.github.natanfudge.nectest.mixin",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
-    "ExampleMixin",
     "MixinMinecraftServer"
   ],
   "client": [
+    "ExampleMixin"
   ],
   "injectors": {
     "defaultRequire": 1
