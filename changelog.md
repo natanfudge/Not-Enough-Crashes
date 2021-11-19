@@ -1,6 +1,8 @@
 ### 4.1.1
-- Fixed the crash report being printed to the log twice on integrated server crashes
-- Fixed the crash report txt file missing information on dedicated server crashes
+- Fixed the crash report being printed to the log twice on integrated server crashes.
+- Fixed the crash report txt file missing information on dedicated server crashes.
+- Fixed Not Enough Crashes being blamed for any crash after the first one in a single game session.
+- Fixed mods being blamed incorrectly when the minecraft instance path contains spaces.
 # 4.0.0
 - **All version from 4.0.0 onwards only support Fabric Loader 0.12.0 and above**.
 ### 3.7.2
