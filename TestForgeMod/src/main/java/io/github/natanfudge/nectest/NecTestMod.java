@@ -39,7 +39,6 @@ public class NecTestMod {
 
     // Directly reference a log4j logger.
     private static final Logger LOGGER = LogManager.getLogger();
-    private static final KeyBinding key = new KeyBinding("key.nec_test.crash", GLFW.GLFW_KEY_LEFT_BRACKET, "category.nec_test");
 
     public NecTestMod() {
         if (getTestMode().equals("init_crash")) {
@@ -48,6 +47,7 @@ public class NecTestMod {
 
         // Register the setup method for modloading
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(NecTestModClient::clientSetup);
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
@@ -57,8 +57,6 @@ public class NecTestMod {
         // some preinit code
         LOGGER.info("HELLO FROM PREINIT");
         LOGGER.info("DIRT BLOCK >> {}", Blocks.DIRT.getRegistryName());
-        ClientRegistry.registerKeyBinding(key);
-
     }
 
     // You can use EventBusSubscriber to automatically subscribe events on the contained class (this is subscribing to the MOD
@@ -69,7 +67,7 @@ public class NecTestMod {
         //TODO: this is the wrong event subscription
         @SubscribeEvent
         public static void onClientTick(final TickEvent.ClientTickEvent event) {
-            if (key.isPressed()) {
+            if (NecTestModClient.key.isPressed()) {
                 throw new NecTestCrash("test crash");
             }
         }

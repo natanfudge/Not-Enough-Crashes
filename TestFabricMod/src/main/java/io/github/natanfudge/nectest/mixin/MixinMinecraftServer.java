@@ -1,7 +1,7 @@
-package io.github.natanfudge.mixin;
+package io.github.natanfudge.nectest.mixin;
 
-import io.github.natanfudge.NecTestCrash;
-import io.github.natanfudge.NecTestMod;
+import io.github.natanfudge.nectest.NecTestCrash;
+import io.github.natanfudge.nectest.NecTestMod;
 import net.minecraft.server.MinecraftServer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
