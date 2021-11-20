@@ -102,7 +102,7 @@ task publishModrinth (type: TaskModrinthUpload){
     versionNumber = total_version + "-fabric" // Will fail if Modrinth has this version already
     versionName = "$mod_name $total_version Fabric"
     uploadFile = remapJar
-    addGameVersion(curseforge_mc_version)
+    addGameVersion(modrinth_mc_version)
     addLoader('fabric')
     changelog = rootProject.file("changelog.md").text
     versionType = "RELEASE"
