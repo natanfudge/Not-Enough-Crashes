@@ -1,7 +1,7 @@
 package fudge.notenoughcrashes.mixins;
 
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.crash.CrashReportSection;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -17,7 +17,7 @@ public class MixinTileEntity {
     private void onPopulateCrashReport(CrashReportSection section, CallbackInfo ci) {
         if (!noNBT) {
             noNBT = true;
-            section.add("Block Entity NBT", () -> ((BlockEntity) (Object) this).toTag(new CompoundTag()).toString());
+            section.add("Block Entity NBT", () -> ((BlockEntity) (Object) this).writeNbt(new NbtCompound()).toString());
             noNBT = false;
         }
     }

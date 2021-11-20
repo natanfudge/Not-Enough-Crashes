@@ -30,7 +30,7 @@ public class InGameCatcher {
         resetStates();
         boolean reported = report.getCause() instanceof CrashException;
         LOGGER.fatal(reported ? "Reported" : "Unreported" + " exception thrown!", report.getCause());
-        displayCrashScreen(report, clientCrashCount);
+        displayCrashScreen(report, clientCrashCount, true);
         // Continue game loop
         getClient().run();
     }
@@ -70,7 +70,7 @@ public class InGameCatcher {
     public static void handleServerCrash(CrashReport report) {
         serverCrashCount++;
         addInfoToCrash(report);
-        displayCrashScreen(report, serverCrashCount);
+        displayCrashScreen(report, serverCrashCount, false);
     }
 
     private static MinecraftClient getClient() {
@@ -82,7 +82,7 @@ public class InGameCatcher {
         report.getSystemDetailsSection().add("Integrated Server Crashes Since Restart", () -> String.valueOf(serverCrashCount));
     }
 
-    private static void displayCrashScreen(CrashReport report, int crashCount) {
+    private static void displayCrashScreen(CrashReport report, int crashCount, boolean clientCrash) {
         try {
             if (EntryPointCatcher.crashedDuringStartup()) {
                 throw new IllegalStateException("Could not initialize startup crash screen");
@@ -91,7 +91,7 @@ public class InGameCatcher {
                 throw new IllegalStateException("The game has crashed an excessive amount of times");
             }
 
-            CrashUtils.outputReport(report);
+            CrashUtils.outputReport(report, clientCrash);
 
             // Vanilla does this when switching to main menu but not our custom crash screen
             // nor the out of memory screen (see https://bugs.mojang.com/browse/MC-128953)
