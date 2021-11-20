@@ -53,7 +53,7 @@ allprojects {
 task publishAll {
     group = "upload"
     dependsOn("fabric:publishFabric")
-    dependsOn("forge:curseforge442354")
+    dependsOn("forge:publishForge")
 }
 
 task buildTestFabricMod(type: Exec) {
