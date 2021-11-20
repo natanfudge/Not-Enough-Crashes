@@ -103,7 +103,7 @@ task publishModrinth (type: TaskModrinthUpload){
     versionName = "$mod_name $total_version Fabric"
     uploadFile = remapJar
     addGameVersion(modrinth_mc_version)
-    addLoader('fabric')
+    addLoader('forge')
     changelog = rootProject.file("changelog.md").text
     versionType = "RELEASE"
 }
