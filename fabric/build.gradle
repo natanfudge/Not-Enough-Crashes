@@ -116,3 +116,4 @@ task publishFabric {
         dependsOn(publishModrinth)
     }
 }
+
