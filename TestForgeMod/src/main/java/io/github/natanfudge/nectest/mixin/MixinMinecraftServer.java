@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinMinecraftServer {
     private static boolean crashed = false;
 
-    @Inject(method = "runServer", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;endTickMetrics()V"))
+    @Inject(method = "runServer", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;endMonitor(Lnet/minecraft/util/TickDurationMonitor;)V"))
     private void testServerCrash(CallbackInfo ci) {
         if (!crashed && NecTestMod.getTestMode().equals("server_crash")) {
             crashed = true;

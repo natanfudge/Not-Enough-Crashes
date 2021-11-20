@@ -92,11 +92,12 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
     private void redirectPrintCrashReport(CrashReport report) {
 //        CrashUtils.outputReport(report);
     }
+//    Lnet/minecraft/client/MinecraftClient;loadWorld(Ljava/lang/String;Lnet/minecraft/util/registry/DynamicRegistryManager$Impl;Ljava/util/function/Function;Lcom/mojang/datafixers/util/Function4;ZLnet/minecraft/client/MinecraftClient$WorldLoadAction;Z)V
     /**
      * Forge only: Prevent the integrated server from exiting in the case it crashed in another case
      */
     @SuppressWarnings({"MixinAnnotationTarget", "UnresolvedMixinReference"})
-    @Redirect(method = "doLoadLevel(Ljava/lang/String;Lnet/minecraft/util/registry/DynamicRegistryManager$Impl;Ljava/util/function/Function;Lcom/mojang/datafixers/util/Function4;ZLnet/minecraft/client/MinecraftClient$WorldLoadAction;Z)V",
+    @Redirect(method = "loadWorld(Ljava/lang/String;Lnet/minecraft/util/registry/DynamicRegistryManager$Impl;Ljava/util/function/Function;Lcom/mojang/datafixers/util/Function4;ZLnet/minecraft/client/MinecraftClient$WorldLoadAction;Z)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;printCrashReport(Lnet/minecraft/util/crash/CrashReport;)V"),
             require = 0)
     private void redirectForgePrintCrashReport(CrashReport report) {

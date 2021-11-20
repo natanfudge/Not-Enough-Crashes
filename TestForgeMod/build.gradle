@@ -54,5 +54,11 @@ jar {
 
 tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
-    options.release = 16
+}
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(8))
+    }
+    withSourcesJar()
 }

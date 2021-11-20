@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.FileSystemNotFoundException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.CodeSource;
@@ -101,7 +102,7 @@ public final class ModIdentifier {
                         + mods.stream().findFirst().get().name() + "'");
             }
             return mods;
-        } catch (URISyntaxException | ClassNotFoundException | NoClassDefFoundError e) {
+        } catch (URISyntaxException | ClassNotFoundException | NoClassDefFoundError | FileSystemNotFoundException e) {
             debug(() -> "Ignoring class " + className + " for identification because an error occurred");
             if (NecConfig.instance().debugModIdentification) {
                 e.printStackTrace();
