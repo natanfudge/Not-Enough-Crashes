@@ -1,7 +1,9 @@
 package fudge.notenoughcrashes.mixins;
 
+import fudge.notenoughcrashes.platform.CommonModMetadata;
 import fudge.notenoughcrashes.stacktrace.ModIdentifier;
 import net.minecraft.util.crash.CrashReport;
+import net.minecraft.util.crash.CrashReportSection;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -10,6 +12,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.Set;
 import java.util.stream.Collectors;
 
 
@@ -18,7 +21,7 @@ public abstract class MixinCrashReport {
 
     @Shadow
     @Final
-    private SystemDetails systemDetailsSection;
+    private CrashReportSection systemDetailsSection;
 
     private CrashReport getThis() {
         return (CrashReport) (Object) this;

@@ -30,7 +30,7 @@ public abstract class ProblemScreen extends Screen {
 
     private static final int GREEN = 0x00FF00;
     private static final Text uploadToCrashyText = NecLocalization.translatedText("notenoughcrashes.gui.uploadToCrashy")
-            .copy().setStyle(Style.EMPTY.withColor(GREEN));
+            .copy().setStyle(Style.EMPTY.withColor(TextColor.fromRgb(GREEN)));
     private static final Text uploadToCrashyLoadingText = NecLocalization.translatedText("notenoughcrashes.gui.loadingCrashyUpload");
 
     private List<Widget> widgets = new ArrayList<>();
