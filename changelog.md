@@ -1,6 +1,8 @@
 ### 4.1.1
-- Fixed the crash report being printed to the log twice on integrated server crashes
-- Fixed the crash report txt file missing information on dedicated server crashes
+- Fixed the crash report being printed to the log twice on integrated server crashes.
+- Fixed the crash report txt file missing information on dedicated server crashes.
+- Fixed Not Enough Crashes being blamed for any crash after the first one in a single game session.
+- Fixed mods being blamed incorrectly when the minecraft instance path contains spaces.
 ## 4.1.0
 [Crashy](https://crashy.net/) is now supported in 1.16.5.
 # 4.0.0

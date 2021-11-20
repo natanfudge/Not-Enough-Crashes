@@ -6,10 +6,7 @@ import fudge.notenoughcrashes.platform.CommonModMetadata;
 import fudge.notenoughcrashes.platform.ModsByLocation;
 import fudge.notenoughcrashes.platform.NecPlatform;
 import net.minecraft.util.crash.CrashReport;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -18,6 +15,7 @@ import java.nio.file.Paths;
 import java.security.CodeSource;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public final class ModIdentifier {
 
@@ -60,25 +58,24 @@ public final class ModIdentifier {
         Set<CommonModMetadata> mods = new LinkedHashSet<>();
         for (String className : involvedClasses) {
             Set<CommonModMetadata> classMods = identifyFromClass(className, modMap);
-            if (classMods != null) {
-                mods.addAll(classMods);
-            }
+            mods.addAll(classMods);
         }
+        debug(modMap::toString);
         return mods;
     }
 
     private static final boolean FORCE_DEBUG = false;
 
-    private static void debug(String message) {
-        if (FORCE_DEBUG || NecConfig.instance().debugModIdentification) NotEnoughCrashes.getLogger().info(message);
+    private static void debug(Supplier<String> message) {
+        if (FORCE_DEBUG || NecConfig.instance().debugModIdentification) NotEnoughCrashes.getLogger().info(message.get());
     }
 
     // TODO: get a list of mixin transformers that affected the class and blame those too
+    @NotNull
     private static Set<CommonModMetadata> identifyFromClass(String className, ModsByLocation modMap) {
-        debug("Analyzing " + className);
         // Skip identification for Mixin, one's mod copy of the library is shared with all other mods
         if (className.startsWith("org.spongepowered.asm.mixin.")) {
-            debug("Ignoring class " + className + " for identification because it is a mixin class");
+            debug(() -> "Ignoring class " + className + " for identification because it is a mixin class");
             return Collections.emptySet();
         }
 
@@ -87,7 +84,7 @@ public final class ModIdentifier {
             Class<?> clazz = Class.forName(className);
             CodeSource codeSource = clazz.getProtectionDomain().getCodeSource();
             if (codeSource == null) {
-                debug("Ignoring class " + className + " for identification because the code source could not be found");
+                debug(() -> "Ignoring class " + className + " for identification because the code source could not be found");
                 return Collections.emptySet(); // Some internal native sun classes
             }
             URL url = codeSource.getLocation();
@@ -98,9 +95,14 @@ public final class ModIdentifier {
             }
 
             // Get the mod containing that class
-            return getModAt(Paths.get(url.toURI()), modMap);
-        } catch (URISyntaxException /*| IOException*/ | ClassNotFoundException | NoClassDefFoundError e) {
-            debug("Ignoring class " + className + " for identification because an error occurred");
+            Set<CommonModMetadata> mods = getModsAt(Paths.get(url.toURI()), modMap);
+            if (NecConfig.instance().debugModIdentification && !mods.isEmpty()){
+                debug(() -> "Successfully placed blame of '" + className + "' on '"
+                        + mods.stream().findFirst().get().name() + "'");
+            }
+            return mods;
+        } catch (URISyntaxException | ClassNotFoundException | NoClassDefFoundError e) {
+            debug(() -> "Ignoring class " + className + " for identification because an error occurred");
             if (NecConfig.instance().debugModIdentification) {
                 e.printStackTrace();
             }
@@ -108,8 +110,8 @@ public final class ModIdentifier {
         }
     }
 
-    @Nullable
-    private static Set<CommonModMetadata> getModAt(Path path, ModsByLocation modMap) {
+    @NotNull
+    private static Set<CommonModMetadata> getModsAt(Path path, ModsByLocation modMap) {
         Set<CommonModMetadata> mod = modMap.get(path);
         if (mod != null) return mod;
         else if (NecPlatform.instance().isDevelopmentEnvironment()) {
@@ -124,7 +126,9 @@ public final class ModIdentifier {
             Path resourcesPath = Paths.get(resourcesPathString);
             return modMap.get(resourcesPath);
         } else {
-            return null;
+            debug(() -> "Mod at path '" + path.toAbsolutePath() + "' is at fault," +
+                    " but it could not be found in the map of mod paths: " /*+ modMap*/);
+            return Collections.emptySet();
         }
     }
 }

@@ -25,7 +25,7 @@ import java.util.*;
 @Environment(EnvType.CLIENT)
 public abstract class ProblemScreen extends Screen {
     private static final Set<String> IGNORED_MODS = new HashSet<>(Arrays.asList(
-            "minecraft", "fabricloader", "loadcatcher", "jumploader", "quilt_loader", "forge"
+            "minecraft", "fabricloader", "loadcatcher", "jumploader", "quilt_loader", "forge", "notenoughcrashes"
     ));
 
     private static final int GREEN = 0x00FF00;
