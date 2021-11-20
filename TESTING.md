@@ -9,7 +9,7 @@ Apply these tests in the production environment, with the test mod:
 
 ## Crash Handling
 
-### Client Initialization Crashes
+### Client Initialization Crashes [Fabric-Only]
 - In the game config folder, have a file named `nec_test_mode.txt` with the content `init_crash`.
   - Start the game
   - Verify:
@@ -29,7 +29,7 @@ Apply these tests in the production environment, with the test mod:
   - Verify:
     - The game crashes.
     - The crash screen appears.
-    - Nec Test mod is blamed.
+    - No mods are blamed.
     - In the terminal, no information is repeated.
     - Verify in the **Log**, **TXT File**, and **Get Link Site**:
       - No information is repeated.
@@ -42,12 +42,11 @@ Apply these tests in the production environment, with the test mod:
   - Click 'Back to title screen' and re-enter the world.
   - Verify the game is working fine.
 
-### Dedicated Server Crashes
+### Dedicated Server Crashes [Dev-Only]
 - In the game config folder, have a file named `nec_test_mode.txt` with the content `server_crash`.
   - Start the server
   - Verify:
     - The game crashes.
-    - Nec test mod is blamed.
     - In the terminal, no information is repeated.
     - Verify a -server crash report is generated with:
       - Suspected mods: None (may contain ignored mods)

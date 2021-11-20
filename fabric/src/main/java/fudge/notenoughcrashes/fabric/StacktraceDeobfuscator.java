@@ -37,13 +37,11 @@ public final class StacktraceDeobfuscator {
 
     public static void init() {
         if (!ENABLE_DEOBF) return;
-        NotEnoughCrashes.getLogger().info("Initializing StacktraceDeobfuscator");
         try {
             if (!Files.exists(CACHED_MAPPINGS)) downloadAndCacheMappings();
         } catch (Exception e) {
             NotEnoughCrashes.getLogger().error("Failed to load mappings!", e);
         }
-        NotEnoughCrashes.getLogger().info("Done initializing StacktraceDeobfuscator");
 
         // Install the log exception deobfuscation rewrite policy
         DeobfuscatingRewritePolicy.install();

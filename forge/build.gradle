@@ -119,4 +119,10 @@ task copyAssetFilesForDebugging(type: Copy) {
 
 classes.dependsOn(copyAssetFilesForDebugging)
 
-//runClient.dependsOn(assemble)
+task publishForge {
+    group = "publishing"
+    afterEvaluate {
+        dependsOn(curseforge442354)
+        dependsOn(publishModrinth)
+    }
+}
