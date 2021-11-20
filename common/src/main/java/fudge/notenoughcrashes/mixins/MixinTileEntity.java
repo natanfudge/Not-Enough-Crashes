@@ -17,7 +17,7 @@ public class MixinTileEntity {
     private void onPopulateCrashReport(CrashReportSection section, CallbackInfo ci) {
         if (!noNBT) {
             noNBT = true;
-            section.add("Block Entity NBT", () -> ((BlockEntity) (Object) this).writeNbt(new NbtCompound()).toString());
+            section.add("Block Entity NBT", () -> ((BlockEntity) (Object) this).createNbt().toString());
             noNBT = false;
         }
     }
