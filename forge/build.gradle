@@ -100,10 +100,10 @@ task publishModrinth (type: TaskModrinthUpload){
     token =  project.hasProperty("modrinth_api_key") ? project.modrinth_api_key : ""
     projectId = 'yM94ont6'
     versionNumber = total_version + "-forge" // Will fail if Modrinth has this version already
-    versionName = "$mod_name $total_version Fabric"
+    versionName = "$mod_name $total_version Forge"
     uploadFile = remapJar
     addGameVersion(curseforge_mc_version)
-    addLoader('fabric')
+    addLoader('forge')
     changelog = rootProject.file("changelog.md").text
     versionType = "RELEASE"
 }
