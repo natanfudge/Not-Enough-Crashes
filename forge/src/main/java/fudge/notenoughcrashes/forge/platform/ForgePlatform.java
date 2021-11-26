@@ -6,13 +6,13 @@ import fudge.notenoughcrashes.platform.NecPlatform;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.FMLPaths;
-import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.forgespi.language.IModInfo;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
@@ -53,14 +53,8 @@ public class ForgePlatform implements NecPlatform {
     }
 
     @Override
-    public @Nullable Path getResource(Path relativePath) {
-        URL url = ForgePlatform.class.getResource("/" + relativePath);
-        if (url == null) return null;
-        try {
-            return Paths.get(url.toURI());
-        } catch (URISyntaxException e) {
-            throw new RuntimeException("Can't parse resource URI", e);
-        }
+    public @Nullable InputStream getResource(Path relativePath) {
+        return NecPlatform.class.getResourceAsStream("/" + relativePath.toString());
     }
 
     @Override

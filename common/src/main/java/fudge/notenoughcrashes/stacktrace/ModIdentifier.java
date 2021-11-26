@@ -125,7 +125,7 @@ public final class ModIdentifier {
                     .replace("classes/java/main", "resources/main")
                     .replace("classes/kotlin/main", "resources/main");
             Path resourcesPath = Paths.get(resourcesPathString);
-            return modMap.get(resourcesPath);
+            return modMap.getOrEmpty(resourcesPath);
         } else {
             debug(() -> "Mod at path '" + path.toAbsolutePath() + "' is at fault," +
                     " but it could not be found in the map of mod paths: " /*+ modMap*/);

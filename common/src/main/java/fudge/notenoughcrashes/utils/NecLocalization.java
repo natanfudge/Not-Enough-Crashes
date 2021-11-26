@@ -8,11 +8,13 @@ import fudge.notenoughcrashes.platform.NecPlatform;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
+import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.nio.file.Files;
+import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -70,13 +72,12 @@ public class NecLocalization {
 
     private static LanguageTranslations loadLanguage(String code) {
         Map<String, String> translations;
-        try {
-            Path localizationsPath = getLocalizationPath(code);
-            if (localizationsPath == null) {
+        try (InputStream localizations = getLocalizations(code)) {
+            if (localizations == null) {
                 translations = new HashMap<>();
                 NotEnoughCrashes.logDebug("No localization for language code: " + code);
             } else {
-                String content = Java11.readString(localizationsPath);
+                String content = IOUtils.toString(localizations, Charset.defaultCharset()); /*Java11.readString();*/
                 translations = parseTranslations(content);
             }
         } catch (IOException e) {
@@ -87,7 +88,7 @@ public class NecLocalization {
     }
 
     @Nullable
-    private static Path getLocalizationPath(String code) {
+    private static InputStream getLocalizations(String code) throws IOException {
         Path relativePath = Paths.get("assets", NotEnoughCrashes.MOD_ID, "lang", code + ".json");
         return NecPlatform.instance().getResource(relativePath);
     }

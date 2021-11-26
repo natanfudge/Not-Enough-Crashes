@@ -1,7 +1,11 @@
 package fudge.notenoughcrashes.platform;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.net.URI;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -33,8 +37,15 @@ public class ModsByLocation {
         return locationToMod.get(normalizePathString(path.toString()));
     }
 
+    @Nullable
     public Set<CommonModMetadata> get(Path path) {
         return get(path.toUri());
+    }
+
+    @NotNull
+    public Set<CommonModMetadata> getOrEmpty(Path path) {
+        Set<CommonModMetadata> mods = get(path);
+        return mods != null ? mods : Collections.emptySet();
     }
 
 

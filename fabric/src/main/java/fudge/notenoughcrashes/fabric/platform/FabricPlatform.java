@@ -11,6 +11,8 @@ import net.fabricmc.loader.api.metadata.ModMetadata;
 import net.fabricmc.loader.api.metadata.Person;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -46,11 +48,17 @@ public class FabricPlatform implements NecPlatform {
 
     @Override
     @Nullable
-    public Path getResource(Path relativePath) {
+    public InputStream getResource(Path relativePath)  {
         // Don't resolve the root path directly with a normal Path, they are incompatible because the root path is often in a Zip FS
         Path path = NotEnoughCrashes.getMetadata().rootPath().resolve(relativePath.toString());
         if (!Files.exists(path)) return null;
-        else return path;
+        else {
+            try {
+                return Files.newInputStream(path);
+            } catch (IOException e) {
+                return null;
+            }
+        }
     }
 
     @Override
