@@ -2,6 +2,8 @@ package fudge.notenoughcrashes.platform;
 
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -23,7 +25,7 @@ public interface NecPlatform {
      * Returns null if no such resource exists at resources/relativePath
      */
     @Nullable
-    Path getResource(Path relativePath);
+    InputStream getResource(Path relativePath);
 
     /**
      * Get be multiple metadatas because forge supports having multiple mods under one jar
