@@ -1,3 +1,5 @@
+### 4.1.2
+- Fixed the crash screen not working in Forge.
 ### 4.1.1
 - Fixed the crash report being printed to the log twice on integrated server crashes.
 - Fixed the crash report txt file missing information on integrated server crashes.
