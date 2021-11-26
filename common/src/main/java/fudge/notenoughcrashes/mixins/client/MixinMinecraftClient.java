@@ -9,6 +9,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.crash.CrashReport;
 import net.minecraft.util.profiler.Recorder;
 import net.minecraft.util.thread.ReentrantThreadExecutor;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -19,12 +20,14 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Queue;
+import java.util.function.Supplier;
 
 
 @Mixin(MinecraftClient.class)
 public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runnable> implements MinecraftClientAccess {
     @Shadow
-    private CrashReport crashReport;
+    @Nullable
+    private Supplier<CrashReport> crashReportSupplier;
 
     @Shadow
     @Final
@@ -52,16 +55,16 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
         if (EntryPointCatcher.crashedDuringStartup()) EntryPointCatcher.displayInitErrorScreen();
     }
 
-    @Inject(method = "run()V", at = @At(value = "FIELD", target = "Lnet/minecraft/client/MinecraftClient;crashReport:Lnet/minecraft/util/crash/CrashReport;"))
+    @Inject(method = "run()V", at = @At(value = "FIELD", target = "Lnet/minecraft/client/MinecraftClient;crashReportSupplier:Ljava/util/function/Supplier;"))
     private void onRunLoop(CallbackInfo ci) {
         if (!NotEnoughCrashes.ENABLE_GAMELOOP_CATCHING) return;
 
-        if (this.crashReport != null) {
+        if (this.crashReportSupplier != null) {
             NotEnoughCrashes.logDebug("Handling run loop crash");
-            InGameCatcher.handleServerCrash(crashReport);
+            InGameCatcher.handleServerCrash(crashReportSupplier.get());
 
             // Causes the run loop to keep going
-            crashReport = null;
+            crashReportSupplier = null;
         }
     }
 
