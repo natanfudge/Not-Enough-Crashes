@@ -13,7 +13,7 @@ artifacts {
 }
 
 architectury {
-    common(false)
+    common()
 }
 
 remapJar {

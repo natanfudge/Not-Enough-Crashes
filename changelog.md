@@ -1,3 +1,5 @@
+### 4.1.3
+- Fixed mixin errors being printed to the log on startup.
 ### 4.1.2
 - Fixed the crash screen not working in Forge.
 ### 4.1.1
