@@ -11,7 +11,7 @@ Features:
 - A convenient way to submit syntax-highlighted crash reports via a special crash screen.
 - Display a list of mods that were involved in the crash, and can be clicked to go to their issue tracker.
 - More useful stack traces that are deobfuscated and include additional information such as NBT for mod developers.
-- Force crash logs to always appear (forceCrashScreen). ![See tutorial for how to change configuration](https://github.com/Phoenix-Starlight/Not-Enough-Crashes/blob/1.18/Configuring%20Not%20Enough%20Crashes.md).
+- Force crash logs to always appear (forceCrashScreen). ![See tutorial for how to change configuration](https://github.com/natanfudge/Not-Enough-Crashes/blob/1.18/Configuring%20Not%20Enough%20Crashes.md).
 
 # Not Enough Crashes API
 
