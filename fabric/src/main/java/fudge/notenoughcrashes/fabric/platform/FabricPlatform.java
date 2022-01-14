@@ -21,6 +21,16 @@ import java.util.stream.Collectors;
 public class FabricPlatform implements NecPlatform {
 
     @Override
+    public boolean isForge() {
+        return false;
+    }
+
+    @Override
+    public boolean isModLoaded(String modId) {
+        return FabricLoader.getInstance().isModLoaded(modId);
+    }
+
+    @Override
     public ModsByLocation getModsAtLocationsInDisk() {
         Map<Path, Set<CommonModMetadata>> modMap = new HashMap<>();
         for (ModContainer mod : FabricLoader.getInstance().getAllMods()) {
