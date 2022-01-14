@@ -2,7 +2,6 @@ package fudge.notenoughcrashes.platform;
 
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.List;
@@ -11,6 +10,10 @@ public interface NecPlatform {
     static NecPlatform instance() {
         return NecPlatformStorage.INSTANCE_SET_ONLY_BY_SPECIFIC_PLATFORMS_VERY_EARLY;
     }
+
+    boolean isForge();
+
+    boolean isModLoaded(String modId);
 
 
     ModsByLocation getModsAtLocationsInDisk();
