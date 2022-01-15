@@ -1,7 +1,7 @@
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 
 plugins {
-	id 'fabric-loom' version '0.9-SNAPSHOT'
+	id 'fabric-loom' version '0.10-SNAPSHOT'
 	id 'maven-publish'
 }
 
