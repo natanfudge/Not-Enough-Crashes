@@ -22,6 +22,16 @@ import java.util.stream.Collectors;
 
 public class ForgePlatform implements NecPlatform {
     @Override
+    public boolean isForge() {
+        return true;
+    }
+
+    @Override
+    public boolean isModLoaded(String modId) {
+        return ModList.get().isLoaded(modId);
+    }
+
+    @Override
     public ModsByLocation getModsAtLocationsInDisk() {
         Map<Path, Set<CommonModMetadata>> modMap = new HashMap<>();
         ModList mods = ModList.get();

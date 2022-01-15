@@ -6,15 +6,17 @@ import com.google.gson.JsonObject;
 import fudge.notenoughcrashes.NotEnoughCrashes;
 import fudge.notenoughcrashes.platform.NecPlatform;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.resource.language.I18n;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -28,19 +30,27 @@ import java.util.Map.Entry;
 public class NecLocalization {
     private static final String DEFAULT_LANGUAGE_CODE = "en_us";
 
-    @NotNull
+    private static final boolean useCustomLocalization = !NecPlatform.instance().isForge()
+            && !NecPlatform.instance().isModLoaded("fabric-resource-loader-v0");
+
     public static String localize(String translationKey) {
+        if (useCustomLocalization) return localizeCustom(translationKey);
+        else return I18n.translate(translationKey);
+    }
+
+    @NotNull
+    private static String localizeCustom(String translationKey) {
         String currentLanguageCode = getCurrentLanguageCode();
-        String translationForChosenLanguage = localize(translationKey, currentLanguageCode);
+        String translationForChosenLanguage = localizeCustom(translationKey, currentLanguageCode);
         if (translationForChosenLanguage != null) return translationForChosenLanguage;
         else {
-            String englishTranslation = localize(translationKey, DEFAULT_LANGUAGE_CODE);
+            String englishTranslation = localizeCustom(translationKey, DEFAULT_LANGUAGE_CODE);
             return englishTranslation == null ? translationKey : englishTranslation;
         }
     }
 
     @Nullable
-    private static String localize(String translationKey, String languageCode) {
+    private static String localizeCustom(String translationKey, String languageCode) {
         LanguageTranslations translations = storedLanguages.computeIfAbsent(
                 languageCode, (ignored) -> loadLanguage(languageCode)
         );
@@ -48,7 +58,8 @@ public class NecLocalization {
     }
 
     public static Text translatedText(String translationKey) {
-        return new LiteralText(localize(translationKey));
+        if (useCustomLocalization) return new LiteralText(localize(translationKey));
+        else return new TranslatableText(translationKey);
     }
 
     @SuppressWarnings("ClassCanBeRecord")
@@ -77,7 +88,7 @@ public class NecLocalization {
                 translations = new HashMap<>();
                 NotEnoughCrashes.logDebug("No localization for language code: " + code);
             } else {
-                String content = IOUtils.toString(localizations, Charset.defaultCharset()); /*Java11.readString();*/
+                String content = IOUtils.toString(localizations, StandardCharsets.UTF_8); /*Java11.readString();*/
                 translations = parseTranslations(content);
             }
         } catch (IOException e) {
