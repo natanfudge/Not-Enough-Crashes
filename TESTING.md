@@ -23,6 +23,14 @@ Apply these tests in the production environment, with the test mod:
       - Suspected Mods: Not Enough Crashes Test Mod (nec_testmod) (may contain ignored mods)
 
   - Click 'Quit Game' and verify the game closes without any exceptions being logged.
+### Initialization Supressed Exception [Fabric-Only]
+- In the game config folder, have a file named `nec_test_mode.txt` with the content `suppressed_crash`.
+  - Start the game
+  - Verify:
+    - The 'Test Main Exception' exception is present in the log as a normal exception.
+    - The 'Test Suppressed Exception' exception is present in the log as a suppressed exception.
+
+  - Click 'Quit Game' and verify the game closes without any exceptions being logged.
 ### Integrated Server Crashes
 - In the game config folder, have a file named `nec_test_mode.txt` with the content `server_crash`.
   - Open a Minecraft World.

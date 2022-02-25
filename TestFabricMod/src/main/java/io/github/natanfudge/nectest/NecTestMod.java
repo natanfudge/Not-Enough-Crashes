@@ -16,18 +16,23 @@ public class NecTestMod implements ModInitializer {
             if (!Files.exists(testModePath)) {
                 Files.createFile(testModePath);
             }
-            return new String(Files.readAllBytes(testModePath));
+            return new String(Files.readAllBytes(testModePath)).trim();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
 
-
     @Override
     public void onInitialize() {
+        System.out.println("Test crash mod initializing with testMode=" + getTestMode());
         if (getTestMode().equals("init_crash")) {
             throw new NecTestCrash("Test Init Crash");
+        }
+        if (getTestMode().equals("suppressed_crash")) {
+            try (TestSuppressedCloseable ignored = new TestSuppressedCloseable()) {
+               throw new NecTestCrash("Test Main Exception");
+            }
         }
     }
 }
