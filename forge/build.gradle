@@ -91,17 +91,17 @@ curseforge {
     }
 }
 
-task publishModrinth (type: TaskModrinthUpload){
+modrinth {
     group = "upload"
     token =  project.hasProperty("modrinth_api_key") ? project.modrinth_api_key : ""
     projectId = 'yM94ont6'
     versionNumber = total_version + "-forge" // Will fail if Modrinth has this version already
     versionName = "$mod_name $total_version Forge"
     uploadFile = remapJar
-    addGameVersion(modrinth_mc_version)
-    addLoader('forge')
+    gameVersions = [modrinth_mc_version]
+    loaders = ["forge"]
     changelog = rootProject.file("changelog.md").text
-    versionType = "RELEASE"
+    versionType = "release"
 }
 
 // Asset files will otherwise be missing when debugging
@@ -119,6 +119,6 @@ task publishForge {
     group = "publishing"
     afterEvaluate {
         dependsOn(curseforge442354)
-        dependsOn(publishModrinth)
+        dependsOn(tasks.modrinth)
     }
 }

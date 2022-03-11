@@ -3,7 +3,7 @@ plugins {
     id "dev.architectury.loom" version "0.11.0-SNAPSHOT" apply false
     id 'maven-publish'
     id 'com.matthewprenger.cursegradle'
-    id "com.modrinth.minotaur" version "1.2.1" apply false
+    id "com.modrinth.minotaur" version "2.+" apply false
     id 'io.github.juuxel.loom-quiltflower' version '1.6.0' apply false
 }
 
