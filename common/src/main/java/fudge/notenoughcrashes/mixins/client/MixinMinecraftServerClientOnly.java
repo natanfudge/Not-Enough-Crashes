@@ -15,7 +15,7 @@ import java.io.File;
 public class MixinMinecraftServerClientOnly {
     /**
      * We write the log anyway using CrashUtils.outputReport in
-     * {@link fudge.notenoughcrashes.mixinhandlers.InGameCatcher#displayCrashScreen(CrashReport, int)}
+     * {@link fudge.notenoughcrashes.mixinhandlers.InGameCatcher#displayCrashScreen(CrashReport, int, boolean)}
      */
     @Redirect(method = "runServer()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/crash/CrashReport;writeToFile(Ljava/io/File;)Z"))
     private boolean disableIntegratedServerWriteToFileOnCrash(CrashReport instance, File file) {
