@@ -1,3 +1,5 @@
+### 4.1.5
+- Fixed not working on Quilt. 
 ### 4.1.4 
 - Fixed the text of the crash screen sometimes being broken
 - Fixed not being able to use custom assets for the mod. Note: this will still not work in Fabric if Fabric API is not installed. 
