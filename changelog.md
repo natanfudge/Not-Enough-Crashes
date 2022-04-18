@@ -1,3 +1,5 @@
+### 4.1.6
+- Updated to support Quilt hashed mappings.
 ### 4.1.5
 - Fixed not working on Quilt. 
 ### 4.1.4 
