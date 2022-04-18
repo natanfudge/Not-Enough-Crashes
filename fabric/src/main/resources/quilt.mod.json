@@ -4,6 +4,7 @@
     "group": "fudge.notenoughcrashes",
     "id": "notenoughcrashes",
     "version": "${version}",
+    "intermediate_mappings": "net.fabricmc:intermediary",
     "entrypoints": {
       "main": [
         "fudge.notenoughcrashes.fabric.NotEnoughCrashesFabric"
@@ -29,11 +30,11 @@
         "Fourmisain": "Contributor",
         "wafflecoffee": "Contributor"
       },
-	"contact": {
-		"issues": "https://github.com/natanfudge/Not-Enough-Crashes/issues",
-		"sources": "https://github.com/natanfudge/Not-Enough-Crashes",
-		"homepage": "https://www.curseforge.com/minecraft/mc-mods/not-enough-crashes",
-		"discord": "https://discord.gg/6TfUuZ2GSe"
+      "contact": {
+        "issues": "https://github.com/natanfudge/Not-Enough-Crashes/issues",
+        "sources": "https://github.com/natanfudge/Not-Enough-Crashes",
+        "homepage": "https://www.curseforge.com/minecraft/mc-mods/not-enough-crashes",
+        "discord": "https://discord.gg/6TfUuZ2GSe"
       },
       "license": "MIT",
       "icon": "icon.png"
