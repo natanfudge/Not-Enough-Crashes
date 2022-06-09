@@ -8,7 +8,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.crash.CrashReport;
 
 @Environment(EnvType.CLIENT)
@@ -26,7 +26,7 @@ public class CrashScreen extends ProblemScreen {
     @Override
     public void init() {
         super.init();
-        ButtonWidget mainMenuButton = new ButtonWidget(width / 2 - 155, height / 4 + 120 + 12, 150, 20, new TranslatableText("gui.toTitle"),
+        ButtonWidget mainMenuButton = new ButtonWidget(width / 2 - 155, height / 4 + 120 + 12, 150, 20,NecLocalization.translatedText("gui.toTitle"),
                 button -> MinecraftClient.getInstance().setScreen(new TitleScreen()));
 
         if (NecConfig.instance().disableReturnToMainMenu) {

@@ -101,11 +101,15 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
     private void beforeCleanUpAfterCrash(CallbackInfo info) {
         InGameCatcher.cleanupBeforeMinecraft(renderTaskQueue);
     }
-
+//String levelName, LevelStorage.Session session, ResourcePackManager dataPackManager, SaveLoader saveLoader
     /**
      * Prevent the integrated server from exiting in the case it crashed
      */
-    @Redirect(method = "startIntegratedServer(Ljava/lang/String;Ljava/util/function/Function;Ljava/util/function/Function;ZLnet/minecraft/client/MinecraftClient$WorldLoadAction;)V",
+    @Redirect(method = "startIntegratedServer(" +
+            "Ljava/lang/String;Lnet/minecraft/world/level/storage/LevelStorage$Session;" +
+            "Lnet/minecraft/resource/ResourcePackManager;" +
+            "Lnet/minecraft/server/SaveLoader;" +
+            ")V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;printCrashReport(Lnet/minecraft/util/crash/CrashReport;)V"))
     private void redirectPrintCrashReport(CrashReport report) {
 //        CrashUtils.outputReport(report);

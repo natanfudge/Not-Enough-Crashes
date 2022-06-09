@@ -6,9 +6,7 @@ import fudge.notenoughcrashes.NotEnoughCrashes;
 import fudge.notenoughcrashes.platform.NecPlatform;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.resource.language.I18n;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -56,8 +54,8 @@ public class NecLocalization {
     }
 
     public static Text translatedText(String translationKey) {
-        if (useCustomLocalization) return new LiteralText(localize(translationKey));
-        else return new TranslatableText(translationKey);
+        if (useCustomLocalization) return Text.of(localize(translationKey));
+        else return Text.translatable(translationKey);
     }
 
     @SuppressWarnings("ClassCanBeRecord")

@@ -53,7 +53,7 @@ public abstract class ProblemScreen extends Screen {
 
 
     protected ProblemScreen(CrashReport report) {
-        super(new LiteralText(""));
+        super(Text.of(""));
         this.report = report;
     }
 
@@ -73,14 +73,14 @@ public abstract class ProblemScreen extends Screen {
                 .sorted(Comparator.comparing(CommonModMetadata::name))
                 .map(mod -> {
                     String issuesPage = mod.issuesPage();
-                    MutableText modText = new LiteralText(mod.name());
+                    MutableText modText = Text.literal(mod.name());
                     if (issuesPage != null) {
                         modText.styled(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, issuesPage)));
                     }
                     return modText;
 
                 })
-                .reduce((existing, next) -> existing.append(new LiteralText(", ")).append(next))
+                .reduce((existing, next) -> existing.append(Text.of(", ")).append(next))
                 .get();
     }
 

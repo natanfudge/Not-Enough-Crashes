@@ -13,7 +13,7 @@ public abstract class MixinBufferBuilder implements StateManager.IResettable {
 
     @Shadow private boolean building;
 
-    @Shadow public abstract void end();
+    @Shadow public abstract BufferBuilder.BuiltBuffer end();
 
     @Inject(method = "<init>", at = @At("RETURN"))
     public void onInit(int bufferSizeIn, CallbackInfo ci) {

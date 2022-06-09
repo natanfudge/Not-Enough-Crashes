@@ -23,7 +23,7 @@ Apply these tests in the production environment, with the test mod:
       - Suspected Mods: Not Enough Crashes Test Mod (nec_testmod) (may contain ignored mods)
 
   - Click 'Quit Game' and verify the game closes without any exceptions being logged.
-### Initialization Supressed Exception [Fabric-Only]
+### Initialization Suppressed Exception [Fabric-Only]
 - In the game config folder, have a file named `nec_test_mode.txt` with the content `suppressed_crash`.
   - Start the game
   - Verify:
@@ -33,8 +33,8 @@ Apply these tests in the production environment, with the test mod:
   - Click 'Quit Game' and verify the game closes without any exceptions being logged.
 ### Integrated Server Crashes
 - In the game config folder, have a file named `nec_test_mode.txt` with the content `server_crash`.
-  - Open a Minecraft World.
-  - Verify:
+`  - Open a Minecraft World.
+`  - Verify:
     - The game crashes.
     - The crash screen appears.
     - No mods are blamed.
@@ -50,7 +50,7 @@ Apply these tests in the production environment, with the test mod:
   - Click 'Back to title screen' and re-enter the world.
   - Verify the game is working fine.
 
-### Dedicated Server Crashes [Dev-Only]
+### Dedicated Server Crashes [Can be tested in dev only]
 - In the game config folder, have a file named `nec_test_mode.txt` with the content `server_crash`.
   - Start the server
   - Verify:
@@ -61,6 +61,7 @@ Apply these tests in the production environment, with the test mod:
       - No information is repeated.
       - System details are present.
 ### Client Reported Crashes
+- In the game config folder, have the file named `nec_test_mode.txt` be empty or non-existent.
 - Open a Minecraft world.
 - Press the left square bracket key.
 - Verify:

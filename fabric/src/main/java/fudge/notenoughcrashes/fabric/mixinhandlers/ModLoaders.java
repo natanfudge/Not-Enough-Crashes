@@ -9,6 +9,6 @@ public class ModLoaders {
         Hooks.startClient(runDir, gameInstance);
     }
     public static void quiltEntrypoints(File runDir, Object gameInstance) {
-        org.quiltmc.loader.impl.entrypoint.minecraft.hooks.EntrypointClient.start(runDir, gameInstance);
+        org.quiltmc.loader.impl.game.minecraft.Hooks.startClient(runDir, gameInstance);
     }
 }

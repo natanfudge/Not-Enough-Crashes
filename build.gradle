@@ -1,6 +1,6 @@
 plugins {
     id "architectury-plugin" version "3.4-SNAPSHOT"
-    id "dev.architectury.loom" version "0.11.0-SNAPSHOT" apply false
+    id "dev.architectury.loom" version "0.12.0-SNAPSHOT" apply false
     id 'maven-publish'
     id 'com.matthewprenger.cursegradle'
     id "com.modrinth.minotaur" version "2.+" apply false

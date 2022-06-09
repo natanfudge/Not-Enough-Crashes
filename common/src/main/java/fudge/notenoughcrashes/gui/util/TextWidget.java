@@ -73,7 +73,7 @@ public class TextWidget implements Widget {
 
             TextRenderer renderer = MinecraftClient.getInstance().textRenderer;
             for (Text component : getTextParts(text)) {
-                i += renderer.getWidth(component.asString());
+                i += renderer.getWidth(component.getString());
                 if (i > x) {
                     return component;
                 }

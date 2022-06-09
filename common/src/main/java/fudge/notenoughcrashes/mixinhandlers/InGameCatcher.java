@@ -7,10 +7,10 @@ import fudge.notenoughcrashes.gui.CrashScreen;
 import fudge.notenoughcrashes.patches.MinecraftClientAccess;
 import fudge.notenoughcrashes.stacktrace.CrashUtils;
 import fudge.notenoughcrashes.utils.GlUtil;
+import fudge.notenoughcrashes.utils.NecLocalization;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.SaveLevelScreen;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.client.gui.screen.MessageScreen;
+import net.minecraft.text.Text;
 import net.minecraft.util.crash.CrashException;
 import net.minecraft.util.crash.CrashReport;
 import net.minecraft.util.profiler.DummyRecorder;
@@ -48,10 +48,10 @@ public class InGameCatcher {
         if (getClient().getNetworkHandler() != null) {
             // Fix: Close the connection to avoid receiving packets from old server
             // when playing in another world (MC-128953)
-            getClient().getNetworkHandler().getConnection().disconnect(new LiteralText(String.format("[%s] Client crashed", NotEnoughCrashes.NAME)));
+            getClient().getNetworkHandler().getConnection().disconnect(Text.of(String.format("[%s] Client crashed", NotEnoughCrashes.NAME)));
         }
 
-        getClient().disconnect(new SaveLevelScreen(new TranslatableText("menu.savingLevel")));
+        getClient().disconnect(new MessageScreen(NecLocalization.translatedText("menu.savingLevel")));
 
         renderTaskQueue.clear(); // Fix: method_1550(null, ...) only clears when integrated server is running
     }
