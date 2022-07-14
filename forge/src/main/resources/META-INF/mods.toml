@@ -12,6 +12,7 @@ description = '''
 Improves crashes in Minecraft - allows returning to title screen, blaming causing mods, and more.
 '''
 logoFile = "icon.png"
+displayTest="IGNORE_ALL_VERSION"   # IGNORE_ALL_VERSION means that your mod will not cause a red X if it's present on the client or the server. This is a special case and should only be used if your mod has no server component.
 
 [[dependencies.notenoughcrashes]]
 modId = "forge"

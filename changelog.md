@@ -1,3 +1,5 @@
+### 4.1.7
+- Fixed the mod claiming it must be installed on the server on Forge. 
 ### 4.1.6
 - Updated to support Quilt hashed mappings.
 ### 4.1.5
