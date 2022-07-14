@@ -23,7 +23,7 @@ repositories {
 
 dependencies {
     modImplementation("net.fabricmc:fabric-loader:${rootProject.loader_version}")
-    compileOnly("org.quiltmc:quilt-loader:0.13.2")
+    compileOnly("org.quiltmc:quilt-loader:0.16.1")
     modRuntimeOnly "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
 
     // Remove the next line if you don't want to depend on the API
