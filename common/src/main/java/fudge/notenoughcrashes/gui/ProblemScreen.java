@@ -11,7 +11,7 @@ import fudge.notenoughcrashes.utils.NecLocalization;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.ConfirmChatLinkScreen;
+import net.minecraft.client.gui.screen.ConfirmLinkScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
@@ -93,7 +93,7 @@ public abstract class ProblemScreen extends Screen {
             if (uploadedCrashLink == null) {
                 uploadedCrashLink = LegacyCrashLogUpload.upload(report.asString());
             }
-            MinecraftClient.getInstance().setScreen(new ConfirmChatLinkScreen(b -> {
+            MinecraftClient.getInstance().setScreen(new ConfirmLinkScreen(b -> {
                 if (b) {
                     Util.getOperatingSystem().open(uploadedCrashLink);
                 }
