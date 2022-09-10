@@ -95,19 +95,20 @@ curseforge {
         forgeGradleIntegration = false
     }
 }
-
+//println("Version = $total_version")
 modrinth {
     group = "upload"
     token =  project.hasProperty("modrinth_api_key") ? project.modrinth_api_key : ""
     projectId = 'yM94ont6'
     versionNumber = total_version + "-fabric" // Will fail if Modrinth has this version already
+//    println("versionNumber = ${versionNumber.get()}")
     versionName = "$mod_name $total_version Fabric"
     uploadFile = remapJar
     gameVersions = [modrinth_mc_version]
     loaders = ["fabric", "quilt"]
     changelog = rootProject.file("changelog.md").text
     versionType = "release"
-
+    debugMode = true
 }
 
 task publishFabric {
