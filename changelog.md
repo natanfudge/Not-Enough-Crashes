@@ -1,4 +1,4 @@
-### 4.1.8 
+### 4.1.8
 - Added and fixed Chinese translations (thanks SolidBlock-cn!).
 ### 4.1.7
 - Fixed the mod claiming it must be installed on the server on Forge. 

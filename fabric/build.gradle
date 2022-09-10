@@ -108,7 +108,6 @@ modrinth {
     loaders = ["fabric", "quilt"]
     changelog = rootProject.file("changelog.md").text
     versionType = "release"
-    debugMode = true
 }
 
 task publishFabric {
