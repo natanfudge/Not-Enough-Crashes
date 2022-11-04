@@ -29,7 +29,7 @@ public final class ModIdentifier {
 
     private static final Map<CrashReport, Set<CommonModMetadata>> suspectedModsCache = new HashMap<>();
 
-    private static final Map<IMixinConfig, Set<CommonModMetadata>> mixinConfigToMods = new HashMap<>();
+    private static final Map<IMixinConfig, Set<CommonModMetadata>> mixinConfigToModsCache = new HashMap<>();
 
     public static Set<CommonModMetadata> getSuspectedModsOf(CrashReport report) {
         return suspectedModsCache.computeIfAbsent(report, (ignored) -> identifyFromStacktrace(report.getCause()));
@@ -62,14 +62,7 @@ public final class ModIdentifier {
         while (e != null) {
             for (StackTraceElement element : e.getStackTrace()) {
                 involvedClasses.add(element.getClassName());
-                MixinMerged mixinMerged = findMixinMerged(element);
-                if (mixinMerged != null) {
-                    // Mixin does a great job of obscuring mixins
-                    ClassInfo classInfo = ClassInfo.forName(mixinMerged.mixin().replace('.', '/'));
-                    if (classInfo != null) {
-                        involvedMixins.add(Reflection.getMixinInfo(classInfo));
-                    }
-                }
+                involvedMixins.add(getMixinInfo(element));
             }
             e = e.getCause();
         }
@@ -80,6 +73,7 @@ public final class ModIdentifier {
             mods.addAll(classMods);
         }
         for (IMixinInfo mixinName : involvedMixins) {
+            if (mixinName == null) continue;
             Set<CommonModMetadata> mixinMods = identifyFromMixin(mixinName);
             mods.addAll(mixinMods);
         }
@@ -153,19 +147,30 @@ public final class ModIdentifier {
 
     @NotNull
     private static Set<CommonModMetadata> identifyFromMixin(IMixinInfo mixin) {
-        Set<CommonModMetadata> metadata = mixinConfigToMods.get(mixin.getConfig());
-        if (metadata != null) return metadata;
+        return mixinConfigToModsCache.computeIfAbsent(mixin.getConfig(), config -> {
+            String mixinFileName = config.getName();
+            Set<CommonModMetadata> modsWithMixinFile = new LinkedHashSet<>();
+            for (CommonModMetadata mod : NecPlatform.instance().getAllMods()) {
+                Path mixinFile = mod.rootPath().resolve(mixinFileName);
+                if (Files.exists(mixinFile)) {
+                    modsWithMixinFile.add(mod);
+                }
+            }
+            return modsWithMixinFile;
+        });
+    }
 
-        String mixinFileName = mixin.getConfig().getName();
-        Set<CommonModMetadata> modsWithMixinFile = new LinkedHashSet<>();
-        for (CommonModMetadata mod : NecPlatform.instance().getAllMods()) {
-            Path mixinFile = mod.rootPath().resolve(mixinFileName);
-            if (Files.exists(mixinFile)) {
-                modsWithMixinFile.add(mod);
+    @Nullable
+    private static IMixinInfo getMixinInfo(StackTraceElement element) {
+        MixinMerged mixinMerged = findMixinMerged(element);
+        if (mixinMerged != null) {
+            // Mixin does a great job of obscuring mixins - see the "Reflection" javadoc for more info
+            ClassInfo classInfo = ClassInfo.forName(mixinMerged.mixin().replace('.', '/'));
+            if (classInfo != null) {
+                return Reflection.getMixinInfo(classInfo);
             }
         }
-        mixinConfigToMods.put(mixin.getConfig(), modsWithMixinFile);
-        return modsWithMixinFile;
+        return null;
     }
 
     @NotNull
@@ -190,6 +195,24 @@ public final class ModIdentifier {
         }
     }
 
+    /**
+     * Mixin is rather protective of its internal mixin structures.
+     * <p>
+     * Mixin has some useful classes:
+     * <ul>
+     *     <li>{@link ClassInfo} - Represents a class</li>
+     *     <li>{@link IMixinInfo} - Represents a mixin</li>
+     * </ul>
+     * The issue arises when we have a {@link ClassInfo} of a mixin and want to get its {@link IMixinInfo}.
+     * The ClassInfo class has a {@link ClassInfo#mixin mixin} field, used to link an IMixinInfo to a mixin's ClassInfo.
+     * However, this field is private and there is no getter for it. We would have to use reflection to get it.
+     * <p>
+     * Another option would be to get the ClassInfo of the mixin's target class to get mixins into that class.
+     * This has a problem, though, when Mixin does not consider the mixin to have been applied to the target class.
+     * Since it only has a getter for applied mixins and not all mixins, reflection is the only option.
+     * <p>
+     * Therefore, the easiest option is to use reflection to get the IMixinInfo from a mixin's ClassInfo.
+     */
     private static class Reflection {
         static final Field classInfoMixin;
 
@@ -202,6 +225,7 @@ public final class ModIdentifier {
             }
         }
 
+        @Nullable
         static IMixinInfo getMixinInfo(ClassInfo classInfo) {
             try {
                 return (IMixinInfo) classInfoMixin.get(classInfo);
