@@ -7,9 +7,17 @@ import fudge.notenoughcrashes.platform.ModsByLocation;
 import fudge.notenoughcrashes.platform.NecPlatform;
 import net.minecraft.util.crash.CrashReport;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.spongepowered.asm.mixin.extensibility.IMixinConfig;
+import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
+import org.spongepowered.asm.mixin.transformer.ClassInfo;
+import org.spongepowered.asm.mixin.transformer.meta.MixinMerged;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.CodeSource;
@@ -20,6 +28,8 @@ import java.util.function.Supplier;
 public final class ModIdentifier {
 
     private static final Map<CrashReport, Set<CommonModMetadata>> suspectedModsCache = new HashMap<>();
+
+    private static final Map<IMixinConfig, Set<CommonModMetadata>> mixinConfigToMods = new HashMap<>();
 
     public static Set<CommonModMetadata> getSuspectedModsOf(CrashReport report) {
         return suspectedModsCache.computeIfAbsent(report, (ignored) -> identifyFromStacktrace(report.getCause()));
@@ -48,9 +58,18 @@ public final class ModIdentifier {
         ModsByLocation modMap = NecPlatform.instance().getModsAtLocationsInDisk();
 
         Set<String> involvedClasses = new LinkedHashSet<>();
+        Set<IMixinInfo> involvedMixins = new LinkedHashSet<>();
         while (e != null) {
             for (StackTraceElement element : e.getStackTrace()) {
                 involvedClasses.add(element.getClassName());
+                MixinMerged mixinMerged = findMixinMerged(element);
+                if (mixinMerged != null) {
+                    // Mixin does a great job of obscuring mixins
+                    ClassInfo classInfo = ClassInfo.forName(mixinMerged.mixin().replace('.', '/'));
+                    if (classInfo != null) {
+                        involvedMixins.add(Reflection.getMixinInfo(classInfo));
+                    }
+                }
             }
             e = e.getCause();
         }
@@ -59,6 +78,10 @@ public final class ModIdentifier {
         for (String className : involvedClasses) {
             Set<CommonModMetadata> classMods = identifyFromClass(className, modMap);
             mods.addAll(classMods);
+        }
+        for (IMixinInfo mixinName : involvedMixins) {
+            Set<CommonModMetadata> mixinMods = identifyFromMixin(mixinName);
+            mods.addAll(mixinMods);
         }
         debug(modMap::toString);
         return mods;
@@ -70,7 +93,6 @@ public final class ModIdentifier {
         if (FORCE_DEBUG || NecConfig.instance().debugModIdentification) NotEnoughCrashes.getLogger().info(message.get());
     }
 
-    // TODO: get a list of mixin transformers that affected the class and blame those too
     @NotNull
     private static Set<CommonModMetadata> identifyFromClass(String className, ModsByLocation modMap) {
         // Skip identification for Mixin, one's mod copy of the library is shared with all other mods
@@ -110,6 +132,42 @@ public final class ModIdentifier {
         }
     }
 
+    @Nullable
+    private static MixinMerged findMixinMerged(StackTraceElement element) {
+        try {
+            Class<?> clazz = Class.forName(element.getClassName());
+            // Walk through methods because we don't know parameter types
+            Method[] methods = clazz.getDeclaredMethods();
+            for (Method method : methods) {
+                if (method.getName().equals(element.getMethodName())) {
+                    MixinMerged mixinMerged = method.getAnnotation(MixinMerged.class);
+                    if (mixinMerged != null) {
+                        return mixinMerged;
+                    }
+                }
+            }
+        } catch (ClassNotFoundException ignored) {}
+
+        return null;
+    }
+
+    @NotNull
+    private static Set<CommonModMetadata> identifyFromMixin(IMixinInfo mixin) {
+        Set<CommonModMetadata> metadata = mixinConfigToMods.get(mixin.getConfig());
+        if (metadata != null) return metadata;
+
+        String mixinFileName = mixin.getConfig().getName();
+        Set<CommonModMetadata> modsWithMixinFile = new LinkedHashSet<>();
+        for (CommonModMetadata mod : NecPlatform.instance().getAllMods()) {
+            Path mixinFile = mod.rootPath().resolve(mixinFileName);
+            if (Files.exists(mixinFile)) {
+                modsWithMixinFile.add(mod);
+            }
+        }
+        mixinConfigToMods.put(mixin.getConfig(), modsWithMixinFile);
+        return modsWithMixinFile;
+    }
+
     @NotNull
     private static Set<CommonModMetadata> getModsAt(Path path, ModsByLocation modMap) {
         Set<CommonModMetadata> mod = modMap.get(path);
@@ -129,6 +187,27 @@ public final class ModIdentifier {
             debug(() -> "Mod at path '" + path.toAbsolutePath() + "' is at fault," +
                     " but it could not be found in the map of mod paths: " /*+ modMap*/);
             return Collections.emptySet();
+        }
+    }
+
+    private static class Reflection {
+        static final Field classInfoMixin;
+
+        static {
+            try {
+                classInfoMixin = ClassInfo.class.getDeclaredField("mixin");
+                classInfoMixin.setAccessible(true);
+            } catch (NoSuchFieldException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        static IMixinInfo getMixinInfo(ClassInfo classInfo) {
+            try {
+                return (IMixinInfo) classInfoMixin.get(classInfo);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 }

@@ -74,6 +74,14 @@ public class ForgePlatform implements NecPlatform {
         return file.getMods().stream().map(ForgePlatform::toCommon).collect(Collectors.toList());
     }
 
+    @Override
+    public List<CommonModMetadata> getAllMods() {
+        return ModList.get().getModFiles().stream()
+                .flatMap(f -> f.getMods().stream())
+                .map(ForgePlatform::toCommon)
+                .collect(Collectors.toList());
+    }
+
     private static CommonModMetadata toCommon(IModInfo imod) {
         Optional<String> issueUrl = imod.getOwningFile().getConfig().getConfigElement("issueTrackerURL");
         Object authorsObj = imod.getConfig().getConfigElement("authors").orElse(null);
