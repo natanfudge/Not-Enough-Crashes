@@ -8,6 +8,7 @@ import fudge.notenoughcrashes.platform.NecPlatform;
 import net.minecraft.util.crash.CrashReport;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.spongepowered.asm.mixin.MixinEnvironment;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfig;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 import org.spongepowered.asm.mixin.transformer.ClassInfo;
@@ -61,7 +62,8 @@ public final class ModIdentifier {
         while (e != null) {
             for (StackTraceElement element : e.getStackTrace()) {
                 involvedClasses.add(element.getClassName());
-                involvedMixins.add(getMixinInfo(element));
+                IMixinInfo mixinInfo = getMixinInfo(element);
+                if (mixinInfo != null) involvedMixins.add(mixinInfo);
             }
             e = e.getCause();
         }
@@ -72,7 +74,6 @@ public final class ModIdentifier {
             mods.addAll(classMods);
         }
         for (IMixinInfo mixinName : involvedMixins) {
-            if (mixinName == null) continue;
             Set<CommonModMetadata> mixinMods = identifyFromMixin(mixinName);
             mods.addAll(mixinMods);
         }
@@ -208,7 +209,7 @@ public final class ModIdentifier {
      * However, this field is private and there is no getter for it. We would have to use reflection to get it.
      * <p>
      * Another option would be to get the ClassInfo of the mixin's target class to get mixins into that class.
-     * This has a problem, though, when Mixin does not consider the mixin to have been applied to the target class.
+     * This has a problem, though, since Mixin likes to claim that mixins are not applied and therefore not accessible with the public {@link ClassInfo#getAppliedMixins()} method.
      * Since it only has a getter for applied mixins and not all mixins, reflection is the only option.
      * <p>
      * Therefore, the easiest option is to use reflection to get the IMixinInfo from a mixin's ClassInfo.
