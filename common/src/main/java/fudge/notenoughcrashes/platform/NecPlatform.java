@@ -36,4 +36,6 @@ public interface NecPlatform {
     List<CommonModMetadata> getModMetadatas(String modId);
 
     List<CommonModMetadata> getAllMods();
+
+    boolean modContainsFile(CommonModMetadata mod, String path);
 }

@@ -17,7 +17,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.CodeSource;
@@ -140,7 +139,9 @@ public final class ModIdentifier {
                     }
                 }
             }
-        } catch (ClassNotFoundException ignored) {}
+        } catch (ClassNotFoundException | NoClassDefFoundError ignored) {
+            debug(() -> "Ignoring class " + element.getClassName() + " for mixin identification because an error occurred");
+        }
 
         return null;
     }
@@ -151,8 +152,7 @@ public final class ModIdentifier {
             String mixinFileName = config.getName();
             Set<CommonModMetadata> modsWithMixinFile = new LinkedHashSet<>();
             for (CommonModMetadata mod : NecPlatform.instance().getAllMods()) {
-                Path mixinFile = mod.rootPath().resolve(mixinFileName);
-                if (Files.exists(mixinFile)) {
+                if (NecPlatform.instance().modContainsFile(mod, mixinFileName)) {
                     modsWithMixinFile.add(mod);
                 }
             }

@@ -1,5 +1,6 @@
 package fudge.notenoughcrashes.forge.platform;
 
+import fudge.notenoughcrashes.NotEnoughCrashes;
 import fudge.notenoughcrashes.platform.CommonModMetadata;
 import fudge.notenoughcrashes.platform.ModsByLocation;
 import fudge.notenoughcrashes.platform.NecPlatform;
@@ -12,11 +13,11 @@ import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.forgespi.language.IModInfo;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -76,10 +77,24 @@ public class ForgePlatform implements NecPlatform {
 
     @Override
     public List<CommonModMetadata> getAllMods() {
-        return ModList.get().getModFiles().stream()
-                .flatMap(f -> f.getMods().stream())
+        return ModList.get().getMods().stream()
                 .map(ForgePlatform::toCommon)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean modContainsFile(CommonModMetadata mod, String path) {
+        if (Files.isDirectory(mod.rootPath())) {
+            return Files.exists(mod.rootPath().resolve(path));
+        }
+
+        try (FileSystem fs = FileSystems.newFileSystem(mod.rootPath())) {
+            Path filePath = fs.getPath(path);
+            return Files.exists(filePath);
+        } catch (IOException e) {
+            NotEnoughCrashes.getLogger().error("Failed to open mod jar, assuming it doesn't contain file " + path, e);
+            return false;
+        }
     }
 
     private static CommonModMetadata toCommon(IModInfo imod) {
