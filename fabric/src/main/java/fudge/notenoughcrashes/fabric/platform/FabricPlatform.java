@@ -77,6 +77,18 @@ public class FabricPlatform implements NecPlatform {
         return mod.map(modContainer -> Collections.singletonList(toCommon(modContainer))).orElse(new ArrayList<>());
     }
 
+    @Override
+    public List<CommonModMetadata> getAllMods() {
+        return FabricLoader.getInstance().getAllMods().stream()
+                .map(FabricPlatform::toCommon)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean modContainsFile(CommonModMetadata mod, String path) {
+        return FabricLoader.getInstance().getModContainer(mod.id()).flatMap(modContainer -> modContainer.findPath(path)).isPresent();
+    }
+
     // Earlier elements will be used first, may need to add more elements if people start using weird shit
     private static final List<String> possibleIssuesFieldsByPriority = Arrays.asList(
             "issues", "sources", "homepage"
