@@ -1,11 +1,13 @@
 # Testing Not Enough Crashes
 This documents details how to test Not Enough Crashes after making changes.
 
-Apply these tests in the production environment, with the test mod:
-- Fabric: `cd TestFabricMod`, Forge: `cd TestForgeMod`
-- `gradlew build`
-  For dev use:
-- `gradlew addTestMods`
+- To test Fabric in dev, uncomment `runtimeOnly project(path: ":TestFabricMod", configuration: "namedElements")` 
+in `fabric/build.gradle`
+- To test Forge in dev, uncomment `runtimeOnly project(path: ":TestFabricMod", configuration: "namedElements")`
+  in `forge/build.gradle`
+
+To test in production, build the test Fabric/Forge mod and add them alongside NEC. 
+
 
 ## Crash Handling
 
