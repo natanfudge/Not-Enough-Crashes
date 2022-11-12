@@ -26,10 +26,8 @@ dependencies {
     compileOnly libs.quilt.loader
     modRuntimeOnly libs.fabric.api
 
-//    modRuntimeOnly project(":TestFabricMod")
-
-    // Remove the next line if you don't want to depend on the API
-//    modCompile("me.shedaniel:architectury:${rootProject.architectury_version}:fabric")
+    // Uncomment to add the test mod at runtime
+//    runtimeOnly project(path: ":TestFabricMod", configuration: "namedElements")
 
     implementation(project(path: ":common", configuration: "dev")) {
         transitive = false
@@ -84,7 +82,7 @@ curseforge {
         id = curseforge_id
         releaseType = 'release'
         addGameVersion "Fabric"
-        addGameVersion minecraft_version
+        addGameVersion curseforge_mc_version
         changelogType = "markdown"
         changelog = rootProject.file("changelog.md")
 
@@ -106,7 +104,7 @@ modrinth {
 //    println("versionNumber = ${versionNumber.get()}")
     versionName = "$mod_name $total_version Fabric"
     uploadFile = remapJar
-    gameVersions = [minecraft_version]
+    gameVersions = [modrinth_mc_version]
     loaders = ["fabric", "quilt"]
     changelog = rootProject.file("changelog.md").text
     versionType = "release"

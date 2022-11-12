@@ -24,7 +24,8 @@ loom {
 dependencies {
     forge "net.minecraftforge:forge:${libs.versions.minecraft.get()}-${libs.versions.forge.get()}"
 
-//    modRuntimeOnly project(":TestForgeMod")
+    // Uncomment to add the test mod at runtime
+//    runtimeOnly project(path: ":TestForgeMod", configuration: "namedElements")
 
     compileOnly(project(path: ":common", configuration: "dev")) {
         transitive = false
@@ -79,7 +80,7 @@ curseforge {
         id = curseforge_id
         releaseType = 'release'
         addGameVersion "Forge"
-        addGameVersion minecraft_version
+        addGameVersion curseforge_mc_version
         changelogType = "markdown"
         changelog = rootProject.file("changelog.md")
 
@@ -100,7 +101,7 @@ modrinth {
     versionNumber = total_version + "-forge" // Will fail if Modrinth has this version already
     versionName = "$mod_name $total_version Forge"
     uploadFile = remapJar
-    gameVersions = [minecraft_version]
+    gameVersions = [modrinth_mc_version]
     loaders = ["forge"]
     changelog = rootProject.file("changelog.md").text
     versionType = "release"

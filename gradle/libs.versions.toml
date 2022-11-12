@@ -11,16 +11,20 @@ cursegradle = "1.4.0" # Must be updated in settings.gradle as well!
 shadow = "7.0.0"
 task_tree = "2.1.0"
 
-# Minecraft & Mods
+# Minecraft
 minecraft = "1.19.2"
 
+# CurseForge & Modrinth MC overrides (or "mc" to use the main version)
+overrides_curseforge = "mc"
+overrides_modrinth = "mc"
+
+# Mods & Libraries
 yarn_mappings = "1.19.2+build.28"
 fabric_loader = "0.14.10"
 fabric_api = "0.66.0+1.19.2"
 quilt_loader = "0.16.1"
 forge = "43.1.52"
 architectury_api = "6.3.49"
-artifice = "0.15.5+21w07a"
 
 [libraries]
 minecraft = { module = "com.mojang:minecraft", version.ref = "minecraft" }
@@ -28,7 +32,6 @@ fabric_loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric_l
 fabric_api = { module = "net.fabricmc.fabric-api:fabric-api", version.ref = "fabric_api" }
 quilt_loader = { module = "org.quiltmc:quilt-loader", version.ref = "quilt_loader" }
 architectury_api = { module = "dev.architectury:architectury", version.ref = "architectury_api" }
-artifice = { module = "io.github.natanfudge:artifice", version.ref = "artifice" }
 
 [plugins]
 architectury_plugin = { id = "architectury-plugin", version.ref = "architectury_plugin" }

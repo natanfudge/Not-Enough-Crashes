@@ -31,10 +31,17 @@ allprojects {
     apply plugin: "java"
     apply plugin: "architectury-plugin"
 
-    archivesBaseName = rootProject.archives_base_name
     ext.mod_version = libs.versions.mod.version.get()
     ext.minecraft_version = libs.versions.minecraft.get()
     ext.total_version = "$mod_version+$minecraft_version"
+
+    def cf = libs.versions.overrides.curseforge.get()
+    def mr = libs.versions.overrides.modrinth.get()
+
+    ext.curseforge_mc_version = cf == 'mc' ? minecraft_version : cf
+    ext.modrinth_mc_version = mr == 'mc' ? minecraft_version : mr
+
+    archivesBaseName = rootProject.archives_base_name
     version = ext.total_version
     group = rootProject.maven_group
 
