@@ -8,7 +8,7 @@ pluginManagement {
     }
 
     plugins {
-        id 'com.matthewprenger.cursegradle' version libs.versions.cursegradle.get()
+        id 'com.matthewprenger.cursegradle' version "1.4.0" // Must be updated in libs.versions.toml as well!
     }
 }
 

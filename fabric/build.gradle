@@ -84,7 +84,7 @@ curseforge {
         id = curseforge_id
         releaseType = 'release'
         addGameVersion "Fabric"
-        addGameVersion curseforge_mc_version
+        addGameVersion minecraft_version
         changelogType = "markdown"
         changelog = rootProject.file("changelog.md")
 
@@ -106,7 +106,7 @@ modrinth {
 //    println("versionNumber = ${versionNumber.get()}")
     versionName = "$mod_name $total_version Fabric"
     uploadFile = remapJar
-    gameVersions = [modrinth_mc_version]
+    gameVersions = [minecraft_version]
     loaders = ["fabric", "quilt"]
     changelog = rootProject.file("changelog.md").text
     versionType = "release"
