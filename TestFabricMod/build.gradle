@@ -1,28 +1,13 @@
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 
-plugins {
-	id 'fabric-loom' version '0.10-SNAPSHOT'
-	id 'maven-publish'
-}
+ext.fabric_version = libs.versions.fabric.api.get()
 
-archivesBaseName = project.archives_base_name
-version = project.mod_version
-group = project.maven_group
-
-repositories {
-	mavenCentral()
-	// Add repositories to retrieve artifacts from in here.
-	// You should only use this when depending on other mods because
-	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
-	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
-	// for more information about repositories.
-}
+archivesBaseName = "nec_testmod"
+version = "1.0.0"
+group = "io.github.natanfudge"
 
 dependencies {
-	// To change the versions see the gradle.properties file
-	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	modImplementation libs.fabric.loader
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation include( fabricApi.module("fabric-lifecycle-events-v1",fabric_version))
@@ -30,7 +15,7 @@ dependencies {
 	modImplementation include( fabricApi.module("fabric-api-base",fabric_version))
 //	 include("net.fabricmc.fabric-api:fabric-api:${project.fabric_version}")
 
-    modImplementation "io.github.natanfudge:artifice:0.15.5+21w07a"
+    modImplementation libs.artifice
 
 
     // PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.

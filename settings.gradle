@@ -15,5 +15,7 @@ pluginManagement {
 include("common")
 include("fabric")
 include("forge")
+include("TestFabricMod")
+include("TestForgeMod")
 
 rootProject.name = "notenoughcrashes"

@@ -1,10 +1,11 @@
 plugins {
-    id "com.github.johnrengelman.shadow" version "7.0.0"
-    id "dev.architectury.loom" version "0.12.0-SNAPSHOT"
+    alias libs.plugins.shadow
 }
-archivesBaseName = rootProject.archives_base_name
-version = rootProject.mod_version
-group = rootProject.maven_group
+
+archivesBaseName = "nec_testmod"
+version = "1.0.0"
+group = "io.github.natanfudge"
+
 configurations {
     shadowCommon // Don't use shadow from the shadow plugin because we don't want IDEA to index this.
 }
@@ -17,12 +18,9 @@ loom {
 }
 
 dependencies {
-    minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
-    // The following line declares the mojmap mappings, you may use other mappings as well
-    mappings "net.fabricmc:yarn:${rootProject.yarn_mappings}:v2"
-    forge "net.minecraftforge:forge:${rootProject.minecraft_version}-${rootProject.forge_version}"
+    forge "net.minecraftforge:forge:${libs.versions.minecraft.get()}-${libs.versions.forge.get()}"
     // Remove the next line if you don't want to depend on the API
-    modApi "dev.architectury:architectury-forge:${rootProject.architectury_version}"
+    modApi libs.architectury.api
 
 }
 
