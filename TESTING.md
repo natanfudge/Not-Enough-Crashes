@@ -42,7 +42,7 @@ Apply these tests in the production environment, with the test mod:
     - Verify in the **Log**, **TXT File**, and **Get Link Site**:
       - No information is repeated.
       - System details are present.
-      - Suspected Mods: None (may contain ignored mods)
+      - Suspected Mods: Not Enough Crashes Test Mod (nec_testmod) (may contain ignored mods)
       - Client Crashes Since Restart: 0
       - Integrated Server Crashes Since Restart: 1
     - Verify the txt file has a -server ending
@@ -57,7 +57,7 @@ Apply these tests in the production environment, with the test mod:
     - The game crashes.
     - In the terminal, no information is repeated.
     - Verify a -server crash report is generated with:
-      - Suspected mods: None (may contain ignored mods)
+      - Suspected mods: Not Enough Crashes Test Mod (nec_testmod) (may contain ignored mods)
       - No information is repeated.
       - System details are present.
 ### Client Reported Crashes

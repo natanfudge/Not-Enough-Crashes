@@ -1,3 +1,5 @@
+### 4.2.0 
+- Now identifies mods that applied mixins to a crash stack trace, which means that more mods will be identified as a potential cause for a crash. (Thanks sschr15!)
 ### 4.1.8
 - Added and fixed Chinese translations (thanks SolidBlock-cn!).
 ### 4.1.7

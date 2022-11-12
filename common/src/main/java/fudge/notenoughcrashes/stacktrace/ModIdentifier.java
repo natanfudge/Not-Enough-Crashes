@@ -7,7 +7,15 @@ import fudge.notenoughcrashes.platform.ModsByLocation;
 import fudge.notenoughcrashes.platform.NecPlatform;
 import net.minecraft.util.crash.CrashReport;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.spongepowered.asm.mixin.MixinEnvironment;
+import org.spongepowered.asm.mixin.extensibility.IMixinConfig;
+import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
+import org.spongepowered.asm.mixin.transformer.ClassInfo;
+import org.spongepowered.asm.mixin.transformer.meta.MixinMerged;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
@@ -20,6 +28,8 @@ import java.util.function.Supplier;
 public final class ModIdentifier {
 
     private static final Map<CrashReport, Set<CommonModMetadata>> suspectedModsCache = new HashMap<>();
+
+    private static final Map<IMixinConfig, Set<CommonModMetadata>> mixinConfigToModsCache = new HashMap<>();
 
     public static Set<CommonModMetadata> getSuspectedModsOf(CrashReport report) {
         return suspectedModsCache.computeIfAbsent(report, (ignored) -> identifyFromStacktrace(report.getCause()));
@@ -48,9 +58,12 @@ public final class ModIdentifier {
         ModsByLocation modMap = NecPlatform.instance().getModsAtLocationsInDisk();
 
         Set<String> involvedClasses = new LinkedHashSet<>();
+        Set<IMixinInfo> involvedMixins = new LinkedHashSet<>();
         while (e != null) {
             for (StackTraceElement element : e.getStackTrace()) {
                 involvedClasses.add(element.getClassName());
+                IMixinInfo mixinInfo = getMixinInfo(element);
+                if (mixinInfo != null) involvedMixins.add(mixinInfo);
             }
             e = e.getCause();
         }
@@ -59,6 +72,10 @@ public final class ModIdentifier {
         for (String className : involvedClasses) {
             Set<CommonModMetadata> classMods = identifyFromClass(className, modMap);
             mods.addAll(classMods);
+        }
+        for (IMixinInfo mixinName : involvedMixins) {
+            Set<CommonModMetadata> mixinMods = identifyFromMixin(mixinName);
+            mods.addAll(mixinMods);
         }
         debug(modMap::toString);
         return mods;
@@ -70,7 +87,6 @@ public final class ModIdentifier {
         if (FORCE_DEBUG || NecConfig.instance().debugModIdentification) NotEnoughCrashes.getLogger().info(message.get());
     }
 
-    // TODO: get a list of mixin transformers that affected the class and blame those too
     @NotNull
     private static Set<CommonModMetadata> identifyFromClass(String className, ModsByLocation modMap) {
         // Skip identification for Mixin, one's mod copy of the library is shared with all other mods
@@ -110,6 +126,54 @@ public final class ModIdentifier {
         }
     }
 
+    @Nullable
+    private static MixinMerged findMixinMerged(StackTraceElement element) {
+        try {
+            Class<?> clazz = Class.forName(element.getClassName());
+            // Walk through methods because we don't know parameter types
+            Method[] methods = clazz.getDeclaredMethods();
+            for (Method method : methods) {
+                if (method.getName().equals(element.getMethodName())) {
+                    MixinMerged mixinMerged = method.getAnnotation(MixinMerged.class);
+                    if (mixinMerged != null) {
+                        return mixinMerged;
+                    }
+                }
+            }
+        } catch (ClassNotFoundException | NoClassDefFoundError ignored) {
+            debug(() -> "Ignoring class " + element.getClassName() + " for mixin identification because an error occurred");
+        }
+
+        return null;
+    }
+
+    @NotNull
+    private static Set<CommonModMetadata> identifyFromMixin(IMixinInfo mixin) {
+        return mixinConfigToModsCache.computeIfAbsent(mixin.getConfig(), config -> {
+            String mixinFileName = config.getName();
+            Set<CommonModMetadata> modsWithMixinFile = new LinkedHashSet<>();
+            for (CommonModMetadata mod : NecPlatform.instance().getAllMods()) {
+                if (NecPlatform.instance().modContainsFile(mod, mixinFileName)) {
+                    modsWithMixinFile.add(mod);
+                }
+            }
+            return modsWithMixinFile;
+        });
+    }
+
+    @Nullable
+    private static IMixinInfo getMixinInfo(StackTraceElement element) {
+        MixinMerged mixinMerged = findMixinMerged(element);
+        if (mixinMerged != null) {
+            // Mixin does a great job of obscuring mixins - see the "Reflection" javadoc for more info
+            ClassInfo classInfo = ClassInfo.forName(mixinMerged.mixin().replace('.', '/'));
+            if (classInfo != null) {
+                return Reflection.getMixinInfo(classInfo);
+            }
+        }
+        return null;
+    }
+
     @NotNull
     private static Set<CommonModMetadata> getModsAt(Path path, ModsByLocation modMap) {
         Set<CommonModMetadata> mod = modMap.get(path);
@@ -129,6 +193,46 @@ public final class ModIdentifier {
             debug(() -> "Mod at path '" + path.toAbsolutePath() + "' is at fault," +
                     " but it could not be found in the map of mod paths: " /*+ modMap*/);
             return Collections.emptySet();
+        }
+    }
+
+    /**
+     * Mixin is rather protective of its internal mixin structures.
+     * <p>
+     * Mixin has some useful classes:
+     * <ul>
+     *     <li>{@link ClassInfo} - Represents a class</li>
+     *     <li>{@link IMixinInfo} - Represents a mixin</li>
+     * </ul>
+     * The issue arises when we have a {@link ClassInfo} of a mixin and want to get its {@link IMixinInfo}.
+     * The ClassInfo class has a {@link ClassInfo#mixin mixin} field, used to link an IMixinInfo to a mixin's ClassInfo.
+     * However, this field is private and there is no getter for it. We would have to use reflection to get it.
+     * <p>
+     * Another option would be to get the ClassInfo of the mixin's target class to get mixins into that class.
+     * This has a problem, though, since Mixin likes to claim that mixins are not applied and therefore not accessible with the public {@link ClassInfo#getAppliedMixins()} method.
+     * Since it only has a getter for applied mixins and not all mixins, reflection is the only option.
+     * <p>
+     * Therefore, the easiest option is to use reflection to get the IMixinInfo from a mixin's ClassInfo.
+     */
+    private static class Reflection {
+        static final Field classInfoMixin;
+
+        static {
+            try {
+                classInfoMixin = ClassInfo.class.getDeclaredField("mixin");
+                classInfoMixin.setAccessible(true);
+            } catch (NoSuchFieldException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        @Nullable
+        static IMixinInfo getMixinInfo(ClassInfo classInfo) {
+            try {
+                return (IMixinInfo) classInfoMixin.get(classInfo);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 }
