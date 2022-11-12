@@ -1,0 +1,43 @@
+[versions]
+# This Mod Version
+mod_version = "4.2.0"
+
+# Gradle Plugins
+architectury_plugin = "3.4-SNAPSHOT"
+architectury_loom = "1.0-SNAPSHOT"
+minotaur = "2.4.5"
+loom_quiltflower = "1.7.4"
+cursegradle = "1.4.0" # Must be updated in settings.gradle as well!
+shadow = "7.0.0"
+task_tree = "2.1.0"
+
+# Minecraft
+minecraft = "1.19.2"
+
+# CurseForge & Modrinth MC overrides (or "mc" to use the main version)
+overrides_curseforge = "mc"
+overrides_modrinth = "mc"
+
+# Mods & Libraries
+yarn_mappings = "1.19.2+build.28"
+fabric_loader = "0.14.10"
+fabric_api = "0.66.0+1.19.2"
+quilt_loader = "0.16.1"
+forge = "43.1.52"
+architectury_api = "6.3.49"
+
+[libraries]
+minecraft = { module = "com.mojang:minecraft", version.ref = "minecraft" }
+fabric_loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric_loader" }
+fabric_api = { module = "net.fabricmc.fabric-api:fabric-api", version.ref = "fabric_api" }
+quilt_loader = { module = "org.quiltmc:quilt-loader", version.ref = "quilt_loader" }
+architectury_api = { module = "dev.architectury:architectury", version.ref = "architectury_api" }
+
+[plugins]
+architectury_plugin = { id = "architectury-plugin", version.ref = "architectury_plugin" }
+architectury_loom = { id = "dev.architectury.loom", version.ref = "architectury_loom" }
+minotaur = { id = "com.modrinth.minotaur", version.ref = "minotaur" }
+loom_quiltflower = { id = "io.github.juuxel.loom-quiltflower", version.ref = "loom_quiltflower" }
+cursegradle = { id = "com.matthewprenger.cursegradle", version.ref = "cursegradle" }
+shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
+task_tree = { id = "com.dorongold.task-tree", version.ref = "task_tree" }

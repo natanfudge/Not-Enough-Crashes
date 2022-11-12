@@ -2,8 +2,8 @@ import com.modrinth.minotaur.TaskModrinthUpload
 import org.gradle.api.tasks.Copy
 
 plugins {
-    id "com.github.johnrengelman.shadow" version "7.0.0"
-    id "com.dorongold.task-tree" version "2.1.0"
+    alias libs.plugins.shadow
+    alias libs.plugins.task.tree
 }
 
 configurations {
@@ -22,7 +22,10 @@ loom {
 }
 
 dependencies {
-    forge("net.minecraftforge:forge:${rootProject.minecraft_version}-${rootProject.forge_version}")
+    forge "net.minecraftforge:forge:${libs.versions.minecraft.get()}-${libs.versions.forge.get()}"
+
+    // Uncomment to add the test mod at runtime
+//    runtimeOnly project(path: ":TestForgeMod", configuration: "namedElements")
 
     compileOnly(project(path: ":common", configuration: "dev")) {
         transitive = false

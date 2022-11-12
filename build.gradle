@@ -1,15 +1,14 @@
 plugins {
-    id "architectury-plugin" version "3.4-SNAPSHOT"
-    id "dev.architectury.loom" version "1.0-SNAPSHOT" apply false
+    alias libs.plugins.architectury.loom apply false
+    alias libs.plugins.loom.quiltflower apply false
+    alias libs.plugins.minotaur apply false
+    alias libs.plugins.architectury.plugin
+    alias libs.plugins.cursegradle
     id 'maven-publish'
-    id 'com.matthewprenger.cursegradle'
-    id "com.modrinth.minotaur" version "2.4.5" apply false
-    id 'io.github.juuxel.loom-quiltflower' version '1.7.4' apply false
 }
 
-
 architectury {
-    minecraft = rootProject.minecraft_version
+    minecraft = libs.versions.minecraft.get()
 }
 
 subprojects {
@@ -20,9 +19,9 @@ subprojects {
     apply plugin: "io.github.juuxel.loom-quiltflower"
 
     dependencies {
-        minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
+        minecraft libs.minecraft
         // The following line declares the mojmap mappings, you may use other mappings as well
-        mappings "net.fabricmc:yarn:${rootProject.yarn_mappings}:v2"
+        mappings "net.fabricmc:yarn:${libs.versions.yarn.mappings.get()}:v2"
         // The following line declares the yarn mappings you may select this one as well.
         // mappings "net.fabricmc:yarn:1.16.5+build.9:v2"
     }
@@ -32,8 +31,17 @@ allprojects {
     apply plugin: "java"
     apply plugin: "architectury-plugin"
 
-    archivesBaseName = rootProject.archives_base_name
+    ext.mod_version = libs.versions.mod.version.get()
+    ext.minecraft_version = libs.versions.minecraft.get()
     ext.total_version = "$mod_version+$minecraft_version"
+
+    def cf = libs.versions.overrides.curseforge.get()
+    def mr = libs.versions.overrides.modrinth.get()
+
+    ext.curseforge_mc_version = cf == 'mc' ? minecraft_version : cf
+    ext.modrinth_mc_version = mr == 'mc' ? minecraft_version : mr
+
+    archivesBaseName = rootProject.archives_base_name
     version = ext.total_version
     group = rootProject.maven_group
 
@@ -56,26 +64,16 @@ task publishAll {
     dependsOn("forge:publishForge")
 }
 
-task buildTestFabricMod(type: Exec) {
-    workingDir "${project.projectDir}/TestFabricMod"
-    commandLine "gradlew.bat", "build"
-}
-
 task addTestFabricMod(type: Copy) {
-    dependsOn buildTestFabricMod
+    dependsOn project(":TestFabricMod").tasks.build
     from "TestFabricMod/build/libs/nec_testmod-1.0.0.jar"
     into "fabric/run/mods"
 }
 
-task buildTestForgeMod(type: Exec) {
-    workingDir "${project.projectDir}/TestForgeMod"
-    commandLine "gradlew.bat", "build"
-}
-
 task addTestForgeMod(type: Copy) {
-    dependsOn buildTestForgeMod
+    dependsOn project(":TestForgeMod").tasks.build
 //   Copy dev jar because there is no support for automatic remapping
-    from "TestForgeMod/build/libs/nec_testmod-1.0.0-dev.jar"
+    from "TestForgeMod/build/libs/nec_testmod-1.0.0-dev-shadow.jar"
     into "forge/run/mods"
 }
 
