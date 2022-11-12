@@ -2,7 +2,7 @@ import com.modrinth.minotaur.TaskModrinthUpload
 import org.gradle.api.tasks.Copy
 
 plugins {
-    id "com.github.johnrengelman.shadow" version "5.2.0"
+    alias libs.plugins.shadow
 }
 
 configurations {
@@ -22,9 +22,11 @@ repositories {
 }
 
 dependencies {
-    modImplementation("net.fabricmc:fabric-loader:${rootProject.loader_version}")
-    compileOnly("org.quiltmc:quilt-loader:0.16.1")
-    modRuntimeOnly "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
+    modImplementation libs.fabric.loader
+    compileOnly libs.quilt.loader
+    modRuntimeOnly libs.fabric.api
+
+//    modRuntimeOnly project(":TestFabricMod")
 
     // Remove the next line if you don't want to depend on the API
 //    modCompile("me.shedaniel:architectury:${rootProject.architectury_version}:fabric")
