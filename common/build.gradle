@@ -13,6 +13,6 @@ artifacts {
 }
 
 architectury {
-    common()
+    common("fabric","forge")
 }
 
