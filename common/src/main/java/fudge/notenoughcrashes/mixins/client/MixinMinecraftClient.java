@@ -118,6 +118,24 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;printCrashReport(Lnet/minecraft/util/crash/CrashReport;)V"),
             require = 0)
     private void redirectForgePrintCrashReport(CrashReport report) {
+        NotEnoughCrashes.logDebug("Redirected Forge closing the game (first version)");
+    }
+
+    /**
+     * Forge only: Prevent the integrated server from exiting in the case it crashed in another case.
+     * This mixin works in some 1.18 forge cases that the other mixin doesn't.
+     */
+    @SuppressWarnings({"MixinAnnotationTarget", "UnresolvedMixinReference"})
+    @Redirect(method = "doLoadLevel(Ljava/lang/String;" +
+            "Ljava/util/function/Function;" +
+            "Ljava/util/function/Function;" +
+            "Z" +
+            "Lnet/minecraft/client/MinecraftClient$WorldLoadAction;" +
+            "Z)V",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;printCrashReport(Lnet/minecraft/util/crash/CrashReport;)V"),
+            require = 0)
+    private void redirectForgePrintCrashReport2(CrashReport report) {
+        NotEnoughCrashes.logDebug("Redirected Forge closing the game (second version)");
     }
 
 }
