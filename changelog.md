@@ -1,3 +1,6 @@
+### 4.2.0
+- Added Mixin blaming
+- Added Chinese translation
 ### 4.1.6
 - Updated to support Quilt hashed mappings.
 ### 4.1.5
