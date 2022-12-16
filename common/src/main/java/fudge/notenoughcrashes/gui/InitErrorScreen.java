@@ -6,7 +6,6 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.Text;
 import net.minecraft.util.crash.CrashReport;
 
 @Environment(EnvType.CLIENT)
@@ -27,12 +26,12 @@ public class InitErrorScreen extends ProblemScreen {
     public void init() {
         super.init();
 
-        ButtonWidget exitButton = new ButtonWidget(width / 2 - 155, height / 4 + 120 + 12, 150, 20, NecLocalization.translatedText("menu.quit"),
+        ButtonWidget exitButton = ButtonWidget.builder(NecLocalization.translatedText("menu.quit"),
                 button -> {
                     // Prevent the game from freaking out when we try to close it
                     NecConfig.instance().forceCrashScreen = false;
                     System.exit(-1);
-                });
+                }).dimensions(width / 2 - 155, height / 4 + 120 + 12, 150, 20).build();
 
         addDrawableChild(exitButton);
     }
