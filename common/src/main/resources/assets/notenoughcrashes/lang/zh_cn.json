@@ -5,6 +5,7 @@
   "notenoughcrashes.gui.failed": "[失败，报告给NEC]",
   "notenoughcrashes.gui.keepPlaying": "继续游戏",
   "notenoughcrashes.gui.restart": "重启Minecraft",
+  "notenoughcrashes.gui.disabledByConfig": "通过配置禁用",
   "notenoughcrashes.crashscreen.title": "Minecraft崩溃啦!",
   "notenoughcrashes.crashscreen.summary": "Minecraft遇到了一个问题并崩溃了。",
   "notenoughcrashes.crashscreen.paragraph1.line1": "识别到下列模组可能是导致崩溃的原因：",
