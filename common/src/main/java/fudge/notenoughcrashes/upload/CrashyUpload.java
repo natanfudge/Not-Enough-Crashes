@@ -17,6 +17,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.zip.GZIPOutputStream;
 
+@SuppressWarnings("ConstantValue")
 public class CrashyUpload {
 
     private enum CrashyMode {
@@ -36,6 +37,7 @@ public class CrashyUpload {
     public static CompletableFuture<String> uploadToCrashy(String text) throws IOException {
         try {
             var prefix = http + "://" + crashyDomain;
+
             var promise = java11PostAsync(prefix + "/uploadCrash", gzip(text)).thenApply(response -> {
                 int statusCode = response.statusCode();
                 String responseBody = response.body();
@@ -55,10 +57,10 @@ public class CrashyUpload {
                 };
             });
 
-//            var res = promise.get();
+//            promise.get();
             return promise;
 
-        } catch (InterruptedException e) {
+        } catch (InterruptedException/* | ExecutionException*/ e) {
             throw new RuntimeException(e);
         }
     }
