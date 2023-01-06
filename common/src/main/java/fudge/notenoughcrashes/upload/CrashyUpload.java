@@ -18,32 +18,45 @@ import java.util.concurrent.ExecutionException;
 import java.util.zip.GZIPOutputStream;
 
 public class CrashyUpload {
+
+    private enum CrashyMode {
+        LOCAL, BETA, RELEASE
+    }
+
+    private static final CrashyMode CRASHY_MODE = CrashyMode.LOCAL;
+    private static final String crashyDomain = CRASHY_MODE == CrashyMode.RELEASE ? "crashy.net" :
+            CRASHY_MODE == CrashyMode.BETA ? "beta.crashy.net" :
+                    "localhost:80";
+
+    private static final String http = CRASHY_MODE == CrashyMode.LOCAL ? "http" :"https";
+
     private static final Path CRASH_CODES_PATH = NotEnoughCrashes.DIRECTORY.resolve("Uploaded Crash logs.txt");
 
-    private static final boolean localTesting = false;
 
     public static CompletableFuture<String> uploadToCrashy(String text) throws IOException {
         try {
-            var prefix = localTesting ? "http://localhost:5001/crashy-9dd87/europe-west1" : "https://europe-west1-crashy-9dd87.cloudfunctions.net";
-            return java11PostAsync(prefix + "/uploadCrash", gzip(text)).thenApply(response -> {
+            var prefix = http + "://" + crashyDomain;
+            var promise = java11PostAsync(prefix + "/uploadCrash", gzip(text)).thenApply(response -> {
                 int statusCode = response.statusCode();
                 String responseBody = response.body();
                 return switch (statusCode) {
                     case HttpURLConnection.HTTP_OK -> {
                         UploadCrashSuccess responseObject = new Gson().fromJson(responseBody, UploadCrashSuccess.class);
                         try {
-                            rememberCrashCode(responseObject.crashId, responseObject.key);
+                            rememberCrashCode(responseObject.crashId, responseObject.deletionKey);
                         } catch (IOException e) {
                             NotEnoughCrashes.getLogger().error("Could not remember crash code when uploading crash " + responseObject.crashId, e);
                         }
-                        yield localTesting ?
-                                responseObject.crashUrl.replace("https://crashy.net", "http://localhost:3000") : responseObject.crashUrl;
+                        yield responseObject.crashyUrl;
                     }
                     case HttpURLConnection.HTTP_BAD_REQUEST -> throw new UploadToCrashyError.InvalidCrash();
                     case HttpURLConnection.HTTP_ENTITY_TOO_LARGE -> throw new UploadToCrashyError.TooLarge();
                     default -> throw new IllegalStateException("Unexpected status code when uploading to crashy: " + statusCode + " message: " + responseBody);
                 };
             });
+
+//            var res = promise.get();
+            return promise;
 
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
@@ -56,7 +69,8 @@ public class CrashyUpload {
     private static CompletableFuture<HttpResponse<String>> java11PostAsync(String url, byte[] body) throws InterruptedException {
         var client = HttpClient.newHttpClient();
         var request = HttpRequest.newBuilder(URI.create(url))
-                .setHeader("content-type", "application/gzip")
+                .setHeader("content-type", "text/plain")
+                .setHeader("content-encoding", "gzip")
                 .POST(HttpRequest.BodyPublishers.ofByteArray(body))
                 .build();
         return client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
@@ -84,8 +98,9 @@ public class CrashyUpload {
 
     static class UploadCrashSuccess {
         String crashId;
-        String key;
-        String crashUrl;
+        String deletionKey;
+        String crashyUrl;
     }
+
 
 }
