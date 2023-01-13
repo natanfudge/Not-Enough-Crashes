@@ -24,7 +24,7 @@ public class CrashyUpload {
         LOCAL, BETA, RELEASE
     }
 
-    private static final CrashyMode CRASHY_MODE = CrashyMode.LOCAL;
+    private static final CrashyMode CRASHY_MODE = CrashyMode.BETA;
     private static final String crashyDomain = CRASHY_MODE == CrashyMode.RELEASE ? "crashy.net" :
             CRASHY_MODE == CrashyMode.BETA ? "beta.crashy.net" :
                     "localhost:80";
@@ -38,7 +38,7 @@ public class CrashyUpload {
         try {
             var prefix = http + "://" + crashyDomain;
 
-            var promise = java11PostAsync(prefix + "/uploadCrash", gzip(text)).thenApply(response -> {
+            var promise = java11PostAsync(prefix + "/uploadCrash", gzip(text)).thenApplyAsync(response -> {
                 int statusCode = response.statusCode();
                 String responseBody = response.body();
                 return switch (statusCode) {
