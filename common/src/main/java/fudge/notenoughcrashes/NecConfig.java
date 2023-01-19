@@ -12,6 +12,7 @@ public class NecConfig {
      *  CONFIG
      *******************************/
     public boolean disableReturnToMainMenu = false;
+    @Deprecated
     public boolean deobfuscateStackTrace = true;
     public boolean catchInitializationCrashes = true;
     public boolean debugModIdentification = false;

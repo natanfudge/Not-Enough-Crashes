@@ -1,3 +1,6 @@
+## 4.3.0
+- Updated internals to better support Crashy 2.0 (older versions of NEC will still work with Crashy)
+- Will no longer deobfuscate stack traces in any way. This feature is now supported exceptionally well by [Crashy 2.0](https://crashy.net/). 
 ### 4.2.0 
 - Now identifies mods that applied mixins to a crash stack trace, which means that more mods will be identified as a potential cause for a crash. (Thanks sschr15!)
 ### 4.1.8
