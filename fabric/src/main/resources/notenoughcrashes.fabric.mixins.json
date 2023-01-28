@@ -1,6 +1,7 @@
 {
   "package": "fudge.notenoughcrashes.fabric.mixins",
   "required": true,
+  "minVersion": "0.8",
   "target": "@env(DEFAULT)",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
