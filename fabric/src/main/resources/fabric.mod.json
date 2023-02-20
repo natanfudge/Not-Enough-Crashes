@@ -18,7 +18,8 @@
   "entrypoints": {
     "main": [
       "fudge.notenoughcrashes.fabric.NotEnoughCrashesFabric"
-    ]
+    ],
+    "modmenu": [ "fudge.notenoughcrashes.fabric.config.ModMenuConfigIntegration" ]
   },
   "depends": {
     "minecraft": ">=1.17",

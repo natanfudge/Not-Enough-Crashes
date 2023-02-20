@@ -24,5 +24,16 @@
   "notenoughcrashes.initerrorscreen.paragraph3.line1": "Click the \"Get link\" button to open it in your browser. You're",
   "notenoughcrashes.initerrorscreen.paragraph3.line2": "encouraged to send this report to the mod's author to help",
   "notenoughcrashes.initerrorscreen.paragraph3.line3": "them fix the issue. Unfortunately, it is not possible to keep",
-  "notenoughcrashes.initerrorscreen.paragraph3.line4": "loading Minecraft due to this error."
+  "notenoughcrashes.initerrorscreen.paragraph3.line4": "loading Minecraft due to this error.",
+  "notenoughcrashes.midnightconfig.disableReturnToMainMenuComment1": "If true, the \"Return To Main Menu\" button will be disabled when crashing,",
+  "notenoughcrashes.midnightconfig.disableReturnToMainMenuComment2": "meaning you cannot recover from a crash.",
+  "notenoughcrashes.midnightconfig.disableReturnToMainMenu": "Disable Return To Main Menu",
+  "notenoughcrashes.midnightconfig.catchInitializationCrashesComment1": "(Fabric Only) If true, the game will close normally when it fails to initialize,",
+  "notenoughcrashes.midnightconfig.catchInitializationCrashesComment2": "and will not display a special crash screen.",
+  "notenoughcrashes.midnightconfig.catchInitializationCrashes": "Catch Initialization Crashes",
+  "notenoughcrashes.midnightconfig.debugModIdentificationComment": "If true, additional info will be logged for the mod developer.",
+  "notenoughcrashes.midnightconfig.debugModIdentification": "Debug Mod Identification",
+  "notenoughcrashes.midnightconfig.crashLimitComment": "How many times NEC will try to prevent the game from closing in one session.",
+  "notenoughcrashes.midnightconfig.crashLimit": "Crash Limit",
+  "notenoughcrashes.midnightconfig.title": "Not Enough Crashes Configuration"
 }

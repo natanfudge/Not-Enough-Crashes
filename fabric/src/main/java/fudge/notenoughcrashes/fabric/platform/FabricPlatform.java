@@ -1,6 +1,8 @@
 package fudge.notenoughcrashes.fabric.platform;
 
 import fudge.notenoughcrashes.NotEnoughCrashes;
+import fudge.notenoughcrashes.config.NecConfig;
+import fudge.notenoughcrashes.fabric.config.NecMidnightConfig;
 import fudge.notenoughcrashes.platform.CommonModMetadata;
 import fudge.notenoughcrashes.platform.ModsByLocation;
 import fudge.notenoughcrashes.platform.NecPlatform;
@@ -58,7 +60,7 @@ public class FabricPlatform implements NecPlatform {
 
     @Override
     @Nullable
-    public InputStream getResource(Path relativePath)  {
+    public InputStream getResource(Path relativePath) {
         // Don't resolve the root path directly with a normal Path, they are incompatible because the root path is often in a Zip FS
         Path path = NotEnoughCrashes.getMetadata().rootPath().resolve(relativePath.toString());
         if (!Files.exists(path)) return null;
@@ -87,6 +89,12 @@ public class FabricPlatform implements NecPlatform {
     @Override
     public boolean modContainsFile(CommonModMetadata mod, String path) {
         return FabricLoader.getInstance().getModContainer(mod.id()).flatMap(modContainer -> modContainer.findPath(path)).isPresent();
+    }
+
+    @Override
+    public NecConfig getCurrentConfig() {
+        return new NecConfig(NecMidnightConfig.disableReturnToMainMenu, NecMidnightConfig.catchInitializationCrashes,
+                NecMidnightConfig.debugModIdentification,  NecMidnightConfig.crashLimit);
     }
 
     // Earlier elements will be used first, may need to add more elements if people start using weird shit

@@ -1,6 +1,6 @@
 package fudge.notenoughcrashes.stacktrace;
 
-import fudge.notenoughcrashes.NecConfig;
+import fudge.notenoughcrashes.config.NecConfig;
 import fudge.notenoughcrashes.NotEnoughCrashes;
 import fudge.notenoughcrashes.platform.CommonModMetadata;
 import fudge.notenoughcrashes.platform.ModsByLocation;
@@ -8,7 +8,6 @@ import fudge.notenoughcrashes.platform.NecPlatform;
 import net.minecraft.util.crash.CrashReport;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.spongepowered.asm.mixin.MixinEnvironment;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfig;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 import org.spongepowered.asm.mixin.transformer.ClassInfo;
@@ -84,7 +83,7 @@ public final class ModIdentifier {
     private static final boolean FORCE_DEBUG = false;
 
     private static void debug(Supplier<String> message) {
-        if (FORCE_DEBUG || NecConfig.instance().debugModIdentification) NotEnoughCrashes.getLogger().info(message.get());
+        if (FORCE_DEBUG || NecConfig.getCurrent().debugModIdentification()) NotEnoughCrashes.getLogger().info(message.get());
     }
 
     @NotNull
@@ -112,14 +111,14 @@ public final class ModIdentifier {
 
             // Get the mod containing that class
             Set<CommonModMetadata> mods = getModsAt(Paths.get(url.toURI()), modMap);
-            if (NecConfig.instance().debugModIdentification && !mods.isEmpty()){
+            if (NecConfig.getCurrent().debugModIdentification() && !mods.isEmpty()){
                 debug(() -> "Successfully placed blame of '" + className + "' on '"
                         + mods.stream().findFirst().get().name() + "'");
             }
             return mods;
         } catch (URISyntaxException | ClassNotFoundException | NoClassDefFoundError e) {
             debug(() -> "Ignoring class " + className + " for identification because an error occurred");
-            if (NecConfig.instance().debugModIdentification) {
+            if (NecConfig.getCurrent().debugModIdentification()) {
                 e.printStackTrace();
             }
             return Collections.emptySet(); // we cannot do it

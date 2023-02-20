@@ -1,13 +1,14 @@
-package fudge.notenoughcrashes;
+package fudge.notenoughcrashes.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import fudge.notenoughcrashes.NotEnoughCrashes;
 import fudge.notenoughcrashes.platform.NecPlatform;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 
-public class NecConfig {
+public class OldNecConfig {
     /******************************
      *  CONFIG
      *******************************/
@@ -84,20 +85,20 @@ public class NecConfig {
         public Expiry expiry = Expiry.NEVER;
     }
 
-    public static NecConfig instance() {
+    public static OldNecConfig instance() {
         if (instance != null) {
             return instance;
         }
 
         if (CONFIG_FILE.exists()) {
             try {
-                return instance = new Gson().fromJson(new FileReader(CONFIG_FILE), NecConfig.class);
+                return instance = new Gson().fromJson(new FileReader(CONFIG_FILE), OldNecConfig.class);
             } catch (FileNotFoundException e) {
                 throw new IllegalStateException(e);
             }
         }
 
-        instance = new NecConfig();
+        instance = new OldNecConfig();
 
         try (FileWriter writer = new FileWriter(CONFIG_FILE)) {
             GSON.toJson(instance, writer);
@@ -110,5 +111,5 @@ public class NecConfig {
 
     private static final File CONFIG_FILE = new File(NecPlatform.instance().getConfigDirectory().toFile(), NotEnoughCrashes.MOD_ID + ".json");
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    private static NecConfig instance = null;
+    private static OldNecConfig instance = null;
 }

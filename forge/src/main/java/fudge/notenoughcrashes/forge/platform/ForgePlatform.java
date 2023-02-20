@@ -1,6 +1,7 @@
 package fudge.notenoughcrashes.forge.platform;
 
 import fudge.notenoughcrashes.NotEnoughCrashes;
+import fudge.notenoughcrashes.config.NecConfig;
 import fudge.notenoughcrashes.platform.CommonModMetadata;
 import fudge.notenoughcrashes.platform.ModsByLocation;
 import fudge.notenoughcrashes.platform.NecPlatform;
@@ -95,6 +96,12 @@ public class ForgePlatform implements NecPlatform {
             NotEnoughCrashes.getLogger().error("Failed to open mod jar, assuming it doesn't contain file " + path, e);
             return false;
         }
+    }
+
+    @Override
+    public NecConfig getCurrentConfig() {
+        //TODO: implement forge config.
+        return null;
     }
 
     private static CommonModMetadata toCommon(IModInfo imod) {

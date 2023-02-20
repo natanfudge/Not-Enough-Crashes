@@ -3,7 +3,7 @@ package fudge.notenoughcrashes.upload;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.SerializedName;
-import fudge.notenoughcrashes.NecConfig;
+import fudge.notenoughcrashes.config.NecConfig;
 import fudge.notenoughcrashes.NotEnoughCrashes;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -15,16 +15,10 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
-import java.util.zip.GZIPOutputStream;
 
 public final class LegacyCrashLogUpload {
     private static String GIST_ACCESS_TOKEN_PART_1() {
@@ -60,121 +54,121 @@ public final class LegacyCrashLogUpload {
 
 
     public static String upload(String text) throws IOException {
-        return upload(text, new HashSet<>());
+        return uploadToByteBin(text);
+//        return upload(text, new HashSet<>());
     }
 
-    public static String upload(String text, Set<NecConfig.CrashLogUploadDestination> failedUploadDestinations) throws IOException {
-        final var uploadDestination = chooseUploadDestination(failedUploadDestinations);
-
-        try {
-            return switch (uploadDestination) {
-                case CRASHY -> CrashyUpload.uploadToCrashySync(text);
-                case GIST -> uploadToGist(text);
-                case HASTE -> uploadToHaste(text);
-                case PASTEBIN -> uploadToPasteBin(text);
-                case BYTEBIN -> uploadToByteBin(text);
-            };
-        } catch (IOException e) {
-            NotEnoughCrashes.getLogger().error("Uploading to " + uploadDestination + " failed, using another destination as fallback.", e);
-
-            // If uploading failed, attempt the other destination options
-            failedUploadDestinations.add(uploadDestination);
-            return upload(text, failedUploadDestinations);
-        } catch (ExecutionException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static NecConfig.CrashLogUploadDestination chooseUploadDestination(Set<NecConfig.CrashLogUploadDestination> failedUploadTypes) throws IOException {
-        if (failedUploadTypes.isEmpty()) return NecConfig.instance().crashlogUpload.destination;
-
-        // When priority is null, the destination cannot be used as a fallback.
-        var selectedDestination = Arrays.stream(NecConfig.CrashLogUploadDestination.values())
-                // When priority is null, the destination cannot be used as a fallback.
-                .filter(destination -> destination.defaultPriority != null && !failedUploadTypes.contains(destination)).min(Comparator.comparingInt(destination -> destination.defaultPriority));
-
-        return selectedDestination.orElseThrow(() -> new IOException("All upload destinations failed!"));
-    }
-
-
-    /**
-     * @return The link of the gist
-     */
-    private static String uploadToGist(String text) throws IOException {
-        final var config = NecConfig.instance().crashlogUpload.gist;
-        String configUploadKey = config.accessToken;
-        String uploadKey = configUploadKey.isEmpty() ? GIST_ACCESS_TOKEN : configUploadKey;
-        HttpPost post = new HttpPost("https://api.github.com/gists");
-
-        String fileName = "crash.txt";
-        post.addHeader("Authorization", "token " + uploadKey);
-
-        GistPost body = new GistPost(!config.unlisted, new HashMap<>() {{
-            put(fileName, new GistFile(text));
-        }});
-        post.setEntity(createStringEntity(new Gson().toJson(body)));
-
-        final String customUserAgent = NecConfig.instance().crashlogUpload.customUserAgent;
-        if (!customUserAgent.isEmpty()) {
-            post.setHeader("User-Agent", customUserAgent);
-        }
-
-        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-            CloseableHttpResponse response = httpClient.execute(post);
-            String responseString = EntityUtils.toString(response.getEntity());
-            JsonObject responseJson = new Gson().fromJson(responseString, JsonObject.class);
-            return responseJson.getAsJsonObject("files").getAsJsonObject(fileName).getAsJsonPrimitive("raw_url").getAsString();
-        }
-
-    }
-
-    private static String uploadToHaste(String str) throws IOException {
-        String url = NecConfig.instance().crashlogUpload.hasteUrl;
-        String customUserAgent = NecConfig.instance().crashlogUpload.customUserAgent;
-        HttpPost post = new HttpPost(url + "documents");
-        post.setEntity(createStringEntity(str));
-
-        if (!customUserAgent.isEmpty()) {
-            post.setHeader("User-Agent", customUserAgent);
-        }
-
-        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-            CloseableHttpResponse response = httpClient.execute(post);
-            String responseString = EntityUtils.toString(response.getEntity());
-            JsonObject responseJson = new Gson().fromJson(responseString, JsonObject.class);
-            String hasteKey = responseJson.getAsJsonPrimitive("key").getAsString();
-            return url + "raw/" + hasteKey;
-        }
-
-    }
-
-    private static String uploadToPasteBin(String text) throws IOException {
-        HttpPost post = new HttpPost("https://pastebin.com/api/api_post.php");
-        final var config = NecConfig.instance().crashlogUpload.pastebin;
-        String pastebinUploadKey = config.uploadKey;
-        String pastebinPrivacy = config.privacy.apiValue;
-        String pastebinExpiryKey = config.expiry.pastebinExpiryKey;
-
-        List<NameValuePair> params = Arrays.asList(new BasicNameValuePair("api_dev_key", pastebinUploadKey), new BasicNameValuePair("api_option", "paste"), // to create
-                new BasicNameValuePair("api_paste_code", text), new BasicNameValuePair("api_paste_name", "crash.txt"), // mirroring gist
-                new BasicNameValuePair("api_paste_format", "yaml"), // hl.js auto detects mc crashes as this
-                new BasicNameValuePair("api_paste_expire_date", pastebinExpiryKey), new BasicNameValuePair("api_paste_private", pastebinPrivacy));
-        post.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
-
-        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-            CloseableHttpResponse response = httpClient.execute(post);
-            String responseString = EntityUtils.toString(response.getEntity());
-            // returns a normal pastebin url, like https://pastebin.com/xxxxxxxxx
-            // inserting raw afer the .com works to return the raw content
-            return responseString.replace("https://pastebin.com/", "https://pastebin.com/raw/");
-        }
-    }
-
+//    public static String upload(String text, Set<NecConfig.CrashLogUploadDestination> failedUploadDestinations) throws IOException {
+//        final var uploadDestination = chooseUploadDestination(failedUploadDestinations);
+//
+//        try {
+//            return switch (uploadDestination) {
+//                case CRASHY -> CrashyUpload.uploadToCrashySync(text);
+//                case GIST -> uploadToGist(text);
+//                case HASTE -> uploadToHaste(text);
+//                case PASTEBIN -> uploadToPasteBin(text);
+//                case BYTEBIN -> uploadToByteBin(text);
+//            };
+//        } catch (IOException e) {
+//            NotEnoughCrashes.getLogger().error("Uploading to " + uploadDestination + " failed, using another destination as fallback.", e);
+//
+//            // If uploading failed, attempt the other destination options
+//            failedUploadDestinations.add(uploadDestination);
+//            return upload(text, failedUploadDestinations);
+//        } catch (ExecutionException | InterruptedException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
+//
+//    private static NecConfig.CrashLogUploadDestination chooseUploadDestination(Set<NecConfig.CrashLogUploadDestination> failedUploadTypes) throws IOException {
+//        if (failedUploadTypes.isEmpty()) return NecConfig.getCurrent().crashlogUpload.destination;
+//
+//        // When priority is null, the destination cannot be used as a fallback.
+//        var selectedDestination = Arrays.stream(NecConfig.CrashLogUploadDestination.values())
+//                // When priority is null, the destination cannot be used as a fallback.
+//                .filter(destination -> destination.defaultPriority != null && !failedUploadTypes.contains(destination)).min(Comparator.comparingInt(destination -> destination.defaultPriority));
+//
+//        return selectedDestination.orElseThrow(() -> new IOException("All upload destinations failed!"));
+//    }
+//
+//
+//    /**
+//     * @return The link of the gist
+//     */
+//    private static String uploadToGist(String text) throws IOException {
+//        final var config = NecConfig.getCurrent().crashlogUpload.gist;
+//        String configUploadKey = config.accessToken;
+//        String uploadKey =  GIST_ACCESS_TOKEN;
+//        HttpPost post = new HttpPost("https://api.github.com/gists");
+//
+//        String fileName = "crash.txt";
+//        post.addHeader("Authorization", "token " + uploadKey);
+//
+//        GistPost body = new GistPost(!config.unlisted, new HashMap<>() {{
+//            put(fileName, new GistFile(text));
+//        }});
+//        post.setEntity(createStringEntity(new Gson().toJson(body)));
+//
+//        final String customUserAgent = NecConfig.getCurrent().crashlogUpload.customUserAgent;
+//        if (!customUserAgent.isEmpty()) {
+//            post.setHeader("User-Agent", customUserAgent);
+//        }
+//
+//        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+//            CloseableHttpResponse response = httpClient.execute(post);
+//            String responseString = EntityUtils.toString(response.getEntity());
+//            JsonObject responseJson = new Gson().fromJson(responseString, JsonObject.class);
+//            return responseJson.getAsJsonObject("files").getAsJsonObject(fileName).getAsJsonPrimitive("raw_url").getAsString();
+//        }
+//
+//    }
+//
+//    private static String uploadToHaste(String str) throws IOException {
+//        String url = NecConfig.getCurrent().crashlogUpload.hasteUrl;
+//        String customUserAgent = NecConfig.getCurrent().crashlogUpload.customUserAgent;
+//        HttpPost post = new HttpPost(url + "documents");
+//        post.setEntity(createStringEntity(str));
+//
+//        if (!customUserAgent.isEmpty()) {
+//            post.setHeader("User-Agent", customUserAgent);
+//        }
+//
+//        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+//            CloseableHttpResponse response = httpClient.execute(post);
+//            String responseString = EntityUtils.toString(response.getEntity());
+//            JsonObject responseJson = new Gson().fromJson(responseString, JsonObject.class);
+//            String hasteKey = responseJson.getAsJsonPrimitive("key").getAsString();
+//            return url + "raw/" + hasteKey;
+//        }
+//
+//    }
+//
+//    private static String uploadToPasteBin(String text) throws IOException {
+//        HttpPost post = new HttpPost("https://pastebin.com/api/api_post.php");
+//        final var config = NecConfig.getCurrent().crashlogUpload.pastebin;
+//        String pastebinUploadKey = config.uploadKey;
+//        String pastebinPrivacy = config.privacy.apiValue;
+//        String pastebinExpiryKey = config.expiry.pastebinExpiryKey;
+//
+//        List<NameValuePair> params = Arrays.asList(new BasicNameValuePair("api_dev_key", pastebinUploadKey), new BasicNameValuePair("api_option", "paste"), // to create
+//                new BasicNameValuePair("api_paste_code", text), new BasicNameValuePair("api_paste_name", "crash.txt"), // mirroring gist
+//                new BasicNameValuePair("api_paste_format", "yaml"), // hl.js auto detects mc crashes as this
+//                new BasicNameValuePair("api_paste_expire_date", pastebinExpiryKey), new BasicNameValuePair("api_paste_private", pastebinPrivacy));
+//        post.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
+//
+//        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+//            CloseableHttpResponse response = httpClient.execute(post);
+//            String responseString = EntityUtils.toString(response.getEntity());
+//            // returns a normal pastebin url, like https://pastebin.com/xxxxxxxxx
+//            // inserting raw afer the .com works to return the raw content
+//            return responseString.replace("https://pastebin.com/", "https://pastebin.com/raw/");
+//        }
+//    }
+//
     private static String uploadToByteBin(String text) throws IOException {
-        final var config = NecConfig.instance().crashlogUpload;
-        String url = NecConfig.instance().crashlogUpload.bytebinUrl;
+        String url = "https://bytebin.lucko.me/";
         HttpPost post = new HttpPost(url + "post");
-        String userAgent = config.customUserAgent.isEmpty() ? String.join(" ", Arrays.toString(post.getHeaders("User-Agent"))).concat(" NotEnoughCrashes") : config.customUserAgent;
+        String userAgent = String.join(" ", Arrays.toString(post.getHeaders("User-Agent"))).concat(" NotEnoughCrashes");
 
         post.setHeader("User-Agent", userAgent);
         post.addHeader("Content-Type", "text/plain");

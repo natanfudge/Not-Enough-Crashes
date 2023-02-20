@@ -1,6 +1,6 @@
 package fudge.notenoughcrashes.gui;
 
-import fudge.notenoughcrashes.NecConfig;
+import fudge.notenoughcrashes.config.NecConfig;
 import fudge.notenoughcrashes.utils.NecLocalization;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -32,7 +32,7 @@ public class CrashScreen extends ProblemScreen {
                 .dimensions(width / 2 - 155, height / 4 + 120 + 12, 150, 20)
                 .build();
 
-        if (NecConfig.instance().disableReturnToMainMenu) {
+        if (NecConfig.getCurrent().disableReturnToMainMenu()) {
             mainMenuButton.active = false;
             mainMenuButton.setMessage(NecLocalization.translatedText("notenoughcrashes.gui.disabledByConfig"));
         }

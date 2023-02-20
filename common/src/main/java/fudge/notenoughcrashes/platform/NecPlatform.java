@@ -1,5 +1,6 @@
 package fudge.notenoughcrashes.platform;
 
+import fudge.notenoughcrashes.config.NecConfig;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.InputStream;
@@ -38,4 +39,6 @@ public interface NecPlatform {
     List<CommonModMetadata> getAllMods();
 
     boolean modContainsFile(CommonModMetadata mod, String path);
+
+    NecConfig getCurrentConfig();
 }

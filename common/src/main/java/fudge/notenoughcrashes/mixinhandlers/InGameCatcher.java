@@ -1,6 +1,6 @@
 package fudge.notenoughcrashes.mixinhandlers;
 
-import fudge.notenoughcrashes.NecConfig;
+import fudge.notenoughcrashes.config.NecConfig;
 import fudge.notenoughcrashes.NotEnoughCrashes;
 import fudge.notenoughcrashes.StateManager;
 import fudge.notenoughcrashes.gui.CrashScreen;
@@ -94,7 +94,7 @@ public class InGameCatcher {
             if (EntryPointCatcher.crashedDuringStartup()) {
                 throw new IllegalStateException("Could not initialize startup crash screen");
             }
-            if (crashCount > NecConfig.instance().crashLimit) {
+            if (crashCount > NecConfig.getCurrent().crashLimit()) {
                 throw new IllegalStateException("The game has crashed an excessive amount of times");
             }
 

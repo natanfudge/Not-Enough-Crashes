@@ -1,5 +1,9 @@
+## 4.4.0
+- Brand new GUI configuration screen for Not Enough Crashes. Accessible through ModMenu in Fabric and through the regular Forge mod menu. 
+- crashlogUpload, deobfuscateStackTrace and forceCrashScreen config options are deprecated and will no longer work. 
+- In Forge, make sure you use the new GUI or the relevant new TOML file instead of the old [notenoughcrashes.json] file.
 ## 4.3.0
-- Updated internals to better support Crashy 2.0 (older versions of NEC will still work with Crashy)
+- Updated internals to better support Crashy 1.0 (older versions of NEC will still work with Crashy)
 - Will no longer deobfuscate stack traces in any way. This feature is now supported exceptionally well by [Crashy 1.0](https://crashy.net/). 
 ### 4.2.0 
 - Now identifies mods that applied mixins to a crash stack trace, which means that more mods will be identified as a potential cause for a crash. (Thanks sschr15!)

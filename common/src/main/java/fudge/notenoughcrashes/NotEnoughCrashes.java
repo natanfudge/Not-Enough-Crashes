@@ -1,8 +1,8 @@
 package fudge.notenoughcrashes;
 
+import fudge.notenoughcrashes.config.NecConfig;
 import fudge.notenoughcrashes.platform.CommonModMetadata;
 import fudge.notenoughcrashes.platform.NecPlatform;
-import fudge.notenoughcrashes.utils.SystemExitBlock;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -31,7 +31,7 @@ public class NotEnoughCrashes {
     public static final boolean ENABLE_GAMELOOP_CATCHING = true;
 
     public static boolean enableEntrypointCatching() {
-        return NecConfig.instance().catchInitializationCrashes;
+        return NecConfig.getCurrent().catchInitializationCrashes();
     }
 
     public static CommonModMetadata getMetadata() {
@@ -45,7 +45,7 @@ public class NotEnoughCrashes {
     }
 
     public static void initialize() {
-        if (NecConfig.instance().forceCrashScreen) SystemExitBlock.forbidSystemExitCall();
-        NecConfig.instance();
+//        if (NecConfig.getCurrent().forceCrashScreen()) SystemExitBlock.forbidSystemExitCall();
+        NecConfig.getCurrent();
     }
 }
