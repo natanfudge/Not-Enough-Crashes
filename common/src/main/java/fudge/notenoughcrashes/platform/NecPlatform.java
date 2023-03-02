@@ -40,5 +40,9 @@ public interface NecPlatform {
 
     boolean modContainsFile(CommonModMetadata mod, String path);
 
-    NecConfig getCurrentConfig();
+//    default NecConfig getCurrentConfig() {
+//
+//    }
+
+    boolean isClient();
 }

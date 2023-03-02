@@ -1,4 +1,4 @@
-package fudge.notenoughcrashes.fabric.config;
+package fudge.notenoughcrashes.config;
 
 //TODO: config Migration path.
 // Current version:

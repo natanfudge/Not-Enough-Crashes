@@ -2,23 +2,26 @@ package fudge.notenoughcrashes.forge.platform;
 
 import fudge.notenoughcrashes.NotEnoughCrashes;
 import fudge.notenoughcrashes.config.NecConfig;
+import fudge.notenoughcrashes.config.NecMidnightConfig;
 import fudge.notenoughcrashes.platform.CommonModMetadata;
 import fudge.notenoughcrashes.platform.ModsByLocation;
 import fudge.notenoughcrashes.platform.NecPlatform;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.FMLPaths;
-import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
-import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.forgespi.language.IModInfo;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.*;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -98,10 +101,16 @@ public class ForgePlatform implements NecPlatform {
         }
     }
 
+//    @Override
+//    public NecConfig getCurrentConfig() {
+//        return new NecConfig(NecMidnightConfig.disableReturnToMainMenu, NecMidnightConfig.catchInitializationCrashes,
+//                NecMidnightConfig.debugModIdentification, NecMidnightConfig.crashLimit);
+//
+//    }
+
     @Override
-    public NecConfig getCurrentConfig() {
-        //TODO: implement forge config.
-        return null;
+    public boolean isClient() {
+        return FMLEnvironment.dist == Dist.CLIENT;
     }
 
     private static CommonModMetadata toCommon(IModInfo imod) {

@@ -1,6 +1,8 @@
 package fudge.notenoughcrashes;
 
+import fudge.notenoughcrashes.config.MidnightConfig;
 import fudge.notenoughcrashes.config.NecConfig;
+import fudge.notenoughcrashes.config.NecMidnightConfig;
 import fudge.notenoughcrashes.platform.CommonModMetadata;
 import fudge.notenoughcrashes.platform.NecPlatform;
 import org.apache.logging.log4j.LogManager;
@@ -46,6 +48,6 @@ public class NotEnoughCrashes {
 
     public static void initialize() {
 //        if (NecConfig.getCurrent().forceCrashScreen()) SystemExitBlock.forbidSystemExitCall();
-        NecConfig.getCurrent();
+        MidnightConfig.init(NotEnoughCrashes.MOD_ID, NecMidnightConfig.class);
     }
 }

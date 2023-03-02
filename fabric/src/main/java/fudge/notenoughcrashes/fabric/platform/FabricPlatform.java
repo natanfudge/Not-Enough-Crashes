@@ -2,10 +2,11 @@ package fudge.notenoughcrashes.fabric.platform;
 
 import fudge.notenoughcrashes.NotEnoughCrashes;
 import fudge.notenoughcrashes.config.NecConfig;
-import fudge.notenoughcrashes.fabric.config.NecMidnightConfig;
+import fudge.notenoughcrashes.config.NecMidnightConfig;
 import fudge.notenoughcrashes.platform.CommonModMetadata;
 import fudge.notenoughcrashes.platform.ModsByLocation;
 import fudge.notenoughcrashes.platform.NecPlatform;
+import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.metadata.ContactInformation;
@@ -91,10 +92,15 @@ public class FabricPlatform implements NecPlatform {
         return FabricLoader.getInstance().getModContainer(mod.id()).flatMap(modContainer -> modContainer.findPath(path)).isPresent();
     }
 
+//    @Override
+//    public NecConfig getCurrentConfig() {
+//        return new NecConfig(NecMidnightConfig.disableReturnToMainMenu, NecMidnightConfig.catchInitializationCrashes,
+//                NecMidnightConfig.debugModIdentification,  NecMidnightConfig.crashLimit);
+//    }
+
     @Override
-    public NecConfig getCurrentConfig() {
-        return new NecConfig(NecMidnightConfig.disableReturnToMainMenu, NecMidnightConfig.catchInitializationCrashes,
-                NecMidnightConfig.debugModIdentification,  NecMidnightConfig.crashLimit);
+    public boolean isClient() {
+        return FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT;
     }
 
     // Earlier elements will be used first, may need to add more elements if people start using weird shit
