@@ -107,16 +107,6 @@ modrinth {
     versionType = "release"
 }
 
-// Asset files will otherwise be missing when debugging
-task copyAssetFilesForDebugging(type: Copy) {
-    def inAssets = rootProject.file("common/src/main/resources/assets/notenoughcrashes")
-    def outAssets = new File("${project.buildDir}/resources/main/assets/notenoughcrashes")
-    from inAssets
-    into outAssets
-    dependsOn rootProject.processResources
-}
-
-classes.dependsOn(copyAssetFilesForDebugging)
 
 task publishForge {
     group = "publishing"
