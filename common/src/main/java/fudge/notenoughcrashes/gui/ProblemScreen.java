@@ -177,7 +177,7 @@ public abstract class ProblemScreen extends Screen {
         int stLen = textRenderer.getWidth(fileNameString);
         xLeft = width / 2 - stLen / 2;
         xRight = width / 2 + stLen / 2;
-        drawStringWithShadow(matrixStack, textRenderer, fileNameString, xLeft, y += 11, 0x00FF00);
+        drawTextWithShadow(matrixStack, textRenderer, fileNameString, xLeft, y += 11, 0x00FF00);
         yTop = y;
         yBottom = y + 10;
     }

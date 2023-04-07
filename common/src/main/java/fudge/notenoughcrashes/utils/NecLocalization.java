@@ -74,7 +74,7 @@ public class NecLocalization {
     private static final Map<String, LanguageTranslations> storedLanguages = new HashMap<>();
 
     private static String getCurrentLanguageCode() {
-        return MinecraftClient.getInstance().getLanguageManager().getLanguage().getCode();
+        return MinecraftClient.getInstance().getLanguageManager().getLanguage();
     }
 
     private static LanguageTranslations loadLanguage(String code) {

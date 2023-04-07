@@ -43,7 +43,7 @@ public class TextWidget implements Widget {
 
     @Override
     public void draw(MatrixStack stack) {
-        DrawableHelper.drawCenteredText(stack,font, translated, x, y, color);
+        DrawableHelper.drawCenteredTextWithShadow(stack,font, translated, x, y, color);
     }
 
     @Override
