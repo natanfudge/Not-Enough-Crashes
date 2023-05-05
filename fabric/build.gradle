@@ -6,7 +6,11 @@ plugins {
 }
 
 configurations {
-    shadowCommon
+    common
+    shadowCommon // Don't use shadow from the shadow plugin since it *excludes* files.
+    compileClasspath.extendsFrom common
+    runtimeClasspath.extendsFrom common
+    developmentFabric.extendsFrom common
 }
 
 architectury {
@@ -37,15 +41,8 @@ dependencies {
     // Uncomment to add the test mod at runtime
 //    runtimeOnly project(path: ":TestFabricMod", configuration: "namedElements")
 
-    implementation(project(path: ":common", configuration: "dev")) {
-        transitive = false
-    }
-    developmentFabric(project(path: ":common", configuration: "dev")) {
-        transitive = false
-    }
-    shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) {
-        transitive = false
-    }
+    common(project(path: ":common", configuration: "namedElements")) { transitive false }
+    shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
 }
 
 
@@ -62,14 +59,25 @@ processResources {
 }
 
 shadowJar {
+    exclude "architectury.common.json"
     configurations = [project.configurations.shadowCommon]
     classifier "dev-shadow"
 }
 
 remapJar {
+//    injectAccessWidener = true
     input.set shadowJar.archiveFile
     dependsOn shadowJar
     classifier "fabric"
+}
+jar {
+    classifier "dev"
+}
+
+components.java {
+    withVariantsFromConfiguration(project.configurations.shadowRuntimeElements) {
+        skip()
+    }
 }
 
 // Asset files will otherwise be missing when debugging

@@ -17,7 +17,7 @@ mod_version = "4.4.0"
 
 # Gradle Plugins
 architectury_plugin = "3.4-SNAPSHOT"
-architectury_loom = "1.0-SNAPSHOT"
+architectury_loom = "1.1-SNAPSHOT"
 minotaur = "2.5.0"
 loom_quiltflower = "1.8.0"
 cursegradle = "1.4.0" # Must be updated in settings.gradle as well!
@@ -34,7 +34,7 @@ overrides_modrinth = "mc"
 # Mods & Libraries
 yarn_mappings = "1.19.4+build.1"
 fabric_loader = "0.14.19"
-fabric_api = "0.77.0+1.19.4"
+fabric_api = "0.78.0+1.19.4"
 quilt_loader = "0.17.6"
 forge = "45.0.43"
 architectury_api = "8.1.79"

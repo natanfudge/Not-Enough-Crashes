@@ -7,7 +7,11 @@ plugins {
 }
 
 configurations {
-    shadowCommon
+    common
+    shadowCommon // Don't use shadow from the shadow plugin since it *excludes* files.
+    compileClasspath.extendsFrom common
+    runtimeClasspath.extendsFrom common
+    developmentForge.extendsFrom common
 }
 
 architectury {
@@ -27,15 +31,9 @@ dependencies {
     // Uncomment to add the test mod at runtime
 //    runtimeOnly project(path: ":TestForgeMod", configuration: "namedElements")
 
-    compileOnly(project(path: ":common", configuration: "dev")) {
-        transitive = false
-    }
-    developmentForge(project(path: ":common", configuration: "dev")) {
-        transitive = false
-    }
-    shadowCommon(project(path: ":common", configuration: "transformProductionForge")) {
-        transitive = false
-    }
+    common(project(path: ":common", configuration: "namedElements")) { transitive false }
+    shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
+
 }
 
 processResources {
@@ -48,6 +46,7 @@ processResources {
 
 shadowJar {
     exclude "fabric.mod.json"
+    exclude "architectury.common.json"
 
     configurations = [project.configurations.shadowCommon]
     classifier "dev-shadow"
@@ -71,7 +70,11 @@ jar {
 java {
     withSourcesJar()
 }
-
+components.java {
+    withVariantsFromConfiguration(project.configurations.shadowRuntimeElements) {
+        skip()
+    }
+}
 
 
 curseforge {
