@@ -266,13 +266,7 @@ public abstract class MidnightConfig {
         public void init() {
             super.init();
             if (!reload) loadValues();
-
-            this.addDrawableChild(ButtonWidget.builder(ScreenTexts.CANCEL, button -> {
-                loadValues();
-                Objects.requireNonNull(client).setScreen(parent);
-            }).dimensions(this.width / 2 - 154, this.height - 28, 150, 20).build());
-
-            ButtonWidget done = this.addDrawableChild(ButtonWidget.builder(ScreenTexts.DONE, (button) -> {
+            ButtonWidget done = ButtonWidget.builder(ScreenTexts.DONE, (button) -> {
                 for (EntryInfo info : entries)
                     if (info.id.equals(modid)) {
                         try {
@@ -282,7 +276,7 @@ public abstract class MidnightConfig {
                     }
                 write(modid);
                 Objects.requireNonNull(client).setScreen(parent);
-            }).dimensions(this.width / 2 + 4, this.height - 28, 150, 20).build());
+            }).dimensions(this.width / 2 + 4, this.height - 28, 150, 20).build();
 
             this.list = new MidnightConfigListWidget(this.client, this.width, this.height, 32, this.height - 32, 25);
             if (this.client != null && this.client.world != null) this.list.setRenderBackground(false);
@@ -351,6 +345,13 @@ public abstract class MidnightConfig {
                 }
                 updateResetButtons();
             }
+
+            this.addDrawableChild(ButtonWidget.builder(ScreenTexts.CANCEL, button -> {
+                loadValues();
+                Objects.requireNonNull(client).setScreen(parent);
+            }).dimensions(this.width / 2 - 154, this.height - 28, 150, 20).build());
+
+            this.addDrawableChild(done);
 
         }
 

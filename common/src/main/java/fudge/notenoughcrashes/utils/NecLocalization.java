@@ -26,8 +26,10 @@ import java.util.Map;
 public class NecLocalization {
     private static final String DEFAULT_LANGUAGE_CODE = "en_us";
 
-    private static final boolean useCustomLocalization = !NecPlatform.instance().isForge()
-            && !NecPlatform.instance().isModLoaded("fabric-resource-loader-v0");
+    private static final boolean useCustomLocalization = (!NecPlatform.instance().isForge()
+            && !NecPlatform.instance().isModLoaded("fabric-resource-loader-v0"))
+            // In edge cases where stuff doesn't get localized properly, make sure we use custom localization.
+            || I18n.translate("notenoughcrashes.crashscreen.title").equals("notenoughcrashes.crashscreen.title");
 
     public static String localize(String translationKey) {
         if (useCustomLocalization) return localizeCustom(translationKey);
