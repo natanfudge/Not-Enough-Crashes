@@ -49,13 +49,13 @@ shadowJar {
     exclude "architectury.common.json"
 
     configurations = [project.configurations.shadowCommon]
-    classifier "dev-shadow"
+    archiveClassifier.set "dev-shadow"
 }
 
 remapJar {
     input.set shadowJar.archiveFile
     dependsOn shadowJar
-    classifier "forge"
+    archiveClassifier.set "forge"
 }
 jar {
     manifest {
@@ -63,7 +63,7 @@ jar {
                 "MixinConfigs": "notenoughcrashes.mixins.json"
         ])
     }
-    classifier "dev"
+    archiveClassifier.set "dev"
 }
 
 

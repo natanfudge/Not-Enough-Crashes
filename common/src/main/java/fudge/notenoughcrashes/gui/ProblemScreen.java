@@ -11,6 +11,7 @@ import fudge.notenoughcrashes.utils.NecLocalization;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ConfirmLinkScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -171,21 +172,21 @@ public abstract class ProblemScreen extends Screen {
     }
 
 
-    protected void drawFileNameString(MatrixStack matrixStack, int y) {
+    protected void drawFileNameString(DrawContext context, int y) {
         String fileNameString = report.getFile() != null ? "\u00A7n" + report.getFile().getName()
                 : NecLocalization.localize("notenoughcrashes.crashscreen.reportSaveFailed");
         int stLen = textRenderer.getWidth(fileNameString);
         xLeft = width / 2 - stLen / 2;
         xRight = width / 2 + stLen / 2;
-        drawTextWithShadow(matrixStack, textRenderer, fileNameString, xLeft, y += 11, 0x00FF00);
+        context.drawTextWithShadow(textRenderer, fileNameString, xLeft, y += 11, 0x00FF00);
         yTop = y;
         yBottom = y + 10;
     }
 
     @Override
-    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float delta) {
-        for (Widget widget : widgets) widget.draw(matrixStack);
-        super.render(matrixStack, mouseX, mouseY, delta);
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        for (Widget widget : widgets) widget.draw(context);
+        super.render(context, mouseX, mouseY, delta);
     }
 
 }

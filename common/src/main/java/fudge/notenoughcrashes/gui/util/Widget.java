@@ -1,9 +1,9 @@
 package fudge.notenoughcrashes.gui.util;
 
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.DrawContext;
 
 public interface Widget {
-    void draw(MatrixStack stack);
+    void draw(DrawContext context);
 
     void onClick(double clickX, double clickY);
 }

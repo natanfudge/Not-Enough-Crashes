@@ -4,9 +4,8 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 
 import java.util.ArrayList;
@@ -42,8 +41,8 @@ public class TextWidget implements Widget {
     }
 
     @Override
-    public void draw(MatrixStack stack) {
-        DrawableHelper.drawCenteredTextWithShadow(stack,font, translated, x, y, color);
+    public void draw(DrawContext context) {
+        context.drawCenteredTextWithShadow(font, translated, x, y, color);
     }
 
     @Override
