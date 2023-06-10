@@ -13,7 +13,7 @@ task_tree = { id = "com.dorongold.task-tree", version.ref = "task_tree" }
 [versions]
 
 # This Mod Version
-mod_version = "4.4.2"
+mod_version = "4.4.3"
 
 # Gradle Plugins
 architectury_plugin = "3.4-SNAPSHOT"

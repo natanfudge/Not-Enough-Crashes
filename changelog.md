@@ -1,3 +1,5 @@
+## 4.4.3
+- Updated Chinese translations
 ## 4.4.1
 - Fixed gibrish text sometimes showing in the crash screen. 
 - Added Ukrainian translations (thanks @PetroTornados!).
