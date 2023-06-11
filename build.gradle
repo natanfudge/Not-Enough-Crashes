@@ -38,6 +38,7 @@ allprojects {
 
     ext.curseforge_mc_version = cf == 'mc' ? minecraft_version : cf
     ext.modrinth_mc_version = mr == 'mc' ? minecraft_version : mr
+    ext.release_type = libs.versions.release.type.get()
 
     archivesBaseName = rootProject.archives_base_name
     version = ext.total_version

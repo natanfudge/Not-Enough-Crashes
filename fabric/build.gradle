@@ -96,7 +96,7 @@ curseforge {
     apiKey = project.hasProperty("curseforge_api_key") ? project.curseforge_api_key : ""
     project {
         id = curseforge_id
-        releaseType = 'release'
+        releaseType = release_type
         addGameVersion "Fabric"
         addGameVersion curseforge_mc_version
         changelogType = "markdown"
@@ -121,7 +121,7 @@ modrinth {
     gameVersions = [modrinth_mc_version]
     loaders = ["fabric", "quilt"]
     changelog = rootProject.file("changelog.md").text
-    versionType = "release"
+    versionType = release_type
 }
 
 task publishFabric {

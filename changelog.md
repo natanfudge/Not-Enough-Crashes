@@ -1,3 +1,5 @@
+## 4.4.4
+- Cleaned up some more things when the game crashes. 
 ## 4.4.3
 - Updated Chinese translations
 ## 4.4.1
