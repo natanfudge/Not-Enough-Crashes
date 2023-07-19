@@ -1,5 +1,6 @@
 package fudge.notenoughcrashes.mixins.client;
 
+import fudge.notenoughcrashes.NotEnoughCrashes;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.crash.CrashReport;
 import org.spongepowered.asm.mixin.Mixin;
@@ -19,6 +20,7 @@ public class MixinMinecraftServerClientOnly {
      */
     @Redirect(method = "runServer()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/crash/CrashReport;writeToFile(Ljava/io/File;)Z"))
     private boolean disableIntegratedServerWriteToFileOnCrash(CrashReport instance, File file) {
-        return true;
+        if (NotEnoughCrashes.enableGameloopCatching()) return true;
+        else return instance.writeToFile(file);
     }
 }

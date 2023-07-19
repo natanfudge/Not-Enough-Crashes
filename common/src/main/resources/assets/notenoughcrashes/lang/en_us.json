@@ -1,6 +1,6 @@
 {
-  "notenoughcrashes.gui.getLink": "Get link",
-  "notenoughcrashes.gui.uploadToCrashy": "Show on Crashy",
+  "notenoughcrashes.gui.getLink": "Show crash log (old)",
+  "notenoughcrashes.gui.uploadToCrashy": "Show crash log",
   "notenoughcrashes.gui.loadingCrashyUpload": "Uploading...",
   "notenoughcrashes.gui.failed": "[Failed, Report to NEC]",
   "notenoughcrashes.gui.keepPlaying": "Keep playing",
@@ -28,12 +28,16 @@
   "notenoughcrashes.midnightconfig.disableReturnToMainMenuComment1": "If true, the \"Return To Main Menu\" button will be disabled when crashing,",
   "notenoughcrashes.midnightconfig.disableReturnToMainMenuComment2": "meaning you cannot recover from a crash.",
   "notenoughcrashes.midnightconfig.disableReturnToMainMenu": "Disable Return To Main Menu",
-  "notenoughcrashes.midnightconfig.catchInitializationCrashesComment1": "(Fabric Only) If true, the game will close normally when it fails to initialize,",
+  "notenoughcrashes.midnightconfig.catchInitializationCrashesComment1": "(Fabric Only) If false, the game will close normally when it fails to initialize,",
   "notenoughcrashes.midnightconfig.catchInitializationCrashesComment2": "and will not display a special crash screen.",
+  "notenoughcrashes.midnightconfig.catchInitializationCrashesComment3": "This will be always disabled (even if the config is set to true) when Iris is installed.",
   "notenoughcrashes.midnightconfig.catchInitializationCrashes": "Catch Initialization Crashes",
   "notenoughcrashes.midnightconfig.debugModIdentificationComment": "If true, additional info will be logged for the mod developer.",
   "notenoughcrashes.midnightconfig.debugModIdentification": "Debug Mod Identification",
   "notenoughcrashes.midnightconfig.crashLimitComment": "How many times NEC will try to prevent the game from closing in one session.",
   "notenoughcrashes.midnightconfig.crashLimit": "Crash Limit",
+  "notenoughcrashes.midnightconfig.catchGameloopComment1": "If false, NEC won't attempt to prevent the game from closing when it crashes.",
+  "notenoughcrashes.midnightconfig.catchGameloopComment2": "This will be always disabled (even if the config is set to true) when Iris is installed.",
+  "notenoughcrashes.midnightconfig.catchGameloop": "Catch Gameplay Crashes",
   "notenoughcrashes.midnightconfig.title": "Not Enough Crashes Configuration"
 }

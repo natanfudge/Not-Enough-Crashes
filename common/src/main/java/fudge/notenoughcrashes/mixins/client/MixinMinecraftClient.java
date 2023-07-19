@@ -4,7 +4,6 @@ import fudge.notenoughcrashes.NotEnoughCrashes;
 import fudge.notenoughcrashes.mixinhandlers.EntryPointCatcher;
 import fudge.notenoughcrashes.mixinhandlers.InGameCatcher;
 import fudge.notenoughcrashes.patches.MinecraftClientAccess;
-import fudge.notenoughcrashes.stacktrace.CrashUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.crash.CrashReport;
 import net.minecraft.util.profiler.Recorder;
@@ -36,6 +35,10 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
     @Shadow
     private Recorder recorder;
 
+    @Shadow
+    public static void printCrashReport(CrashReport report) {
+    }
+
     @Override
     public Recorder getRecorder() {
         return recorder;
@@ -57,7 +60,7 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
 
     @Inject(method = "run()V", at = @At(value = "FIELD", target = "Lnet/minecraft/client/MinecraftClient;crashReportSupplier:Ljava/util/function/Supplier;"))
     private void onRunLoop(CallbackInfo ci) {
-        if (!NotEnoughCrashes.ENABLE_GAMELOOP_CATCHING) return;
+        if (!NotEnoughCrashes.enableGameloopCatching()) return;
 
         if (this.crashReportSupplier != null) {
             NotEnoughCrashes.logDebug("Handling run loop crash");
@@ -72,7 +75,7 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
     // Can't capture arg in inject so captured here
     @ModifyArg(method = "run()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;printCrashReport(Lnet/minecraft/util/crash/CrashReport;)V", ordinal = 1))
     private CrashReport atTheEndOfFirstCatchBeforePrintingCrashReport(CrashReport report) {
-        if (!NotEnoughCrashes.ENABLE_GAMELOOP_CATCHING) return report;
+        if (!NotEnoughCrashes.enableGameloopCatching()) return report;
 
         NotEnoughCrashes.logDebug("Handling client game loop try/catch crash in first catch block");
         // we MUST use the report passed as parameter, because the field one only gets assigned in integrated server crashes.
@@ -83,7 +86,7 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
     // Can't capture arg in inject so captured here
     @ModifyArg(method = "run()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;printCrashReport(Lnet/minecraft/util/crash/CrashReport;)V", ordinal = 2))
     private CrashReport atTheEndOfSecondCatchBeforePrintingCrashReport(CrashReport report) {
-        if (!NotEnoughCrashes.ENABLE_GAMELOOP_CATCHING) return report;
+        if (!NotEnoughCrashes.enableGameloopCatching()) return report;
 
         NotEnoughCrashes.logDebug("Handling client game loop try/catch crash in second catch block");
         // we MUST use the report passed as parameter, because the field one only gets assigned in integrated server crashes.
@@ -94,14 +97,17 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
     // Prevent calling printCrashReport which is not needed
     @Inject(method = "run()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;printCrashReport(Lnet/minecraft/util/crash/CrashReport;)V"), cancellable = true)
     private void cancelRunLoopAfterCrash(CallbackInfo ci) {
-        if (NotEnoughCrashes.ENABLE_GAMELOOP_CATCHING) ci.cancel();
+        if (NotEnoughCrashes.enableGameloopCatching()) ci.cancel();
     }
 
     @Inject(method = "cleanUpAfterCrash()V", at = @At("HEAD"))
     private void beforeCleanUpAfterCrash(CallbackInfo info) {
-        InGameCatcher.cleanupBeforeMinecraft(renderTaskQueue);
+        if (NotEnoughCrashes.enableGameloopCatching()) {
+            InGameCatcher.cleanupBeforeMinecraft(renderTaskQueue);
+        }
     }
 //String levelName, LevelStorage.Session session, ResourcePackManager dataPackManager, SaveLoader saveLoader
+
     /**
      * Prevent the integrated server from exiting in the case it crashed
      */
@@ -112,8 +118,9 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
             ")V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;printCrashReport(Lnet/minecraft/util/crash/CrashReport;)V"))
     private void redirectPrintCrashReport(CrashReport report) {
-//        CrashUtils.outputReport(report);
+        if (!NotEnoughCrashes.enableGameloopCatching()) printCrashReport(report);
     }
+
     /**
      * Forge only: Prevent the integrated server from exiting in the case it crashed in another case
      */
@@ -122,6 +129,7 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;printCrashReport(Lnet/minecraft/util/crash/CrashReport;)V"),
             require = 0)
     private void redirectForgePrintCrashReport(CrashReport report) {
+        if (!NotEnoughCrashes.enableGameloopCatching()) printCrashReport(report);
     }
 
 }

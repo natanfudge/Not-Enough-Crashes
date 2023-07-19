@@ -27,6 +27,7 @@ repositories {
         name = "modmenu"
         url = "https://maven.terraformersmc.com"
     }
+    maven { url = "https://api.modrinth.com/maven" }
 }
 
 dependencies {
@@ -36,7 +37,8 @@ dependencies {
 
     // For config modmenu integration.
     modCompileOnly("com.terraformersmc:modmenu:6.2.2")
-//    modRuntimeOnly("com.terraformersmc:modmenu:6.2.2")
+    modCompileOnly "maven.modrinth:iris:1.6.1+1.19.2"
+    modRuntimeOnly("com.terraformersmc:modmenu:7.1.0")
 
     // Uncomment to add the test mod at runtime
 //    runtimeOnly project(path: ":TestFabricMod", configuration: "namedElements")

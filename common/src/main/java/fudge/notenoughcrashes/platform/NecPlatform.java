@@ -40,9 +40,9 @@ public interface NecPlatform {
 
     boolean modContainsFile(CommonModMetadata mod, String path);
 
-//    default NecConfig getCurrentConfig() {
-//
-//    }
+    default boolean irisExists() {
+        return false;
+    }
 
     boolean isClient();
 }

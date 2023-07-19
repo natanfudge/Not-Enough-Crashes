@@ -1,8 +1,6 @@
 package fudge.notenoughcrashes.fabric.platform;
 
 import fudge.notenoughcrashes.NotEnoughCrashes;
-import fudge.notenoughcrashes.config.NecConfig;
-import fudge.notenoughcrashes.config.NecMidnightConfig;
 import fudge.notenoughcrashes.platform.CommonModMetadata;
 import fudge.notenoughcrashes.platform.ModsByLocation;
 import fudge.notenoughcrashes.platform.NecPlatform;
@@ -17,11 +15,17 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class FabricPlatform implements NecPlatform {
+    private boolean irisExists = false;
+
+    public void setIrisExists() {
+        irisExists = true;
+    }
 
     @Override
     public boolean isForge() {
@@ -89,14 +93,20 @@ public class FabricPlatform implements NecPlatform {
 
     @Override
     public boolean modContainsFile(CommonModMetadata mod, String path) {
-        return FabricLoader.getInstance().getModContainer(mod.id()).flatMap(modContainer -> modContainer.findPath(path)).isPresent();
+        return FabricLoader.getInstance().getModContainer(mod.id()).flatMap(modContainer -> {
+            try {
+                return modContainer.findPath(path);
+            } catch (InvalidPathException e) {
+                // Sometimes weird mixin file fuck up this method call and throw a InvalidPathException
+                return Optional.empty();
+            }
+        }).isPresent();
     }
 
-//    @Override
-//    public NecConfig getCurrentConfig() {
-//        return new NecConfig(NecMidnightConfig.disableReturnToMainMenu, NecMidnightConfig.catchInitializationCrashes,
-//                NecMidnightConfig.debugModIdentification,  NecMidnightConfig.crashLimit);
-//    }
+    @Override
+    public boolean irisExists() {
+        return irisExists;
+    }
 
     @Override
     public boolean isClient() {

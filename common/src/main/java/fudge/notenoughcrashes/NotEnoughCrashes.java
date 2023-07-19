@@ -14,7 +14,6 @@ import java.nio.file.Path;
 import java.util.List;
 
 public class NotEnoughCrashes {
-
     public static final Path DIRECTORY = NecPlatform.instance().getGameDirectory().resolve("not-enough-crashes");
     public static final String NAME = "Not Enough Crashes";
     public static final String MOD_ID = "notenoughcrashes";
@@ -30,10 +29,12 @@ public class NotEnoughCrashes {
         if (LOG_DEBUG) getLogger().error(message);
     }
 
-    public static final boolean ENABLE_GAMELOOP_CATCHING = true;
+    public static boolean enableGameloopCatching() {
+        return NecConfig.getCurrent().catchGameloopCrashes() && !NecPlatform.instance().irisExists();
+    }
 
     public static boolean enableEntrypointCatching() {
-        return NecConfig.getCurrent().catchInitializationCrashes();
+        return NecConfig.getCurrent().catchInitializationCrashes() && !NecPlatform.instance().irisExists();
     }
 
     public static CommonModMetadata getMetadata() {

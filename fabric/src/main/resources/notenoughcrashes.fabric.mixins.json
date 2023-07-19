@@ -5,10 +5,11 @@
   "minVersion": "0.8",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "MixinMain"
+    "MixinMain",
+    "iris.SilentNEC"
   ],
   "client": [
-    "client.MixinMain",
-    "client.CatchInitMInecraftClientMixin"
+    "client.CatchInitMInecraftClientMixin",
+    "client.MixinMain"
   ]
 }

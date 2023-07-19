@@ -1,3 +1,5 @@
+## 4.4.5
+- Fixed a crash in Fabric with certain mods
 ## 4.4.4
 - Cleaned up some more things when the game crashes. 
 ## 4.4.3

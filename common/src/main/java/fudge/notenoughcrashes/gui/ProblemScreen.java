@@ -15,7 +15,6 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ConfirmLinkScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.*;
 import net.minecraft.util.Util;
 import net.minecraft.util.crash.CrashReport;
@@ -30,6 +29,7 @@ public abstract class ProblemScreen extends Screen {
     ));
 
     private static final int GREEN = 0x00FF00;
+    private static final int GRAY = 0x9a9a9a;
     private static final Text uploadToCrashyText = NecLocalization.translatedText("notenoughcrashes.gui.uploadToCrashy")
             .copy().setStyle(Style.EMPTY.withColor(GREEN));
     private static final Text uploadToCrashyLoadingText = NecLocalization.translatedText("notenoughcrashes.gui.loadingCrashyUpload");
@@ -135,16 +135,19 @@ public abstract class ProblemScreen extends Screen {
     @Override
     public void init() {
         widgets = new ArrayList<>();
-
+//        height / 4 + 120 + 12
         addDrawableChild(
-                ButtonWidget.builder(NecLocalization.translatedText("notenoughcrashes.gui.getLink"), this::handleLegacyLinkClick)
-                        .dimensions(width / 2 - 155 + 160, height / 4 + 132 + 12, 150, 20)
+                ButtonWidget.builder(
+                        NecLocalization.translatedText("notenoughcrashes.gui.getLink")
+                                .copy().setStyle(Style.EMPTY.withColor(GRAY))
+                                , this::handleLegacyLinkClick)
+                        .dimensions(width / 2 - 155 + 160, height / 4 + 144 + 12, 150, 20)
                         .build()
         );
 
         addDrawableChild(
                 ButtonWidget.builder(uploadToCrashyText,this::handleCrashyUploadClick)
-                        .dimensions(width / 2 - 155 + 160, height / 4 + 108 + 12, 150, 20)
+                        .dimensions(width / 2 - 155 + 160, height / 4 + 120 + 12, 150, 20)
                         .build()
         );
 
