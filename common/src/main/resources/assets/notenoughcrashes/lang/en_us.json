@@ -30,7 +30,7 @@
   "notenoughcrashes.midnightconfig.disableReturnToMainMenu": "Disable Return To Main Menu",
   "notenoughcrashes.midnightconfig.catchInitializationCrashesComment1": "(Fabric Only) If false, the game will close normally when it fails to initialize,",
   "notenoughcrashes.midnightconfig.catchInitializationCrashesComment2": "and will not display a special crash screen.",
-  "notenoughcrashes.midnightconfig.catchInitializationCrashesComment3": "This will be always disabled (even if the config is set to true) when Iris is installed.",
+  "notenoughcrashes.midnightconfig.catchInitializationCrashesComment3": "This will be always disabled (even if true) when certain mods are installed.",
   "notenoughcrashes.midnightconfig.catchInitializationCrashes": "Catch Initialization Crashes",
   "notenoughcrashes.midnightconfig.debugModIdentificationComment": "If true, additional info will be logged for the mod developer.",
   "notenoughcrashes.midnightconfig.debugModIdentification": "Debug Mod Identification",

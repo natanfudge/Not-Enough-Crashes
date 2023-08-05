@@ -13,7 +13,7 @@ task_tree = { id = "com.dorongold.task-tree", version.ref = "task_tree" }
 [versions]
 
 # This Mod Version
-mod_version = "4.4.5"
+mod_version = "4.4.6"
 
 # Gradle Plugins
 architectury_plugin = "3.4-SNAPSHOT"
@@ -30,7 +30,7 @@ minecraft = "1.20.1"
 # CurseForge & Modrinth MC overrides (or "mc" to use the main version)
 overrides_curseforge = "mc"
 overrides_modrinth = "mc"
-release_type = "beta"
+release_type = "release"
 
 # Mods & Libraries
 yarn_mappings = "1.20.1+build.2"

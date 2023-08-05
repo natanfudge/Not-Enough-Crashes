@@ -34,7 +34,9 @@ public class NotEnoughCrashes {
     }
 
     public static boolean enableEntrypointCatching() {
-        return NecConfig.getCurrent().catchInitializationCrashes() && !NecPlatform.instance().irisExists();
+        return NecConfig.getCurrent().catchInitializationCrashes() && !NecPlatform.instance().irisExists()
+                // Sodium insists on crashing when windows are used before it is initialized
+                && !NecPlatform.instance().isModLoaded("sodium");
     }
 
     public static CommonModMetadata getMetadata() {

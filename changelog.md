@@ -1,10 +1,13 @@
-## 4.4.5
-- Fixed a crash in Fabric with certain mods
-## 4.4.4
+### 4.4.6
+- Fixed quit button not have the correct text in some cases.
+- Crash initialization screen is now disabled when Sodium is installed.
+### 4.4.5
+- Fixed a crash in Fabric with certain mods.
+### 4.4.4
 - Cleaned up some more things when the game crashes. 
-## 4.4.3
+### 4.4.3
 - Updated Chinese translations
-## 4.4.1
+### 4.4.1
 - Fixed gibrish text sometimes showing in the crash screen. 
 - Added Ukrainian translations (thanks @PetroTornados!).
 - Fixed incorrect tab ordering in the config screen.
