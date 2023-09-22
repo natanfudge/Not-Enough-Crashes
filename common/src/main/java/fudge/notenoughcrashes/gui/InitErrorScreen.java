@@ -36,7 +36,7 @@ public class InitErrorScreen extends ProblemScreen {
 
     @Override
     public void render(DrawContext context, int mouseX, int i, float f) {
-        renderBackground(context);
+        renderBackground(context, mouseX, i, f);
         context.drawCenteredTextWithShadow(textRenderer, NecLocalization.localize("notenoughcrashes.initerrorscreen.title"), width / 2, height / 4 - 40, 0xFFFFFF);
 
         context.drawTextWithShadow(textRenderer, NecLocalization.localize("notenoughcrashes.initerrorscreen.summary"), x, y, TEXT_COLOR);

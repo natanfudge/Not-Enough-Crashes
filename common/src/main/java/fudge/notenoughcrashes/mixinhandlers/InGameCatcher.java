@@ -102,7 +102,6 @@ public class InGameCatcher {
 
             // Vanilla does this when switching to main menu but not our custom crash screen
             // nor the out of memory screen (see https://bugs.mojang.com/browse/MC-128953)
-            getClient().options.debugEnabled = false;
             getClient().inGameHud.getChatHud().clear(true);
 
             // Display the crash screen
