@@ -1,3 +1,5 @@
+### 5.0.0
+- Support for Fabric Loader 1.5.0. Note that this version will no longer debfuscate crash logs. 
 ### 4.2.1
 - Added missing Chinese translation.
 ### 4.2.0 

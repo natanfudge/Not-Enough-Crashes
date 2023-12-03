@@ -13,7 +13,7 @@ task_tree = { id = "com.dorongold.task-tree", version.ref = "task_tree" }
 [versions]
 
 # This Mod Version
-mod_version = "4.2.1"
+mod_version = "5.0.0"
 
 # Gradle Plugins
 architectury_plugin = "3.4-SNAPSHOT"
@@ -33,7 +33,7 @@ overrides_modrinth = "mc"
 
 # Mods & Libraries
 yarn_mappings = "1.19.2+build.28"
-fabric_loader = "0.14.10"
+fabric_loader = "0.15.0"
 fabric_api = "0.66.0+1.19.2"
 quilt_loader = "0.17.6"
 forge = "43.1.52"
