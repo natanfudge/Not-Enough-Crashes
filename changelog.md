@@ -1,3 +1,5 @@
+### 4.4.7
+- Fixed crash in certain cases
 ### 4.4.6
 - Fixed quit button not have the correct text in some cases.
 - Crash initialization screen is now disabled when Sodium is installed.
