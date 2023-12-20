@@ -15,7 +15,7 @@ subprojects {
     apply plugin: "dev.architectury.loom"
     apply plugin: 'maven-publish'
     apply plugin: 'com.matthewprenger.cursegradle'
-    apply plugin: "com.modrinth.minotaur"
+//    apply plugin: "com.modrinth.minotaur"
     apply plugin: "io.github.juuxel.loom-quiltflower"
 
     dependencies {

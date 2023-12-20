@@ -5,7 +5,7 @@ plugins {
     alias libs.plugins.shadow
     alias libs.plugins.task.tree
 }
-
+apply plugin: "com.modrinth.minotaur"
 configurations {
     common
     shadowCommon // Don't use shadow from the shadow plugin since it *excludes* files.

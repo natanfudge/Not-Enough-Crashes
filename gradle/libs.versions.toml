@@ -13,12 +13,12 @@ task_tree = { id = "com.dorongold.task-tree", version.ref = "task_tree" }
 [versions]
 
 # This Mod Version
-mod_version = "4.4.6"
+mod_version = "4.4.7"
 
 # Gradle Plugins
 architectury_plugin = "3.4-SNAPSHOT"
 architectury_loom = "1.2-SNAPSHOT"
-minotaur = "2.5.0"
+minotaur = "2.8.7"
 loom_quiltflower = "1.8.0"
 cursegradle = "1.4.0" # Must be updated in settings.gradle as well!
 shadow = "7.1.2"

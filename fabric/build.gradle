@@ -4,7 +4,7 @@ import org.gradle.api.tasks.Copy
 plugins {
     alias libs.plugins.shadow
 }
-
+apply plugin: "com.modrinth.minotaur"
 configurations {
     common
     shadowCommon // Don't use shadow from the shadow plugin since it *excludes* files.

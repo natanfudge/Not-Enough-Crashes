@@ -15,4 +15,3 @@ artifacts {
 architectury {
     common("fabric","forge")
 }
-
