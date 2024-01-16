@@ -15,13 +15,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
  */
 @Mixin(Iris.class)
 public class SilentNEC {
-	@Shadow(remap = false)
-	private static boolean hasNEC;
-
 	@Inject(at = @At("TAIL"), method = "onEarlyInitialize", remap = false)
 	private void onEarlyInitialize(CallbackInfo info) {
 		var platform = (FabricPlatform)NecPlatform.instance();
 		platform.setIrisExists();
-		hasNEC = false; // NEC doesn't exist Iris, it doesn't exist...
 	}
 }
