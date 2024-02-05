@@ -1,6 +1,7 @@
 package fudge.notenoughcrashes.gui;
 
 import fudge.notenoughcrashes.config.NecConfig;
+import fudge.notenoughcrashes.mixinhandlers.InGameCatcher;
 import fudge.notenoughcrashes.utils.NecLocalization;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -27,7 +28,10 @@ public class CrashScreen extends ProblemScreen {
         super.init();
         ButtonWidget mainMenuButton = ButtonWidget.builder(
                         NecLocalization.translatedText("gui.toTitle"),
-                        button -> MinecraftClient.getInstance().setScreen(new TitleScreen())
+                        button -> {
+                            InGameCatcher.crashScreenActive = true;
+                            MinecraftClient.getInstance().setScreen(new TitleScreen());
+                        }
                 )
                 .dimensions(width / 2 - 155, height / 4 + 120 + 12, 150, 20)
                 .build();

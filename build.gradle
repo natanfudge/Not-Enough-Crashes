@@ -1,6 +1,6 @@
 plugins {
     alias libs.plugins.architectury.loom apply false
-    alias libs.plugins.loom.quiltflower apply false
+//    alias libs.plugins.loom.quiltflower apply false
     alias libs.plugins.minotaur apply false
     alias libs.plugins.architectury.plugin
     alias libs.plugins.cursegradle
@@ -16,7 +16,7 @@ subprojects {
     apply plugin: 'maven-publish'
     apply plugin: 'com.matthewprenger.cursegradle'
 //    apply plugin: "com.modrinth.minotaur"
-    apply plugin: "io.github.juuxel.loom-quiltflower"
+//    apply plugin: "io.github.juuxel.loom-quiltflower"
 
     dependencies {
         minecraft libs.minecraft

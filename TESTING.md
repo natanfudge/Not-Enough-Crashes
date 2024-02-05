@@ -39,7 +39,7 @@ To test in production, build the test Fabric/Forge mod and add them alongside NE
 `  - Verify:
     - The game crashes.
     - The crash screen appears.
-    - No mods are blamed.
+    - "Not Enough Crashes Test Mod" is blamed.
     - In the terminal, no information is repeated.
     - Verify in the **Log**, **TXT File**, and **Get Link Site**:
       - No information is repeated.

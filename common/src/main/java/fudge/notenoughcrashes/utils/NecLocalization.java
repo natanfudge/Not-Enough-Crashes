@@ -56,7 +56,7 @@ public class NecLocalization {
     }
 
     public static Text translatedText(String translationKey) {
-        if (useCustomLocalization) return Text.of(localize(translationKey));
+        if (useCustomLocalization && translationKey.startsWith(NotEnoughCrashes.MOD_ID)) return Text.of(localize(translationKey));
         else return Text.translatable(translationKey);
     }
 

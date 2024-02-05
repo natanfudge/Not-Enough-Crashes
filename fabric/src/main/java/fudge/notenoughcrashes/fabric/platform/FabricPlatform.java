@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -63,11 +64,22 @@ public class FabricPlatform implements NecPlatform {
         return FabricLoader.getInstance().isDevelopmentEnvironment();
     }
 
+    private Path getResourcesDirectory() {
+        Path fabricPath = NotEnoughCrashes.getMetadata().rootPath();
+        if (isDevelopmentEnvironment()) {
+            // Replace \ with / for it to work on all platforms
+            // The assets are usually in the common build folder in dev and not in the fabric builder folder, so we use the common one instead.
+            return Paths.get(fabricPath.toString().replace("\\", "/").replace("/fabric/build", "/common/build"));
+        } else {
+            return fabricPath;
+        }
+    }
+
     @Override
     @Nullable
     public InputStream getResource(Path relativePath) {
         // Don't resolve the root path directly with a normal Path, they are incompatible because the root path is often in a Zip FS
-        Path path = NotEnoughCrashes.getMetadata().rootPath().resolve(relativePath.toString());
+        Path path = getResourcesDirectory().resolve(relativePath.toString());
         if (!Files.exists(path)) return null;
         else {
             try {

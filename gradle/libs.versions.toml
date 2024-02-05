@@ -5,7 +5,7 @@
 architectury_plugin = { id = "architectury-plugin", version.ref = "architectury_plugin" }
 architectury_loom = { id = "dev.architectury.loom", version.ref = "architectury_loom" }
 minotaur = { id = "com.modrinth.minotaur", version.ref = "minotaur" }
-loom_quiltflower = { id = "io.github.juuxel.loom-quiltflower", version.ref = "loom_quiltflower" }
+#loom_quiltflower = { id = "io.github.juuxel.loom-quiltflower", version.ref = "loom_quiltflower" }
 cursegradle = { id = "com.matthewprenger.cursegradle", version.ref = "cursegradle" }
 shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
 task_tree = { id = "com.dorongold.task-tree", version.ref = "task_tree" }
@@ -17,15 +17,16 @@ mod_version = "4.4.7"
 
 # Gradle Plugins
 architectury_plugin = "3.4-SNAPSHOT"
-architectury_loom = "1.2-SNAPSHOT"
+architectury_loom = "1.4-SNAPSHOT"
+
 minotaur = "2.8.7"
-loom_quiltflower = "1.8.0"
+#loom_quiltflower = "1.11.0"
 cursegradle = "1.4.0" # Must be updated in settings.gradle as well!
 shadow = "7.1.2"
 task_tree = "2.1.0"
 
 # Minecraft
-minecraft = "1.20.2"
+minecraft = "1.20.4"
 
 # CurseForge & Modrinth MC overrides (or "mc" to use the main version)
 overrides_curseforge = "mc"
@@ -33,12 +34,15 @@ overrides_modrinth = "mc"
 release_type = "release"
 
 # Mods & Libraries
-yarn_mappings = "1.20.2+build.1"
-fabric_loader = "0.14.22"
-fabric_api = "0.89.1+1.20.2"
+yarn_mappings = "1.20.4+build.3"
+fabric_loader = "0.15.5"
+fabric_api = "0.93.1+1.20.4"
+modmenu = "9.0.0"
+
+
 quilt_loader = "0.17.6"
-forge = "48.0.1"
-architectury_api = "9.0.8"
+forge = "49.0.19"
+architectury_api = "11.0.11"
 
 [libraries]
 
@@ -47,3 +51,4 @@ fabric_loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric_l
 fabric_api = { module = "net.fabricmc.fabric-api:fabric-api", version.ref = "fabric_api" }
 quilt_loader = { module = "org.quiltmc:quilt-loader", version.ref = "quilt_loader" }
 architectury_api = { module = "dev.architectury:architectury", version.ref = "architectury_api" }
+modmenu = { module = "com.terraformersmc:modmenu", version.ref = "modmenu"}

@@ -94,13 +94,7 @@ public abstract class ProblemScreen extends Screen {
             if (uploadedCrashLink == null) {
                 uploadedCrashLink = LegacyCrashLogUpload.upload(report.asString());
             }
-            MinecraftClient.getInstance().setScreen(new ConfirmLinkScreen(b -> {
-                if (b) {
-                    Util.getOperatingSystem().open(uploadedCrashLink);
-                }
-
-                MinecraftClient.getInstance().setScreen(construct(report));
-            }, uploadedCrashLink, true));
+            Util.getOperatingSystem().open(uploadedCrashLink);
         } catch (Throwable e) {
             NotEnoughCrashes.getLogger().error("Exception when crash menu button clicked:", e);
             buttonWidget.setMessage(NecLocalization.translatedText("notenoughcrashes.gui.failed"));
@@ -139,7 +133,8 @@ public abstract class ProblemScreen extends Screen {
         addDrawableChild(
                 ButtonWidget.builder(
                         NecLocalization.translatedText("notenoughcrashes.gui.getLink")
-                                .copy().setStyle(Style.EMPTY.withColor(GRAY))
+                        // No longer grayed out because Crashy is not working ATM
+//                                .copy().setStyle(Style.EMPTY.withColor(GRAY))
                                 , this::handleLegacyLinkClick)
                         .dimensions(width / 2 - 155 + 160, height / 4 + 144 + 12, 150, 20)
                         .build()

@@ -1,8 +1,8 @@
 package fudge.notenoughcrashes.mixinhandlers;
 
-import fudge.notenoughcrashes.config.NecConfig;
 import fudge.notenoughcrashes.NotEnoughCrashes;
 import fudge.notenoughcrashes.StateManager;
+import fudge.notenoughcrashes.config.NecConfig;
 import fudge.notenoughcrashes.gui.CrashScreen;
 import fudge.notenoughcrashes.patches.MinecraftClientAccess;
 import fudge.notenoughcrashes.stacktrace.CrashUtils;
@@ -24,14 +24,15 @@ public class InGameCatcher {
 
     private static int clientCrashCount = 0;
     private static int serverCrashCount = 0;
+    public static boolean crashScreenActive = false;
 
     public static void handleClientCrash(CrashReport report) {
         clientCrashCount++;
         addInfoToCrash(report);
 
         resetStates();
-        boolean reported = report.getCause() instanceof CrashException;
-        LOGGER.fatal(reported ? "Reported" : "Unreported" + " exception thrown!", report.getCause());
+//        boolean reported = report.getCause() instanceof CrashException;
+//        LOGGER.fatal(reported ? "Reported" : "Unreported" + " exception thrown!", report.getCause());
         displayCrashScreen(report, clientCrashCount, true);
         // Continue game loop
         getClient().run();
@@ -66,6 +67,9 @@ public class InGameCatcher {
         }
         client.player = null;
         client.world = null;
+
+        var server = client.getServer();
+        if (server != null) server.stop(true);
     }
 
     private static void resetModState() {
@@ -90,6 +94,7 @@ public class InGameCatcher {
     }
 
     private static void displayCrashScreen(CrashReport report, int crashCount, boolean clientCrash) {
+        crashScreenActive = true;
         try {
             if (EntryPointCatcher.crashedDuringStartup()) {
                 throw new IllegalStateException("Could not initialize startup crash screen");
@@ -107,9 +112,10 @@ public class InGameCatcher {
             // Display the crash screen
             getClient().setScreen(new CrashScreen(report));
         } catch (Throwable t) {
+            crashScreenActive = false;
             // The crash screen has crashed. Report it normally instead.
             LOGGER.error("An uncaught exception occured while displaying the crash screen, making normal report instead", t);
-            MinecraftClient.printCrashReport(report);
+            getClient().printCrashReport(report);
             System.exit(report.getFile() != null ? -1 : -2);
         }
     }

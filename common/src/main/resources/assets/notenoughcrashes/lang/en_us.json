@@ -1,6 +1,6 @@
 {
-  "notenoughcrashes.gui.getLink": "Show crash log (old)",
-  "notenoughcrashes.gui.uploadToCrashy": "Show crash log",
+  "notenoughcrashes.gui.getLink": "Show crash log",
+  "notenoughcrashes.gui.uploadToCrashy": "Upload to Crashy",
   "notenoughcrashes.gui.loadingCrashyUpload": "Uploading...",
   "notenoughcrashes.gui.failed": "[Failed, Report to NEC]",
   "notenoughcrashes.gui.keepPlaying": "Keep playing",
