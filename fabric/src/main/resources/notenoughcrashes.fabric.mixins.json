@@ -3,13 +3,12 @@
   "required": true,
   "target": "@env(DEFAULT)",
   "minVersion": "0.8",
-  "compatibilityLevel": "JAVA_17",
+  "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "MixinMain",
-    "iris.SilentNEC"
+    "MixinMain"
   ],
   "client": [
-    "client.CatchInitMInecraftClientMixin",
+    "client.CatchInitMinecraftClientMixin",
     "client.MixinMain"
   ]
 }

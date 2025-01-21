@@ -1,6 +1,5 @@
 package fudge.notenoughcrashes.platform;
 
-import fudge.notenoughcrashes.config.NecConfig;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.InputStream;

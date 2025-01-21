@@ -3,31 +3,13 @@ pluginManagement {
         maven { url "https://maven.fabricmc.net/" }
         maven { url "https://maven.architectury.dev/" }
         maven { url "https://files.minecraftforge.net/maven/" }
-        maven { name = 'Cotton'; url = 'https://server.bbkr.space/artifactory/libs-release/' }
         gradlePluginPortal()
     }
-
-    plugins {
-        id 'com.matthewprenger.cursegradle' version "1.4.0"
-        id 'org.jetbrains.kotlin.jvm' version '1.9.22' // Must be updated in libs.versions.toml as well!
-    }
 }
 
-plugins {
-    id 'de.fayard.refreshVersions' version '0.51.0'
-////                           # available:'0.60.0'
-////                           # available:'0.60.1'
-////                           # available:'0.60.2'
-////                           # available:'0.60.3'
-////                           # available:'0.60.4'
-////                           # available:'0.60.5'
-    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.8.0'
-}
+rootProject.name = 'notenoughcrashes'
 
-include("common")
-include("fabric")
-//include("forge")
-include("TestFabricMod")
-//include("TestForgeMod")
-
-rootProject.name = "notenoughcrashes"
+include 'common'
+include 'fabric'
+include 'neoforge'
+enableFeaturePreview "STABLE_CONFIGURATION_CACHE"

@@ -10,7 +10,6 @@ import fudge.notenoughcrashes.utils.NecLocalization;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.MessageScreen;
 import net.minecraft.text.Text;
-import net.minecraft.util.crash.CrashException;
 import net.minecraft.util.crash.CrashReport;
 import net.minecraft.util.profiler.DummyRecorder;
 import org.apache.logging.log4j.LogManager;

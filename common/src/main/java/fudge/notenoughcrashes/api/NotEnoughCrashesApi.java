@@ -1,4 +1,4 @@
-//package fudge.notenoughcrashes.api;
+package fudge.notenoughcrashes.api;//package fudge.notenoughcrashes.api;
 //
 //import java.util.ArrayList;
 //import java.util.List;

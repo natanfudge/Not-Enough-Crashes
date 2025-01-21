@@ -1,4 +1,4 @@
-//package fudge.notenoughcrashes.utils;
+package fudge.notenoughcrashes.utils;//package fudge.notenoughcrashes.utils;
 //
 //import fudge.notenoughcrashes.config.NecConfig;
 //

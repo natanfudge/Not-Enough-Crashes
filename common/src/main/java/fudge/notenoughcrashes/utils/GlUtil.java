@@ -2,10 +2,11 @@ package fudge.notenoughcrashes.utils;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.BackgroundRenderer;
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.opengl.*;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
+import org.lwjgl.opengl.GL13;
+import org.lwjgl.opengl.GL14;
 
 
 public class GlUtil {

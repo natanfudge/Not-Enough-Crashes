@@ -1,21 +1,27 @@
-import com.modrinth.minotaur.TaskModrinthUpload
-import org.gradle.api.tasks.Copy
-
 plugins {
     alias libs.plugins.shadow
-}
-apply plugin: "com.modrinth.minotaur"
-configurations {
-    common
-    shadowCommon // Don't use shadow from the shadow plugin since it *excludes* files.
-    compileClasspath.extendsFrom common
-    runtimeClasspath.extendsFrom common
-    developmentFabric.extendsFrom common
 }
 
 architectury {
     platformSetupLoomIde()
     fabric()
+}
+
+configurations {
+    common {
+        canBeResolved = true
+        canBeConsumed = false
+    }
+    compileClasspath.extendsFrom common
+    runtimeClasspath.extendsFrom common
+    developmentFabric.extendsFrom common
+
+    // Files in this configuration will be bundled into your mod using the Shadow plugin.
+    // Don't use the `shadow` configuration from the plugin itself as it's meant for excluding files.
+    shadowBundle {
+        canBeResolved = true
+        canBeConsumed = false
+    }
 }
 
 repositories {
@@ -30,29 +36,24 @@ repositories {
     maven { url = "https://api.modrinth.com/maven" }
 }
 
+
 dependencies {
     modImplementation libs.fabric.loader
     compileOnly libs.quilt.loader
     modRuntimeOnly libs.fabric.api
 
-    // For config modmenu integration.
-    modCompileOnly("com.terraformersmc:modmenu:6.2.2")
-    modCompileOnly "maven.modrinth:iris:1.6.1+1.19.2"
+    modCompileOnly libs.modmenu
     modRuntimeOnly libs.modmenu
 
-    // Uncomment to add the test mod at runtime
-    runtimeOnly project(path: ":TestFabricMod", configuration: "namedElements")
-
-    common(project(path: ":common", configuration: "namedElements")) { transitive false }
-    shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
+    common(project(path: ':common', configuration: 'namedElements')) { transitive false }
+    shadowBundle project(path: ':common', configuration: 'transformProductionFabric')
 }
 
-
 processResources {
-    inputs.property "version", project.version
+    inputs.property 'version', project.version
 
-    filesMatching("fabric.mod.json") {
-        expand "version": project.version
+    filesMatching('fabric.mod.json') {
+        expand version: project.version
     }
 
     filesMatching("quilt.mod.json") {
@@ -61,43 +62,19 @@ processResources {
 }
 
 shadowJar {
-    exclude "architectury.common.json"
-    configurations = [project.configurations.shadowCommon]
-    archiveClassifier.set "dev-shadow"
+    configurations = [project.configurations.shadowBundle]
+    archiveClassifier = 'dev-shadow'
 }
 
 remapJar {
-//    injectAccessWidener = true
-    input.set shadowJar.archiveFile
-    dependsOn shadowJar
-    archiveClassifier.set "fabric"
+    inputFile.set shadowJar.archiveFile
 }
-jar {
-    archiveClassifier.set "dev"
-}
-
-components.java {
-    withVariantsFromConfiguration(project.configurations.shadowRuntimeElements) {
-        skip()
-    }
-}
-
-// Asset files will otherwise be missing when debugging
-//task copyAssetFilesForDebugging(type: Copy) {
-//    def inAssets = rootProject.file("common/src/main/resources/assets/notenoughcrashes")
-//    def outAssets = new File("${project.buildDir}/resources/main/assets/notenoughcrashes")
-//    from inAssets
-//    into outAssets
-//    dependsOn rootProject.processResources
-//}
-//
-//classes.dependsOn(copyAssetFilesForDebugging)
 
 
 curseforge {
     apiKey = project.hasProperty("curseforge_api_key") ? project.curseforge_api_key : ""
     project {
-        id = curseforge_id
+        id = "353890"
         releaseType = release_type
         addGameVersion "Fabric"
         addGameVersion curseforge_mc_version

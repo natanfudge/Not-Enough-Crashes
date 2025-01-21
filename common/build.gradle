@@ -1,20 +1,10 @@
-dependencies {
-    // We depend on fabric loader here to use the fabric @Environment annotations
-    // Do NOT use other classes from fabric loader
-    modImplementation libs.fabric.loader
-}
-
-configurations {
-    dev
-}
-
-artifacts {
-    dev(jar)
-}
-
 architectury {
-    common("fabric"/*,"forge"*/)
+    common("fabric","neoforge")
 }
-repositories {
-    mavenCentral()
+
+dependencies {
+    // We depend on Fabric Loader here to use the Fabric @Environment annotations,
+    // which get remapped to the correct annotations on each platform.
+    // Do NOT use other classes from Fabric Loader.
+    modImplementation libs.fabric.loader
 }

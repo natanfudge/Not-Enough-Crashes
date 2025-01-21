@@ -5,10 +5,8 @@
 architectury_plugin = { id = "architectury-plugin", version.ref = "architectury_plugin" }
 architectury_loom = { id = "dev.architectury.loom", version.ref = "architectury_loom" }
 minotaur = { id = "com.modrinth.minotaur", version.ref = "minotaur" }
-#loom_quiltflower = { id = "io.github.juuxel.loom-quiltflower", version.ref = "loom_quiltflower" }
 cursegradle = { id = "com.matthewprenger.cursegradle", version.ref = "cursegradle" }
 shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
-task_tree = { id = "com.dorongold.task-tree", version.ref = "task_tree" }
 
 [versions]
 
@@ -17,7 +15,7 @@ mod_version = "4.4.8"
 
 # Gradle Plugins
 architectury_plugin = "3.4-SNAPSHOT"
-architectury_loom = "1.6-SNAPSHOT"
+architectury_loom = "1.9-SNAPSHOT"
 
 minotaur = "2.8.7"
 cursegradle = "1.4.0" # Must be updated in settings.gradle as well!
@@ -34,19 +32,20 @@ release_type = "release"
 
 # Mods & Libraries
 yarn_mappings = "1.21+build.9"
+yarn_mappings_patch_neoforge = "1.21+build.1"
 fabric_loader = "0.16.0"
 fabric_api = "0.101.2+1.21"
 modmenu = "11.0.1"
 
 quilt_loader = "0.26.0"
-forge = "50.1.0"
-architectury_api = "12.0.28"
+forge = "20.6.121"
 
 [libraries]
 
-minecraft = { module = "com.mojang:minecraft", version.ref = "minecraft" }
+minecraft = { module = "net.minecraft:minecraft", version.ref = "minecraft" }
 fabric_loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric_loader" }
 fabric_api = { module = "net.fabricmc.fabric-api:fabric-api", version.ref = "fabric_api" }
 quilt_loader = { module = "org.quiltmc:quilt-loader", version.ref = "quilt_loader" }
-architectury_api = { module = "dev.architectury:architectury", version.ref = "architectury_api" }
 modmenu = { module = "com.terraformersmc:modmenu", version.ref = "modmenu"}
+yarn_mappings_patch_neoforge = {module = "dev.architectury:yarn-mappings-patch-neoforge", version.ref = "yarn_mappings_patch_neoforge"}
+neoforge = { module = "net.neoforged:neoforge", version.ref = "forge" }
