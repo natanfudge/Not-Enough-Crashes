@@ -19,9 +19,11 @@ subprojects {
     apply plugin: "com.modrinth.minotaur"
     apply plugin: 'com.matthewprenger.cursegradle'
 
+
     def modVersion = libs.versions.mod.version.get()
     def minecraftVersion = libs.versions.minecraft.get()
-    ext.total_version = "$modVersion+$minecraftVersion"
+    def total_version = "$modVersion+$minecraftVersion"
+    ext.total_version = total_version
 
     def cf = libs.versions.overrides.curseforge.get()
     def mr = libs.versions.overrides.modrinth.get()
@@ -33,6 +35,11 @@ subprojects {
     archivesBaseName = rootProject.archives_base_name
     version = ext.total_version
     group = rootProject.maven_group
+
+    base {
+        // Set up a suffixed format for the mod jar names, e.g. `example-fabric`.
+        archivesName = "$rootProject.archives_base_name-$project.name"
+    }
 
     dependencies {
         minecraft libs.minecraft

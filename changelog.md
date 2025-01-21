@@ -1,3 +1,5 @@
+# Minecraft 1.20.6
+- Starting from Minecraft 1.20.6, NEC supports **only** NeoForge, and not Forge. 
 ### 4.4.7
 - Fixed crash in certain cases
 ### 4.4.6

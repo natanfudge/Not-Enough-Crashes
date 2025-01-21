@@ -57,18 +57,20 @@ remapJar {
     inputFile.set shadowJar.archiveFile
 }
 
+def forge_release  = "alpha"
+
 curseforge {
     apiKey = project.hasProperty("curseforge_api_key") ? project.curseforge_api_key : ""
     project {
         id = "442354"
-        releaseType = release_type
-        addGameVersion "Forge"
+        releaseType = forge_release
+        addGameVersion "NeoForge"
         addGameVersion curseforge_mc_version
         changelogType = "markdown"
         changelog = rootProject.file("changelog.md")
 
         mainArtifact(remapJar) {
-            displayName = "$mod_name $total_version Forge"
+            displayName = "$mod_name $total_version NeoForge"
         }
     }
 
@@ -81,13 +83,13 @@ modrinth {
     group = "upload"
     token =  project.hasProperty("modrinth_api_key") ? project.modrinth_api_key : ""
     projectId = 'yM94ont6'
-    versionNumber = total_version + "-forge" // Will fail if Modrinth has this version already
-    versionName = "$mod_name $total_version Forge"
+    versionNumber = total_version + "-neoforge" // Will fail if Modrinth has this version already
+    versionName = "$mod_name $total_version NeoForge"
     uploadFile = remapJar
     gameVersions = [modrinth_mc_version]
-    loaders = ["forge"]
+    loaders = ["neoforge"]
     changelog = rootProject.file("changelog.md").text
-    versionType = release_type
+    versionType = forge_release
 }
 
 
