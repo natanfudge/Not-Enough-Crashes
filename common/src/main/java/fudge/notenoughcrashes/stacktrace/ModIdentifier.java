@@ -1,7 +1,7 @@
 package fudge.notenoughcrashes.stacktrace;
 
-import fudge.notenoughcrashes.config.NecConfig;
 import fudge.notenoughcrashes.NotEnoughCrashes;
+import fudge.notenoughcrashes.config.NecConfig;
 import fudge.notenoughcrashes.platform.CommonModMetadata;
 import fudge.notenoughcrashes.platform.ModsByLocation;
 import fudge.notenoughcrashes.platform.NecPlatform;

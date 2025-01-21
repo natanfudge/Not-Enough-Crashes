@@ -10,12 +10,13 @@ import fudge.notenoughcrashes.upload.LegacyCrashLogUpload;
 import fudge.notenoughcrashes.utils.NecLocalization;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.ConfirmLinkScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.text.*;
+import net.minecraft.text.ClickEvent;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Style;
+import net.minecraft.text.Text;
 import net.minecraft.util.Util;
 import net.minecraft.util.crash.CrashReport;
 
@@ -31,7 +32,7 @@ public abstract class ProblemScreen extends Screen {
     private static final int GREEN = 0x00FF00;
     private static final int GRAY = 0x9a9a9a;
     private static final Text uploadToCrashyText = NecLocalization.translatedText("notenoughcrashes.gui.uploadToCrashy")
-            .copy().setStyle(Style.EMPTY.withColor(GREEN));
+            .copy()/*.setStyle(Style.EMPTY.withColor(GREEN))*/;
     private static final Text uploadToCrashyLoadingText = NecLocalization.translatedText("notenoughcrashes.gui.loadingCrashyUpload");
 
     private List<Widget> widgets = new ArrayList<>();

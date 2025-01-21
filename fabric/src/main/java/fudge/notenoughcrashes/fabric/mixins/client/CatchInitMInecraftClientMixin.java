@@ -12,7 +12,7 @@ import java.io.File;
 
 @Mixin(MinecraftClient.class)
 @SuppressWarnings({"StaticVariableMayNotBeInitialized", "MixinAnnotationTarget", "UnresolvedMixinReference", "InvalidInjectorMethodSignature"})
-public abstract class CatchInitMInecraftClientMixin {
+public abstract class CatchInitMinecraftClientMixin {
 
     // require = 0 to support quilt
     @Redirect(method = "<init>", require = 0, at = @At(value = "INVOKE", target = "Lnet/fabricmc/loader/impl/game/minecraft/Hooks;startClient(Ljava/io/File;Ljava/lang/Object;)V", remap = false))

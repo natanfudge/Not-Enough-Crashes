@@ -2,7 +2,7 @@
   "package": "fudge.notenoughcrashes.mixins",
   "required": true,
   "target": "@env(DEFAULT)",
-  "compatibilityLevel": "JAVA_17",
+  "compatibilityLevel": "JAVA_21",
   "minVersion": "0.8",
   "mixins": [
     "MixinCrashReport",

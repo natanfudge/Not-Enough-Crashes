@@ -1,6 +1,5 @@
 plugins {
     alias libs.plugins.architectury.loom apply false
-//    alias libs.plugins.loom.quiltflower apply false
     alias libs.plugins.minotaur apply false
     alias libs.plugins.architectury.plugin
     alias libs.plugins.cursegradle
@@ -11,41 +10,36 @@ architectury {
     minecraft = libs.versions.minecraft.get()
 }
 
+
+
 subprojects {
-    apply plugin: "dev.architectury.loom"
+    apply plugin: 'dev.architectury.loom'
+    apply plugin: 'architectury-plugin'
     apply plugin: 'maven-publish'
+    apply plugin: "com.modrinth.minotaur"
     apply plugin: 'com.matthewprenger.cursegradle'
-//    apply plugin: "com.modrinth.minotaur"
-//    apply plugin: "io.github.juuxel.loom-quiltflower"
 
-    dependencies {
-        minecraft libs.minecraft
-        // The following line declares the mojmap mappings, you may use other mappings as well
-        mappings "net.fabricmc:yarn:${libs.versions.yarn.mappings.get()}:v2"
-    }
-}
-
-allprojects {
-    apply plugin: "java"
-    apply plugin: "architectury-plugin"
-
-    ext.mod_version = libs.versions.mod.version.get()
-    ext.minecraft_version = libs.versions.minecraft.get()
-    ext.total_version = "$mod_version+$minecraft_version"
+    def modVersion = libs.versions.mod.version.get()
+    def minecraftVersion = libs.versions.minecraft.get()
+    ext.total_version = "$modVersion+$minecraftVersion"
 
     def cf = libs.versions.overrides.curseforge.get()
     def mr = libs.versions.overrides.modrinth.get()
 
-    ext.curseforge_mc_version = cf == 'mc' ? minecraft_version : cf
-    ext.modrinth_mc_version = mr == 'mc' ? minecraft_version : mr
+    ext.curseforge_mc_version = cf == 'mc' ? minecraftVersion : cf
+    ext.modrinth_mc_version = mr == 'mc' ? minecraftVersion : mr
     ext.release_type = libs.versions.release.type.get()
 
     archivesBaseName = rootProject.archives_base_name
     version = ext.total_version
     group = rootProject.maven_group
 
-    tasks.withType(JavaCompile) {
-        options.encoding = "UTF-8"
+    dependencies {
+        minecraft libs.minecraft
+        mappings loom.layered {
+            it.mappings("net.fabricmc:yarn:${libs.versions.yarn.mappings.version.get()}:v2")
+            it.mappings libs.yarn.mappings.patch.neoforge
+        }
     }
 
     java {
@@ -56,26 +50,25 @@ allprojects {
     }
 
 }
-
 task publishAll {
     group = "upload"
     dependsOn("fabric:publishFabric")
     dependsOn("forge:publishForge")
 }
 
-task addTestFabricMod(type: Copy) {
-    dependsOn project(":TestFabricMod").tasks.build
-    from "TestFabricMod/build/libs/nec_testmod-1.0.0.jar"
-    into "fabric/run/mods"
-}
-
-task addTestForgeMod(type: Copy) {
-    dependsOn project(":TestForgeMod").tasks.build
-//   Copy dev jar because there is no support for automatic remapping
-    from "TestForgeMod/build/libs/nec_testmod-1.0.0-dev-shadow.jar"
-    into "forge/run/mods"
-}
-
-task addTestMods {
-    dependsOn addTestFabricMod, addTestForgeMod
-}
+//task addTestFabricMod(type: Copy) {
+//    dependsOn project(":TestFabricMod").tasks.build
+//    from "TestFabricMod/build/libs/nec_testmod-1.0.0.jar"
+//    into "fabric/run/mods"
+//}
+//
+//task addTestForgeMod(type: Copy) {
+//    dependsOn project(":TestForgeMod").tasks.build
+////   Copy dev jar because there is no support for automatic remapping
+//    from "TestForgeMod/build/libs/nec_testmod-1.0.0-dev-shadow.jar"
+//    into "forge/run/mods"
+//}
+//
+//task addTestMods {
+//    dependsOn addTestFabricMod, addTestForgeMod
+//}
