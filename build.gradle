@@ -60,7 +60,7 @@ subprojects {
 task publishAll {
     group = "upload"
     dependsOn("fabric:publishFabric")
-    dependsOn("forge:publishForge")
+    dependsOn("neoforge:publishForge")
 }
 
 //task addTestFabricMod(type: Copy) {

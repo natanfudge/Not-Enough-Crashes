@@ -66,8 +66,6 @@ public class GlUtil {
         RenderSystem.colorMask(true, true, true, true);
         RenderSystem.clearDepth(1.0D);
 
-        BackgroundRenderer.clearFog();
-
 
         RenderSystem.lineWidth(1.0F);
         RenderSystem.clearDepth(1.0D);
