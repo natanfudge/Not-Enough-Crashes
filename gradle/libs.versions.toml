@@ -23,7 +23,7 @@ shadow = "8.1.1"
 task_tree = "4.0.0"
 
 # Minecraft
-minecraft = "1.21"
+minecraft = "1.21.1"
 
 # CurseForge & Modrinth MC overrides (or "mc" to use the main version)
 overrides_curseforge = "mc"
@@ -31,14 +31,14 @@ overrides_modrinth = "mc"
 release_type = "release"
 
 # Mods & Libraries
-yarn_mappings_version = "1.21+build.9"
+yarn_mappings_version = "1.21.1+build.3"
 yarn_mappings_patch_neoforge = "1.21+build.4"
-fabric_loader = "0.16.0"
-fabric_api = "0.101.2+1.21"
-modmenu = "11.0.1"
+fabric_loader = "0.16.10"
+fabric_api = "0.115.0+1.21.1"
+modmenu = "11.0.3"
 
 quilt_loader = "0.26.0"
-forge = "21.0.167"
+forge = "21.1.113"
 
 [libraries]
 
