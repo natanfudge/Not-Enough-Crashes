@@ -46,6 +46,7 @@ subprojects {
         mappings loom.layered {
             it.mappings("net.fabricmc:yarn:${libs.versions.yarn.mappings.version.get()}:v2")
             it.mappings libs.yarn.mappings.patch.neoforge
+//            it.officialMojangMappings()
         }
     }
 

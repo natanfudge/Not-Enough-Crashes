@@ -1,8 +1,12 @@
 package fudge.notenoughcrashes.config;
 
 import com.google.common.collect.Lists;
-import com.google.gson.ExclusionStrategy; import com.google.gson.FieldAttributes; import com.google.gson.Gson; import com.google.gson.GsonBuilder;
+import com.google.gson.*;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
+import com.mojang.blaze3d.opengl.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.serialization.JsonOps;
 import fudge.notenoughcrashes.platform.NecPlatform;
 import net.fabricmc.api.EnvType; import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient; import net.minecraft.client.font.TextRenderer; import net.minecraft.client.gui.DrawContext;
@@ -19,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*; import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.Color;
+import java.io.IOException;
 import java.lang.annotation.ElementType; import java.lang.annotation.Retention; import java.lang.annotation.RetentionPolicy; import java.lang.annotation.Target;
 import java.lang.reflect.Field; import java.lang.reflect.Modifier; import java.lang.reflect.ParameterizedType;
 import java.nio.file.Files; import java.nio.file.Path;
@@ -76,7 +81,10 @@ public abstract class MidnightConfig {
     private static final Gson gson = new GsonBuilder()
             .excludeFieldsWithModifiers(Modifier.TRANSIENT).excludeFieldsWithModifiers(Modifier.PRIVATE)
             .addSerializationExclusionStrategy(new HiddenAnnotationExclusionStrategy())
-            .registerTypeAdapter(Identifier.class, new Identifier.Serializer())
+            .registerTypeAdapter(Identifier.class, new TypeAdapter<Identifier>() {
+                public void write(JsonWriter out, Identifier id) throws IOException { out.value(id.toString()); }
+                public Identifier read(JsonReader in) throws IOException { return Identifier.of(in.nextString()); }
+            })
             .setPrettyPrinting().create();
 
     @SuppressWarnings("unused") // Utility for mod authors
@@ -423,9 +431,9 @@ public abstract class MidnightConfig {
         @Override
         protected void drawHeaderAndFooterSeparators(DrawContext context) {
             if (renderHeaderSeparator) super.drawHeaderAndFooterSeparators(context);
-            else { RenderSystem.enableBlend();
+            else { GlStateManager._enableBlend();
                 context.drawTexture(RenderLayer::getGuiTextured, this.client.world == null ? Screen.FOOTER_SEPARATOR_TEXTURE : Screen.INWORLD_FOOTER_SEPARATOR_TEXTURE, this.getX(), this.getBottom(), 0.0F, 0.0F, this.getWidth(), 2, 32, 2);
-                RenderSystem.disableBlend(); }
+                GlStateManager._disableBlend(); }
         }
         public void addButton(List<ClickableWidget> buttons, Text text, EntryInfo info) { this.addEntry(new ButtonEntry(buttons, text, info)); }
         public void clear() { this.clearEntries(); }

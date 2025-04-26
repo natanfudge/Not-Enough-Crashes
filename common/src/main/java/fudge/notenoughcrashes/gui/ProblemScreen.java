@@ -22,6 +22,7 @@ import net.minecraft.util.crash.CrashReport;
 import net.minecraft.util.crash.ReportType;
 
 import java.io.File;
+import java.net.URI;
 import java.nio.file.Path;
 import java.util.*;
 
@@ -79,7 +80,7 @@ public abstract class ProblemScreen extends Screen {
                     String issuesPage = mod.issuesPage();
                     MutableText modText = Text.literal(mod.name());
                     if (issuesPage != null) {
-                        modText.styled(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, issuesPage)));
+                        modText.styled(style -> style.withClickEvent(new ClickEvent.OpenUrl(URI.create(issuesPage))));
                     }
                     return modText;
 
