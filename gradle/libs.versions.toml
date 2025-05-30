@@ -11,7 +11,7 @@ shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
 [versions]
 
 # This Mod Version
-mod_version = "4.4.8"
+mod_version = "4.4.9"
 
 # Gradle Plugins
 architectury_plugin = "3.4-SNAPSHOT"

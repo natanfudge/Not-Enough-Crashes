@@ -1,3 +1,5 @@
+### 4.4.9
+- Added Japanese Translation
 ### 4.4.8
 - Removed a fringe feature that was eating away at the computer's memory
 # Minecraft 1.20.6
