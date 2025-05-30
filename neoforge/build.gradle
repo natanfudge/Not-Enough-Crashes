@@ -57,7 +57,7 @@ remapJar {
     inputFile.set shadowJar.archiveFile
 }
 
-def forge_release  = "alpha"
+def forge_release  = "release"
 
 curseforge {
     apiKey = project.hasProperty("curseforge_api_key") ? project.curseforge_api_key : ""
