@@ -26,7 +26,7 @@ public class EntryPointCatcher {
     public static void handleEntryPointError(Throwable e) {
         crashReport = CrashReport.create(e, "Initializing game");
         crashReport.addElement("Initialization");
-        MinecraftClient.addSystemDetailsToCrashReport(null, null, MinecraftVersion.create().comp_4024(), null, crashReport);
+        MinecraftClient.addSystemDetailsToCrashReport(null, null, MinecraftVersion.create().name(), null, crashReport);
         CrashUtils.outputClientReport(crashReport);
 
         // Make GL shuttup about any GL error that occurred

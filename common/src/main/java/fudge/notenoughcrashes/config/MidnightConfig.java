@@ -458,7 +458,7 @@ public abstract class MidnightConfig {
         @Override
         protected void drawHeaderAndFooterSeparators(DrawContext context) {
             if (renderHeaderSeparator) super.drawHeaderAndFooterSeparators(context);
-            else context.method_25290(RenderPipelines.GUI_TEXTURED, this.client.world == null ? Screen.FOOTER_SEPARATOR_TEXTURE : Screen.INWORLD_FOOTER_SEPARATOR_TEXTURE, this.getX(), this.getBottom(), 0, 0, this.getWidth(), 2, 32, 2);
+            else context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, this.client.world == null ? Screen.FOOTER_SEPARATOR_TEXTURE : Screen.INWORLD_FOOTER_SEPARATOR_TEXTURE, this.getX(), this.getBottom(), 0, 0, this.getWidth(), 2, 32, 2);
         }
         public void addButton(List<ClickableWidget> buttons, Text text, EntryInfo info) { this.addEntry(new ButtonEntry(buttons, text, info)); }
         public void clear() { this.clearEntries(); }
