@@ -22,7 +22,7 @@ cursegradle = "1.4.0" # Must be updated in settings.gradle as well!
 shadow = "8.1.1"
 
 # Minecraft
-minecraft = "1.21.5"
+minecraft = "1.21.6"
 
 # CurseForge & Modrinth MC overrides (or "mc" to use the main version)
 overrides_curseforge = "mc"
@@ -33,11 +33,11 @@ release_type = "release"
 yarn_mappings_version = "1.21.5+build.1"
 yarn_mappings_patch_neoforge = "1.21+build.4"
 fabric_loader = "0.16.14"
-fabric_api = "0.121.0+1.21.5"
-modmenu = "13.0.0"
+fabric_api = "0.128.2+1.21.6"
+modmenu = "15.0.0-beta.3"
 
 quilt_loader = "0.26.0"
-forge = "21.5.58-beta"
+forge = "21.6.20-beta"
 
 [libraries]
 

@@ -50,7 +50,7 @@ public class InGameCatcher {
             getClient().getNetworkHandler().getConnection().disconnect(Text.of(String.format("[%s] Client crashed", NotEnoughCrashes.NAME)));
         }
 
-        getClient().disconnect(new MessageScreen(NecLocalization.translatedText("menu.savingLevel")));
+        getClient().disconnect(new MessageScreen(NecLocalization.translatedText("menu.savingLevel")), false);
 
         renderTaskQueue.clear(); // Fix: method_1550(null, ...) only clears when integrated server is running
     }

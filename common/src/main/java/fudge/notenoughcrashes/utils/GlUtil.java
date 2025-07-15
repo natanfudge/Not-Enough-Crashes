@@ -25,7 +25,7 @@ public class GlUtil {
 
         // Reset depth
         GlStateManager._disableDepthTest();
-        RenderSystem.disableScissor();
+//        RenderSystem.disableScissor();
         GlStateManager._depthFunc(513);
         GlStateManager._depthMask(true);
 

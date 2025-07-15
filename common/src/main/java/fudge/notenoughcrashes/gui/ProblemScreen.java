@@ -1,11 +1,8 @@
 package fudge.notenoughcrashes.gui;
 
 import fudge.notenoughcrashes.NotEnoughCrashes;
-import fudge.notenoughcrashes.gui.util.TextWidget;
-import fudge.notenoughcrashes.gui.util.Widget;
 import fudge.notenoughcrashes.platform.CommonModMetadata;
 import fudge.notenoughcrashes.stacktrace.ModIdentifier;
-import fudge.notenoughcrashes.upload.CrashyUpload;
 import fudge.notenoughcrashes.upload.LegacyCrashLogUpload;
 import fudge.notenoughcrashes.utils.NecLocalization;
 import net.fabricmc.api.EnvType;
@@ -13,15 +10,14 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.TextWidget;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.MutableText;
-import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Util;
 import net.minecraft.util.crash.CrashReport;
 import net.minecraft.util.crash.ReportType;
 
-import java.io.File;
 import java.net.URI;
 import java.nio.file.Path;
 import java.util.*;
@@ -31,21 +27,6 @@ public abstract class ProblemScreen extends Screen {
     private static final Set<String> IGNORED_MODS = new HashSet<>(Arrays.asList(
             "minecraft", "fabricloader", "loadcatcher", "jumploader", "quilt_loader", "forge", "notenoughcrashes"
     ));
-
-    private static final int GREEN = 0x00FF00;
-    private static final int GRAY = 0x9a9a9a;
-    private static final Text uploadToCrashyText = NecLocalization.translatedText("notenoughcrashes.gui.uploadToCrashy")
-            .copy()/*.setStyle(Style.EMPTY.withColor(GREEN))*/;
-    private static final Text uploadToCrashyLoadingText = NecLocalization.translatedText("notenoughcrashes.gui.loadingCrashyUpload");
-
-    private List<Widget> widgets = new ArrayList<>();
-
-    protected void addWidget(Widget widget) {
-        widgets.add(widget);
-    }
-
-    public abstract ProblemScreen construct(CrashReport report);
-
     protected CrashReport report;
     private String uploadedCrashLink = null;
     protected int xLeft = Integer.MAX_VALUE;
@@ -90,13 +71,17 @@ public abstract class ProblemScreen extends Screen {
     }
 
     private void addSuspectedModsWidget() {
-        addWidget(new TextWidget(getSuspectedModsText(), TextWidget.CLICKABLE_TEXT_COLOR, textRenderer, width / 2, y + 29));
+        var widget = new TextWidget(getSuspectedModsText(),textRenderer);
+        widget.setX(width / 2 - textRenderer.getWidth(getSuspectedModsText().getString()) / 2);
+        widget.setTextColor(0xE0E000);
+        widget.setY(y + 29);
+        addDrawableChild(widget);
     }
 
     private void handleLegacyLinkClick(ButtonWidget buttonWidget) {
         try {
             if (uploadedCrashLink == null) {
-                uploadedCrashLink = LegacyCrashLogUpload.upload(report. asString(ReportType.MINECRAFT_CRASH_REPORT));
+                uploadedCrashLink = LegacyCrashLogUpload.upload(report.asString(ReportType.MINECRAFT_CRASH_REPORT));
             }
             Util.getOperatingSystem().open(uploadedCrashLink);
         } catch (Throwable e) {
@@ -107,48 +92,15 @@ public abstract class ProblemScreen extends Screen {
     }
 
 
-    private String crashyLink = null;
-
-    private void handleCrashyUploadClick(ButtonWidget buttonWidget) {
-        try {
-            if (crashyLink == null) {
-                buttonWidget.active = false;
-                buttonWidget.setMessage(uploadToCrashyLoadingText);
-                CrashyUpload.uploadToCrashy(report.asString(ReportType.MINECRAFT_CRASH_REPORT)).thenAccept(link -> {
-                    crashyLink = link;
-                    buttonWidget.active = true;
-                    buttonWidget.setMessage(uploadToCrashyText);
-                    Util.getOperatingSystem().open(crashyLink);
-                });
-            } else {
-                Util.getOperatingSystem().open(crashyLink);
-            }
-        } catch (Throwable e) {
-            NotEnoughCrashes.getLogger().error("Exception uploading to crashy", e);
-            buttonWidget.setMessage(NecLocalization.translatedText("notenoughcrashes.gui.failed"));
-            buttonWidget.active = false;
-        }
-    }
-
     @Override
     public void init() {
-        widgets = new ArrayList<>();
-//        height / 4 + 120 + 12
         addDrawableChild(
                 ButtonWidget.builder(
-                        NecLocalization.translatedText("notenoughcrashes.gui.getLink")
-                        // No longer grayed out because Crashy is not working ATM
-//                                .copy().setStyle(Style.EMPTY.withColor(GRAY))
+                                NecLocalization.translatedText("notenoughcrashes.gui.getLink")
                                 , this::handleLegacyLinkClick)
-                        .dimensions(width / 2 - 155 + 160, height / 4 + 144 + 12, 150, 20)
+                        .dimensions(width / 2 - 155 + 160, height / 4 + 120 + 12, 150, 20)
                         .build()
         );
-
-//        addDrawableChild(
-//                ButtonWidget.builder(uploadToCrashyText,this::handleCrashyUploadClick)
-//                        .dimensions(width / 2 - 155 + 160, height / 4 + 120 + 12, 150, 20)
-//                        .build()
-//        );
 
 
         x = width / 2 - 155;
@@ -158,7 +110,6 @@ public abstract class ProblemScreen extends Screen {
 
     @Override
     public boolean mouseClicked(double x, double y, int int_1) {
-        for (Widget widget : widgets) widget.onClick(x, y);
         if (x >= xLeft && x <= xRight && y >= yTop && y <= yBottom) {
             Path file = report.getFile();
             if (file != null) {
@@ -173,22 +124,15 @@ public abstract class ProblemScreen extends Screen {
         return false;
     }
 
-
-    protected void drawFileNameString(DrawContext context, int y) {
-        String fileNameString = report.getFile() != null ? "\u00A7n" + report.getFile().getFileName()
+    String getFileNameString() {
+        return report.getFile() != null ? "\u00A7n" + report.getFile().getFileName()
                 : NecLocalization.localize("notenoughcrashes.crashscreen.reportSaveFailed");
-        int stLen = textRenderer.getWidth(fileNameString);
-        xLeft = width / 2 - stLen / 2;
-        xRight = width / 2 + stLen / 2;
-        context.drawTextWithShadow(textRenderer, fileNameString, xLeft, y += 11, 0x00FF00);
-        yTop = y;
-        yBottom = y + 10;
     }
+
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         super.render(context, mouseX, mouseY, delta);
-        for (Widget widget : widgets) widget.draw(context);
     }
 
 }
