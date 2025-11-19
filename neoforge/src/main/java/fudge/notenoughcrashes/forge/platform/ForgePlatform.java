@@ -61,7 +61,7 @@ public class ForgePlatform implements NecPlatform {
 
     @Override
     public boolean isDevelopmentEnvironment() {
-        return !FMLLoader.isProduction();
+        return !FMLLoader.getCurrent().isProduction();
     }
 
     @Override
@@ -101,7 +101,7 @@ public class ForgePlatform implements NecPlatform {
 
     @Override
     public boolean isClient() {
-        return FMLEnvironment.dist == Dist.CLIENT;
+        return FMLEnvironment.getDist() == Dist.CLIENT;
     }
 
     private static CommonModMetadata toCommon(IModInfo imod) {

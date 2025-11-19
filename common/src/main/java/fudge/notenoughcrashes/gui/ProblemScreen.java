@@ -7,6 +7,7 @@ import fudge.notenoughcrashes.upload.LegacyCrashLogUpload;
 import fudge.notenoughcrashes.utils.NecLocalization;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -108,15 +109,16 @@ public abstract class ProblemScreen extends Screen {
         addSuspectedModsWidget();
     }
 
+
     @Override
-    public boolean mouseClicked(double x, double y, int int_1) {
+    public boolean mouseClicked(Click click, boolean doubled) {
         if (x >= xLeft && x <= xRight && y >= yTop && y <= yBottom) {
             Path file = report.getFile();
             if (file != null) {
                 Util.getOperatingSystem().open(file);
             }
         }
-        return super.mouseClicked(x, y, int_1);
+        return super.mouseClicked(click, doubled);
     }
 
     @Override

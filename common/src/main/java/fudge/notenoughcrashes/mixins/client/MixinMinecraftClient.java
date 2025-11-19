@@ -32,10 +32,6 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
     private Supplier<CrashReport> crashReportSupplier;
 
     @Shadow
-    @Final
-    private Queue<Runnable> renderTaskQueue;
-
-    @Shadow
     private Recorder recorder;
 
     @Shadow
@@ -120,7 +116,7 @@ public abstract class MixinMinecraftClient extends ReentrantThreadExecutor<Runna
     @Inject(method = "cleanUpAfterCrash()V", at = @At("HEAD"))
     private void beforeCleanUpAfterCrash(CallbackInfo info) {
         if (NotEnoughCrashes.enableGameloopCatching()) {
-            InGameCatcher.cleanupBeforeMinecraft(renderTaskQueue);
+            InGameCatcher.cleanupBeforeMinecraft();
         }
     }
 //String levelName, LevelStorage.Session session, ResourcePackManager dataPackManager, SaveLoader saveLoader

@@ -44,4 +44,8 @@ public interface NecPlatform {
     }
 
     boolean isClient();
+
+    default boolean isClientEnv() {
+        return isClient();
+    }
 }

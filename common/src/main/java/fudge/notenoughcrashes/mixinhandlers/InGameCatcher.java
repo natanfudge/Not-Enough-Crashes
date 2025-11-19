@@ -43,7 +43,7 @@ public class InGameCatcher {
         resetCriticalGameState();
     }
 
-    public static void cleanupBeforeMinecraft(Queue<Runnable> renderTaskQueue) {
+    public static void cleanupBeforeMinecraft() {
         if (getClient().getNetworkHandler() != null) {
             // Fix: Close the connection to avoid receiving packets from old server
             // when playing in another world (MC-128953)
@@ -52,7 +52,6 @@ public class InGameCatcher {
 
         getClient().disconnect(new MessageScreen(NecLocalization.translatedText("menu.savingLevel")), false);
 
-        renderTaskQueue.clear(); // Fix: method_1550(null, ...) only clears when integrated server is running
     }
 
     // Sometimes the game fails to reset this so we make sure it happens ourselves
