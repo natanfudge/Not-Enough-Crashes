@@ -12,6 +12,7 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.MultilineTextWidget;
 import net.minecraft.client.gui.widget.TextWidget;
 import net.minecraft.client.gui.widget.Widget;
+import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.crash.CrashReport;
 
@@ -79,10 +80,10 @@ public class CrashScreen extends ProblemScreen {
 
     /** Convenience factory for a centred `TextWidget`. */
     private TextWidget centeredText(int centreX, int y, Text text, int color) {
-        var w = new TextWidget(text, textRenderer);
+        Text coloredText = text.copy().styled(style -> style.withColor(color));
+        var w = new TextWidget(coloredText, textRenderer);
         w.setX(centreX - textRenderer.getWidth(text.getString()) / 2);
         w.setY(y);
-        w.setTextColor(color);
         return w;
     }
 

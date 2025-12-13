@@ -66,7 +66,7 @@ public class GlUtil {
         GlStateManager._colorMask(true, true, true, true);
 //        RenderSystem.clearDepth(1.0D);
 
-        RenderSystem.lineWidth(1.0F);
+        GL11.glLineWidth(1.0F);
 //        RenderSystem.clearDepth(1.0D);
         GlStateManager._enableDepthTest();
         GlStateManager._depthFunc(515);

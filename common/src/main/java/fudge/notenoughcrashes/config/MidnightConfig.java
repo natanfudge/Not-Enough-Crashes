@@ -155,8 +155,6 @@ public abstract class MidnightConfig {
     }
 
     protected Text getEnumTranslatableText(Object value, EntryInfo info) {
-        if (value instanceof TranslatableOption translatableOption) return translatableOption.getText();
-
         String translationKey = "%s.midnightconfig.enum.%s.%s".formatted(modid, info.dataType.getSimpleName(), info.toTemporaryValue());
         return I18n.hasTranslation(translationKey) ? Text.translatable(translationKey) : Text.literal(info.toTemporaryValue());
     }

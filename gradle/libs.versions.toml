@@ -15,14 +15,14 @@ mod_version = "4.4.9"
 
 # Gradle Plugins
 architectury_plugin = "3.4-SNAPSHOT"
-architectury_loom = "1.11-SNAPSHOT"
+architectury_loom = "1.13-SNAPSHOT"
 
 minotaur = "2.8.7"
 cursegradle = "1.4.0" # Must be updated in settings.gradle as well!
 shadow = "8.1.1"
 
 # Minecraft
-minecraft = "1.21.10"
+minecraft = "1.21.11"
 
 # CurseForge & Modrinth MC overrides (or "mc" to use the main version)
 overrides_curseforge = "mc"
@@ -30,14 +30,14 @@ overrides_modrinth = "mc"
 release_type = "release"
 
 # Mods & Libraries
-yarn_mappings_version = "1.21.10+build.2"
+yarn_mappings_version = "1.21.11+build.3"
 yarn_mappings_patch_neoforge = "1.21+build.4"
-fabric_loader = "0.18.0"
-fabric_api = "0.138.3+1.21.10"
-modmenu = "16.0.0-rc.1"
+fabric_loader = "0.18.2"
+fabric_api = "0.139.5+1.21.11"
+modmenu = "17.0.0-alpha.1"
 
 quilt_loader = "0.26.0"
-forge = "21.10.52-beta"
+forge = "21.11.6-beta"
 
 [libraries]
 

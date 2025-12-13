@@ -14,6 +14,7 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextWidget;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.MutableText;
+import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Util;
 import net.minecraft.util.crash.CrashReport;
@@ -72,9 +73,9 @@ public abstract class ProblemScreen extends Screen {
     }
 
     private void addSuspectedModsWidget() {
-        var widget = new TextWidget(getSuspectedModsText(),textRenderer);
-        widget.setX(width / 2 - textRenderer.getWidth(getSuspectedModsText().getString()) / 2);
-        widget.setTextColor(0xE0E000);
+        Text suspectedModsText = getSuspectedModsText().copy().styled(style -> style.withColor(0xE0E000));
+        var widget = new TextWidget(suspectedModsText, textRenderer);
+        widget.setX(width / 2 - textRenderer.getWidth(suspectedModsText.getString()) / 2);
         widget.setY(y + 29);
         addDrawableChild(widget);
     }
