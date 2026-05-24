@@ -1,11 +1,11 @@
 package fudge.notenoughcrashes.config;
 
 import fudge.notenoughcrashes.platform.NecPlatform;
-import net.minecraft.client.gui.tab.Tab;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.resource.language.I18n;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.components.tabs.Tab;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.network.chat.Component;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -21,8 +21,8 @@ public class EntryInfo {
     Object defaultValue, value, function;
     String tempValue;   // The value visible in the config screen
     boolean inLimits = true;
-    Text error;
-    ClickableWidget actionButton; // color picker button / explorer button
+    Component error;
+    AbstractWidget actionButton; // color picker button / explorer button
     Tab tab;
     boolean conditionsMet = true;
 
@@ -99,6 +99,6 @@ public class EntryInfo {
 
     public Tooltip getTooltip(boolean isButton) {
         String key = translationKey + (!isButton ? ".label" : "") + ".tooltip";
-        return Tooltip.of(isButton && this.error != null ? this.error : I18n.hasTranslation(key) ? Text.translatable(key) : Text.empty());
+        return Tooltip.create(isButton && this.error != null ? this.error : I18n.exists(key) ? Component.translatable(key) : Component.empty());
     }
 }

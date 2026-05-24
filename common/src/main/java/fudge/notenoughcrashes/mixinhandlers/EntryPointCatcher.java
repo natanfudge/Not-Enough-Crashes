@@ -3,12 +3,9 @@ package fudge.notenoughcrashes.mixinhandlers;
 import fudge.notenoughcrashes.NotEnoughCrashes;
 import fudge.notenoughcrashes.gui.InitErrorScreen;
 import fudge.notenoughcrashes.stacktrace.CrashUtils;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.MinecraftVersion;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.util.Window;
-import net.minecraft.util.crash.CrashReport;
+import net.minecraft.client.Minecraft;
+import com.mojang.blaze3d.platform.Window;
+import net.minecraft.CrashReport;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -22,28 +19,26 @@ public class EntryPointCatcher {
     private static final Logger LOGGER = LogManager.getLogger(NotEnoughCrashes.NAME + " Entry Points");
 
 
-    @Environment(EnvType.CLIENT)
     public static void handleEntryPointError(Throwable e) {
-        crashReport = CrashReport.create(e, "Initializing game");
-        crashReport.addElement("Initialization");
-        MinecraftClient.addSystemDetailsToCrashReport(null, null, MinecraftVersion.create().name(), null, crashReport);
+        crashReport = CrashReport.forThrowable(e, "Initializing game");
+        crashReport.addCategory("Initialization");
+        Minecraft.getInstance().fillReport(crashReport);
         CrashUtils.outputClientReport(crashReport);
 
         // Make GL shuttup about any GL error that occurred
-        Window.acceptError((integer, stringx) -> {
+        Window.checkGlfwError((integer, stringx) -> {
         });
     }
 
 
-    @Environment(EnvType.CLIENT)
     public static void displayInitErrorScreen() {
         try {
-            MinecraftClient.getInstance().setScreen(new InitErrorScreen(crashReport));
+            Minecraft.getInstance().setScreen(new InitErrorScreen(crashReport));
         } catch (Throwable t) {
-            CrashReport additionalReport = CrashReport.create(t, "Displaying init error screen");
+            CrashReport additionalReport = CrashReport.forThrowable(t, "Displaying init error screen");
             LOGGER.error("An uncaught exception occured while displaying the init error screen, making normal report instead", t);
             CrashUtils.outputClientReport(additionalReport);
-            System.exit(additionalReport.getFile() != null ? -1 : -2);
+            System.exit(additionalReport.getSaveFile() != null ? -1 : -2);
         }
     }
 

@@ -54,8 +54,7 @@ public class ModsByLocation {
         String noUnion = removePrefix(path, "union:/");
         // Remove scheme marker
         String noScheme = removeAndBefore(noUnion, "//");
-        // Remove '%2370!' that forge has, example:
-        // union:/C:/Users/natan/.gradle/caches/fabric-loom/1.17.1/net.fabricmc.yarn.1_17_1.1.17.1+build.61-v2-forge-1.17.1-37.0.69/forge-1.17.1-37.0.69-minecraft-mapped.jar%2371!
+        // Remove '%2370!' that forge has in union paths.
         // We use 'removeLastPercentSymbol' instead of removing everything after last occurrence of '%' so it works with spaces as well
         // (the last space will be 'deleted', but that doesn't matter for our purposes)
         String noPercent = removeLastPercentSymbol(noScheme);

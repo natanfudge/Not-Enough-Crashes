@@ -3,7 +3,7 @@
 [plugins]
 
 architectury_plugin = { id = "architectury-plugin", version.ref = "architectury_plugin" }
-architectury_loom = { id = "dev.architectury.loom", version.ref = "architectury_loom" }
+architectury_loom = { id = "dev.architectury.loom-no-remap", version.ref = "architectury_loom" }
 minotaur = { id = "com.modrinth.minotaur", version.ref = "minotaur" }
 cursegradle = { id = "com.matthewprenger.cursegradle", version.ref = "cursegradle" }
 shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
@@ -14,15 +14,15 @@ shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
 mod_version = "4.4.9"
 
 # Gradle Plugins
-architectury_plugin = "3.4-SNAPSHOT"
-architectury_loom = "1.13-SNAPSHOT"
+architectury_plugin = "3.5.166"
+architectury_loom = "1.14.473"
 
 minotaur = "2.8.7"
 cursegradle = "1.4.0" # Must be updated in settings.gradle as well!
 shadow = "8.1.1"
 
 # Minecraft
-minecraft = "1.21.11"
+minecraft = "26.1.2"
 
 # CurseForge & Modrinth MC overrides (or "mc" to use the main version)
 overrides_curseforge = "mc"
@@ -30,14 +30,12 @@ overrides_modrinth = "mc"
 release_type = "release"
 
 # Mods & Libraries
-yarn_mappings_version = "1.21.11+build.3"
-yarn_mappings_patch_neoforge = "1.21+build.4"
-fabric_loader = "0.18.2"
-fabric_api = "0.139.5+1.21.11"
-modmenu = "17.0.0-alpha.1"
+fabric_loader = "0.19.2"
+fabric_api = "0.149.1+26.1.2"
+modmenu = "18.0.0-beta.1"
 
 quilt_loader = "0.26.0"
-forge = "21.11.6-beta"
+forge = "26.1.2.64-beta"
 
 [libraries]
 
@@ -46,5 +44,4 @@ fabric_loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric_l
 fabric_api = { module = "net.fabricmc.fabric-api:fabric-api", version.ref = "fabric_api" }
 quilt_loader = { module = "org.quiltmc:quilt-loader", version.ref = "quilt_loader" }
 modmenu = { module = "com.terraformersmc:modmenu", version.ref = "modmenu"}
-yarn_mappings_patch_neoforge = {module = "dev.architectury:yarn-mappings-patch-neoforge", version.ref = "yarn_mappings_patch_neoforge"}
 neoforge = { module = "net.neoforged:neoforge", version.ref = "forge" }

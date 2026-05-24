@@ -7,11 +7,11 @@ import fudge.notenoughcrashes.patches.MinecraftClientAccess;
 import fudge.notenoughcrashes.stacktrace.CrashUtils;
 import fudge.notenoughcrashes.utils.GlUtil;
 import fudge.notenoughcrashes.utils.NecLocalization;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.MessageScreen;
-import net.minecraft.text.Text;
-import net.minecraft.util.crash.CrashReport;
-import net.minecraft.util.profiler.DummyRecorder;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.GenericMessageScreen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.CrashReport;
+import net.minecraft.util.profiling.metrics.profiling.InactiveMetricsRecorder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -44,29 +44,29 @@ public class InGameCatcher {
     }
 
     public static void cleanupBeforeMinecraft() {
-        if (getClient().getNetworkHandler() != null) {
+        if (getClient().getConnection() != null) {
             // Fix: Close the connection to avoid receiving packets from old server
             // when playing in another world (MC-128953)
-            getClient().getNetworkHandler().getConnection().disconnect(Text.of(String.format("[%s] Client crashed", NotEnoughCrashes.NAME)));
+            getClient().getConnection().getConnection().disconnect(Component.literal(String.format("[%s] Client crashed", NotEnoughCrashes.NAME)));
         }
 
-        getClient().disconnect(new MessageScreen(NecLocalization.translatedText("menu.savingLevel")), false);
+        getClient().disconnect(new GenericMessageScreen(NecLocalization.translatedText("menu.savingLevel")), false);
 
     }
 
     // Sometimes the game fails to reset this so we make sure it happens ourselves
     private static void resetCriticalGameState() {
-        MinecraftClient client = getClient();
+        Minecraft client = getClient();
         // Turn off profiler because it will crash the game if the world is closed
-        if (((MinecraftClientAccess) client).getRecorder().isActive()) {
-            client.toggleDebugProfiler(null);
-            ((MinecraftClientAccess) client).setRecorder(DummyRecorder.INSTANCE);
+        if (((MinecraftClientAccess) client).getRecorder().isRecording()) {
+            ((MinecraftClientAccess) client).getRecorder().cancel();
+            ((MinecraftClientAccess) client).setRecorder(InactiveMetricsRecorder.INSTANCE);
         }
         client.player = null;
-        client.world = null;
+        client.level = null;
 
-        var server = client.getServer();
-        if (server != null) server.stop(true);
+        var server = client.getSingleplayerServer();
+        if (server != null) server.halt(true);
     }
 
     private static void resetModState() {
@@ -81,13 +81,13 @@ public class InGameCatcher {
         displayCrashScreen(report, serverCrashCount, false);
     }
 
-    private static MinecraftClient getClient() {
-        return MinecraftClient.getInstance();
+    private static Minecraft getClient() {
+        return Minecraft.getInstance();
     }
 
     public static void addInfoToCrash(CrashReport report) {
-        report.getSystemDetailsSection().addSection("Client Crashes Since Restart", () -> String.valueOf(clientCrashCount));
-        report.getSystemDetailsSection().addSection("Integrated Server Crashes Since Restart", () -> String.valueOf(serverCrashCount));
+        report.getSystemReport().setDetail("Client Crashes Since Restart", () -> String.valueOf(clientCrashCount));
+        report.getSystemReport().setDetail("Integrated Server Crashes Since Restart", () -> String.valueOf(serverCrashCount));
     }
 
     public static void displayCrashScreen(CrashReport report, int crashCount, boolean clientCrash) {
@@ -104,7 +104,7 @@ public class InGameCatcher {
 
             // Vanilla does this when switching to main menu but not our custom crash screen
             // nor the out of memory screen (see https://bugs.mojang.com/browse/MC-128953)
-            getClient().inGameHud.getChatHud().clear(true);
+            getClient().gui.getChat().clearMessages(true);
 
             // Display the crash screen
             getClient().setScreen(new CrashScreen(report));
@@ -112,8 +112,8 @@ public class InGameCatcher {
             crashScreenActive = false;
             // The crash screen has crashed. Report it normally instead.
             LOGGER.error("An uncaught exception occured while displaying the crash screen, making normal report instead", t);
-            getClient().printCrashReport(report);
-            System.exit(report.getFile() != null ? -1 : -2);
+            Minecraft.saveReport(getClient().gameDirectory, report);
+            System.exit(report.getSaveFile() != null ? -1 : -2);
         }
     }
 }

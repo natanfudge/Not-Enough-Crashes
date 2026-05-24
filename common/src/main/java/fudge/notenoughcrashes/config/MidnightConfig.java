@@ -3,12 +3,14 @@ package fudge.notenoughcrashes.config;
 import com.google.gson.*;
 import com.google.gson.stream.*;
 import fudge.notenoughcrashes.platform.NecPlatform;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.*;
-import net.minecraft.client.resource.language.I18n;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-import net.minecraft.util.*;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -44,7 +46,7 @@ public abstract class MidnightConfig {
             })
             .registerTypeAdapter(Identifier.class, new TypeAdapter<Identifier>() {
                 public void write(JsonWriter out, Identifier id) throws IOException { out.value(id.toString()); }
-                public Identifier read(JsonReader in) throws IOException { return Identifier.of(in.nextString()); }
+                public Identifier read(JsonReader in) throws IOException { return Identifier.parse(in.nextString()); }
             }).setPrettyPrinting().create();
 
     protected static final LinkedHashMap<String, EntryInfo> entries = new LinkedHashMap<>();    // modid:fieldName -> EntryInfo
@@ -88,14 +90,14 @@ public abstract class MidnightConfig {
             else if (info.dataType == double.class) textField(info, Double::parseDouble, DECIMAL_ONLY, e.min(), e.max(), false);
             else if (info.dataType == String.class || info.dataType == Identifier.class) textField(info, String::length, null, Math.min(e.min(), 0), Math.max(e.max(), 1), true);
             else if (info.dataType == boolean.class) {
-                Function<Object, Text> func = value -> Text.translatable((Boolean) value ? "gui.yes" : "gui.no").formatted((Boolean) value ? Formatting.GREEN : Formatting.RED);
-                info.function = new AbstractMap.SimpleEntry<ButtonWidget.PressAction, Function<Object, Text>>(button -> {
+                Function<Object, Component> func = value -> Component.translatable((Boolean) value ? "gui.yes" : "gui.no").withStyle((Boolean) value ? ChatFormatting.GREEN : ChatFormatting.RED);
+                info.function = new AbstractMap.SimpleEntry<Button.OnPress, Function<Object, Component>>(button -> {
                     info.setValue(!(Boolean) info.value); button.setMessage(func.apply(info.value));
                 }, func);
             } else if (info.dataType.isEnum()) {
                 List<?> values = Arrays.asList(field.getType().getEnumConstants());
-                Function<Object, Text> func = value -> getEnumTranslatableText(value, info);
-                info.function = new AbstractMap.SimpleEntry<ButtonWidget.PressAction, Function<Object, Text>>(button -> {
+                Function<Object, Component> func = value -> getEnumTranslatableText(value, info);
+                info.function = new AbstractMap.SimpleEntry<Button.OnPress, Function<Object, Component>>(button -> {
                     int index = values.indexOf(info.value) + 1;
                     info.setValue(values.get(index >= values.size() ? 0 : index));
                     button.setMessage(func.apply(info.value));
@@ -118,23 +120,23 @@ public abstract class MidnightConfig {
 
     private static void textField(EntryInfo info, Function<String,Number> f, Pattern pattern, double min, double max, boolean cast) {
         boolean isNumber = pattern != null;
-        info.function = (BiFunction<TextFieldWidget, ButtonWidget, Predicate<String>>) (t, b) -> s -> {
+        info.function = (BiFunction<EditBox, Button, Predicate<String>>) (t, b) -> s -> {
             s = s.trim();
             if (!(s.isEmpty() || !isNumber || pattern.matcher(s).matches()) ||
-                    (info.dataType == Identifier.class && Identifier.validate(s).isError())) return false;
+                    (info.dataType == Identifier.class && Identifier.tryParse(s) == null)) return false;
 
             Number value = 0; boolean inLimits = false; info.error = null;
             if (!(isNumber && s.isEmpty()) && !s.equals("-") && !s.equals(".")) {
                 try { value = f.apply(s); } catch(NumberFormatException e){ return false; }
                 inLimits = value.doubleValue() >= min && value.doubleValue() <= max;
-                info.error = inLimits? null : Text.literal(value.doubleValue() < min ?
+                info.error = inLimits? null : Component.literal(value.doubleValue() < min ?
                         "§cMinimum " + (isNumber? "value" : "length") + (cast? " is " + (int)min : " is " + min) :
-                        "§cMaximum " + (isNumber? "value" : "length") + (cast? " is " + (int)max : " is " + max)).formatted(Formatting.RED);
+                        "§cMaximum " + (isNumber? "value" : "length") + (cast? " is " + (int)max : " is " + max)).withStyle(ChatFormatting.RED);
                 t.setTooltip(info.getTooltip(true));
             }
 
             info.tempValue = s;
-            t.setEditableColor(inLimits? 0xFFFFFFFF : 0xFFFF7777);
+            t.setTextColor(inLimits? 0xFFFFFFFF : 0xFFFF7777);
             info.inLimits = inLimits;
             b.active = entries.values().stream().allMatch(e -> e.inLimits);
 
@@ -147,16 +149,16 @@ public abstract class MidnightConfig {
             if (info.entry.isColor()) {
                 if (!s.contains("#")) s = '#' + s;
                 if (!HEXADECIMAL_ONLY.matcher(s).matches()) return false;
-                try { info.actionButton.setMessage(Text.literal("⬛").setStyle(Style.EMPTY.withColor(Color.decode(info.tempValue).getRGB())));
+                try { info.actionButton.setMessage(Component.literal("⬛").setStyle(Style.EMPTY.withColor(Color.decode(info.tempValue).getRGB())));
                 } catch (Exception ignored) {}
             }
             return true;
         };
     }
 
-    protected Text getEnumTranslatableText(Object value, EntryInfo info) {
+    protected Component getEnumTranslatableText(Object value, EntryInfo info) {
         String translationKey = "%s.midnightconfig.enum.%s.%s".formatted(modid, info.dataType.getSimpleName(), info.toTemporaryValue());
-        return I18n.hasTranslation(translationKey) ? Text.translatable(translationKey) : Text.literal(info.toTemporaryValue());
+        return I18n.exists(translationKey) ? Component.translatable(translationKey) : Component.literal(info.toTemporaryValue());
     }
 
     public void loadValuesFromJson() {

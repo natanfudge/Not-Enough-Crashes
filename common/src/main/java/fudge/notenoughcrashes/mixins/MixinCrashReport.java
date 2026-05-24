@@ -1,8 +1,8 @@
 package fudge.notenoughcrashes.mixins;
 
 import fudge.notenoughcrashes.stacktrace.ModIdentifier;
-import net.minecraft.util.SystemDetails;
-import net.minecraft.util.crash.CrashReport;
+import net.minecraft.SystemReport;
+import net.minecraft.CrashReport;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -19,7 +19,7 @@ public abstract class MixinCrashReport {
 
     @Shadow
     @Final
-    private SystemDetails systemDetailsSection;
+    private SystemReport systemReport;
 
     private CrashReport getThis() {
         return (CrashReport) (Object) this;
@@ -28,9 +28,9 @@ public abstract class MixinCrashReport {
     /**
      * @reason Adds a list of mods which may have caused the crash to the report.
      */
-    @Inject(method = "addDetails", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/SystemDetails;writeTo(Ljava/lang/StringBuilder;)V"))
+    @Inject(method = "getDetails(Ljava/lang/StringBuilder;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/SystemReport;appendToCrashReportString(Ljava/lang/StringBuilder;)V"))
     private void beforeSystemDetailsAreWritten(CallbackInfo ci) {
-        systemDetailsSection.addSection("Suspected Mods", () -> {
+        systemReport.setDetail("Suspected Mods", () -> {
             try {
                 var suspectedMods = ModIdentifier.getSuspectedModsOf(getThis());
                 if (!suspectedMods.isEmpty()) {

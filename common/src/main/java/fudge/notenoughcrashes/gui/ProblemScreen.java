@@ -5,26 +5,23 @@ import fudge.notenoughcrashes.platform.CommonModMetadata;
 import fudge.notenoughcrashes.stacktrace.ModIdentifier;
 import fudge.notenoughcrashes.upload.LegacyCrashLogUpload;
 import fudge.notenoughcrashes.utils.NecLocalization;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.TextWidget;
-import net.minecraft.text.ClickEvent;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.StringWidget;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.Util;
-import net.minecraft.util.crash.CrashReport;
-import net.minecraft.util.crash.ReportType;
+import net.minecraft.CrashReport;
+import net.minecraft.ReportType;
 
 import java.net.URI;
 import java.nio.file.Path;
 import java.util.*;
 
-@Environment(EnvType.CLIENT)
 public abstract class ProblemScreen extends Screen {
     private static final Set<String> IGNORED_MODS = new HashSet<>(Arrays.asList(
             "minecraft", "fabricloader", "loadcatcher", "jumploader", "quilt_loader", "forge", "notenoughcrashes"
@@ -41,12 +38,12 @@ public abstract class ProblemScreen extends Screen {
 
 
     protected ProblemScreen(CrashReport report) {
-        super(Text.of(""));
+        super(Component.empty());
         this.report = report;
     }
 
 
-    private Text getSuspectedModsText() {
+    private Component getSuspectedModsText() {
         Set<CommonModMetadata> suspectedMods = ModIdentifier.getSuspectedModsOf(report);
 
         // Minecraft exists and basically any stack trace, and loader exists in any launch,
@@ -61,31 +58,31 @@ public abstract class ProblemScreen extends Screen {
                 .sorted(Comparator.comparing(CommonModMetadata::name))
                 .map(mod -> {
                     String issuesPage = mod.issuesPage();
-                    MutableText modText = Text.literal(mod.name());
+                    MutableComponent modText = Component.literal(mod.name());
                     if (issuesPage != null) {
-                        modText.styled(style -> style.withClickEvent(new ClickEvent.OpenUrl(URI.create(issuesPage))));
+                        modText.withStyle(style -> style.withClickEvent(new ClickEvent.OpenUrl(URI.create(issuesPage))));
                     }
                     return modText;
 
                 })
-                .reduce((existing, next) -> existing.append(Text.of(", ")).append(next))
+                .reduce((existing, next) -> existing.append(Component.literal(", ")).append(next))
                 .get();
     }
 
     private void addSuspectedModsWidget() {
-        Text suspectedModsText = getSuspectedModsText().copy().styled(style -> style.withColor(0xE0E000));
-        var widget = new TextWidget(suspectedModsText, textRenderer);
-        widget.setX(width / 2 - textRenderer.getWidth(suspectedModsText.getString()) / 2);
+        Component suspectedModsText = getSuspectedModsText().copy().withColor(0xE0E000);
+        var widget = new StringWidget(suspectedModsText, font);
+        widget.setX(width / 2 - font.width(suspectedModsText.getString()) / 2);
         widget.setY(y + 29);
-        addDrawableChild(widget);
+        addRenderableWidget(widget);
     }
 
-    private void handleLegacyLinkClick(ButtonWidget buttonWidget) {
+    private void handleLegacyLinkClick(Button buttonWidget) {
         try {
             if (uploadedCrashLink == null) {
-                uploadedCrashLink = LegacyCrashLogUpload.upload(report.asString(ReportType.MINECRAFT_CRASH_REPORT));
+                uploadedCrashLink = LegacyCrashLogUpload.upload(report.getFriendlyReport(ReportType.CRASH));
             }
-            Util.getOperatingSystem().open(uploadedCrashLink);
+            Util.getPlatform().openUri(uploadedCrashLink);
         } catch (Throwable e) {
             NotEnoughCrashes.getLogger().error("Exception when crash menu button clicked:", e);
             buttonWidget.setMessage(NecLocalization.translatedText("notenoughcrashes.gui.failed"));
@@ -96,11 +93,11 @@ public abstract class ProblemScreen extends Screen {
 
     @Override
     public void init() {
-        addDrawableChild(
-                ButtonWidget.builder(
+        addRenderableWidget(
+                Button.builder(
                                 NecLocalization.translatedText("notenoughcrashes.gui.getLink")
                                 , this::handleLegacyLinkClick)
-                        .dimensions(width / 2 - 155 + 160, height / 4 + 120 + 12, 150, 20)
+                        .bounds(width / 2 - 155 + 160, height / 4 + 120 + 12, 150, 20)
                         .build()
         );
 
@@ -112,11 +109,11 @@ public abstract class ProblemScreen extends Screen {
 
 
     @Override
-    public boolean mouseClicked(Click click, boolean doubled) {
+    public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
         if (x >= xLeft && x <= xRight && y >= yTop && y <= yBottom) {
-            Path file = report.getFile();
+            Path file = report.getSaveFile();
             if (file != null) {
-                Util.getOperatingSystem().open(file);
+                Util.getPlatform().openPath(file);
             }
         }
         return super.mouseClicked(click, doubled);
@@ -128,14 +125,14 @@ public abstract class ProblemScreen extends Screen {
     }
 
     String getFileNameString() {
-        return report.getFile() != null ? "\u00A7n" + report.getFile().getFileName()
+        return report.getSaveFile() != null ? "\u00A7n" + report.getSaveFile().getFileName()
                 : NecLocalization.localize("notenoughcrashes.crashscreen.reportSaveFailed");
     }
 
 
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        super.render(context, mouseX, mouseY, delta);
+    public void extractRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
+        super.extractRenderState(context, mouseX, mouseY, delta);
     }
 
 }

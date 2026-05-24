@@ -3,20 +3,13 @@ package fudge.notenoughcrashes.gui;
 import fudge.notenoughcrashes.config.NecConfig;
 import fudge.notenoughcrashes.mixinhandlers.InGameCatcher;
 import fudge.notenoughcrashes.utils.NecLocalization;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.TitleScreen;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.MultilineTextWidget;
-import net.minecraft.client.gui.widget.TextWidget;
-import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-import net.minecraft.util.crash.CrashReport;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.TitleScreen;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.StringWidget;
+import net.minecraft.network.chat.Component;
+import net.minecraft.CrashReport;
 
-@Environment(EnvType.CLIENT)
 public class CrashScreen extends ProblemScreen {
 
     private static final int BODY_TEXT_COLOR = 0xD0D0D0;
@@ -31,13 +24,13 @@ public class CrashScreen extends ProblemScreen {
         super.init();
 
         /* ---------- “Return to title” button ---------- */
-        ButtonWidget mainMenuButton = ButtonWidget.builder(
+        Button mainMenuButton = Button.builder(
                         NecLocalization.translatedText("gui.toTitle"),
                         btn -> {
                             InGameCatcher.crashScreenActive = true;
-                            MinecraftClient.getInstance().setScreen(new TitleScreen());
+                            Minecraft.getInstance().setScreen(new TitleScreen());
                         })
-                .dimensions(width / 2 - 155, height / 4 + 120 + 12, 150, 20)
+                .bounds(width / 2 - 155, height / 4 + 120 + 12, 150, 20)
                 .build();
 
         if (NecConfig.getCurrent().disableReturnToMainMenu()) {
@@ -45,15 +38,15 @@ public class CrashScreen extends ProblemScreen {
             mainMenuButton.setMessage(
                     NecLocalization.translatedText("notenoughcrashes.gui.disabledByConfig"));
         }
-        addDrawableChild(mainMenuButton);
+        addRenderableWidget(mainMenuButton);
 
-        /* ---------- Text widgets ---------- */
+        /* ---------- Component widgets ---------- */
         int paragraphStartX = width / 2;
         int y = height / 4 - 51;        // title is 40 px above the old body start
 
         // Title
-        addDrawableChild(centeredText(paragraphStartX, y,
-                Text.translatable("notenoughcrashes.crashscreen.title"), 0xFFFFFF));
+        addRenderableWidget(centeredText(paragraphStartX, y,
+                Component.translatable("notenoughcrashes.crashscreen.title"), 0xFFFFFF));
 
         // Body copy – keeps the original spacing
         y = addBodyLine(paragraphStartX, y + 40, 18, "notenoughcrashes.crashscreen.summary");
@@ -78,18 +71,18 @@ public class CrashScreen extends ProblemScreen {
     /* Helpers                                                               */
     /* --------------------------------------------------------------------- */
 
-    /** Convenience factory for a centred `TextWidget`. */
-    private TextWidget centeredText(int centreX, int y, Text text, int color) {
-        Text coloredText = text.copy().styled(style -> style.withColor(color));
-        var w = new TextWidget(coloredText, textRenderer);
-        w.setX(centreX - textRenderer.getWidth(text.getString()) / 2);
+    /** Convenience factory for a centred `StringWidget`. */
+    private StringWidget centeredText(int centreX, int y, Component text, int color) {
+        Component coloredText = text.copy().withColor(color);
+        var w = new StringWidget(coloredText, font);
+        w.setX(centreX - font.width(text.getString()) / 2);
         w.setY(y);
         return w;
     }
 
     /** Overload for translation keys. */
-    private TextWidget centeredText(int centreX, int y, String translationKey, int color) {
-        return centeredText(centreX, y, Text.translatable(translationKey), color);
+    private StringWidget centeredText(int centreX, int y, String translationKey, int color) {
+        return centeredText(centreX, y, Component.translatable(translationKey), color);
     }
 
     /**
@@ -106,7 +99,7 @@ public class CrashScreen extends ProblemScreen {
      */
     private int addBodyLine(int centreX, int currentY, int offset, String keyOrLiteral, int color) {
         int y = currentY + offset;
-        addDrawableChild(centeredText(centreX, y, keyOrLiteral, color));
+        addRenderableWidget(centeredText(centreX, y, keyOrLiteral, color));
         return y;
     }
 

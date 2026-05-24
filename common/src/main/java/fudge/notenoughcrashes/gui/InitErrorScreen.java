@@ -1,16 +1,11 @@
 package fudge.notenoughcrashes.gui;
 
 import fudge.notenoughcrashes.utils.NecLocalization;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.TextWidget;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-import net.minecraft.util.crash.CrashReport;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.StringWidget;
+import net.minecraft.network.chat.Component;
+import net.minecraft.CrashReport;
 
-@Environment(EnvType.CLIENT)
 public class InitErrorScreen extends ProblemScreen {
 
     private static final int BODY_TEXT_COLOR = 0xD0D0D0;
@@ -27,20 +22,20 @@ public class InitErrorScreen extends ProblemScreen {
         super.init();
 
         /* ---------- “Quit” button ---------- */
-        ButtonWidget exitButton = ButtonWidget.builder(
-                        Text.translatable("menu.quit"),
+        Button exitButton = Button.builder(
+                        Component.translatable("menu.quit"),
                         btn -> System.exit(-1))
-                .dimensions(width / 2 - 155, height / 4 + 120 + 12, 150, 20)
+                .bounds(width / 2 - 155, height / 4 + 120 + 12, 150, 20)
                 .build();
-        addDrawableChild(exitButton);
+        addRenderableWidget(exitButton);
 
-        /* ---------- Text widgets ---------- */
+        /* ---------- Component widgets ---------- */
         int paragraphStartX = width / 2;
         int y = height / 4 - 40;   // same baseline offset used in CrashScreen
 
         // Title
-        addDrawableChild(centeredText(paragraphStartX, y,
-                Text.translatable("notenoughcrashes.initerrorscreen.title"), 0xFFFFFF));
+        addRenderableWidget(centeredText(paragraphStartX, y,
+                Component.translatable("notenoughcrashes.initerrorscreen.title"), 0xFFFFFF));
 
         // Body – replicate original vertical gaps
         y = addBodyLine(paragraphStartX, y + 40,  0,  "notenoughcrashes.initerrorscreen.summary");
@@ -63,18 +58,18 @@ public class InitErrorScreen extends ProblemScreen {
     /* Helpers (shared style with CrashScreen)                            */
     /* ------------------------------------------------------------------ */
 
-    /** Returns a centred `TextWidget` positioned by *pixel* centre, not widget width. */
-    private TextWidget centeredText(int centreX, int y, Text text, int color) {
-        Text coloredText = text.copy().styled(style -> style.withColor(color));
-        var w = new TextWidget(coloredText, textRenderer);
-        w.setX(centreX - textRenderer.getWidth(text.getString()) / 2);
+    /** Returns a centred `StringWidget` positioned by *pixel* centre, not widget width. */
+    private StringWidget centeredText(int centreX, int y, Component text, int color) {
+        Component coloredText = text.copy().withColor(color);
+        var w = new StringWidget(coloredText, font);
+        w.setX(centreX - font.width(text.getString()) / 2);
         w.setY(y);
         return w;
     }
 
     /** Overload that accepts a translation‑key or literal string. */
-    private TextWidget centeredText(int centreX, int y, String keyOrLiteral, int color) {
-        return centeredText(centreX, y, Text.translatable(keyOrLiteral), color);
+    private StringWidget centeredText(int centreX, int y, String keyOrLiteral, int color) {
+        return centeredText(centreX, y, Component.translatable(keyOrLiteral), color);
     }
 
     /**
@@ -87,7 +82,7 @@ public class InitErrorScreen extends ProblemScreen {
 
     private int addBodyLine(int centreX, int currentY, int offset, String keyOrLiteral, int color) {
         int y = currentY + offset;
-        addDrawableChild(centeredText(centreX, y, keyOrLiteral, color));
+        addRenderableWidget(centeredText(centreX, y, keyOrLiteral, color));
         return y;
     }
 

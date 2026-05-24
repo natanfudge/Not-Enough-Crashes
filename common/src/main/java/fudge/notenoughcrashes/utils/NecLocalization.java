@@ -4,9 +4,9 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import fudge.notenoughcrashes.NotEnoughCrashes;
 import fudge.notenoughcrashes.platform.NecPlatform;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.resource.language.I18n;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.network.chat.Component;
 import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,11 +29,11 @@ public class NecLocalization {
     private static final boolean useCustomLocalization = (!NecPlatform.instance().isForge()
             && !NecPlatform.instance().isModLoaded("fabric-resource-loader-v0"))
             // In edge cases where stuff doesn't get localized properly, make sure we use custom localization.
-            || I18n.translate("notenoughcrashes.crashscreen.title").equals("notenoughcrashes.crashscreen.title");
+            || I18n.get("notenoughcrashes.crashscreen.title").equals("notenoughcrashes.crashscreen.title");
 
     public static String localize(String translationKey) {
         if (useCustomLocalization) return localizeCustom(translationKey);
-        else return I18n.translate(translationKey);
+        else return I18n.get(translationKey);
     }
 
     @NotNull
@@ -55,9 +55,9 @@ public class NecLocalization {
         return translations.get(translationKey);
     }
 
-    public static Text translatedText(String translationKey) {
-        if (useCustomLocalization && translationKey.startsWith(NotEnoughCrashes.MOD_ID)) return Text.of(localize(translationKey));
-        else return Text.translatable(translationKey);
+    public static Component translatedText(String translationKey) {
+        if (useCustomLocalization && translationKey.startsWith(NotEnoughCrashes.MOD_ID)) return Component.literal(localize(translationKey));
+        else return Component.translatable(translationKey);
     }
 
     @SuppressWarnings("ClassCanBeRecord")
@@ -76,7 +76,7 @@ public class NecLocalization {
     private static final Map<String, LanguageTranslations> storedLanguages = new HashMap<>();
 
     private static String getCurrentLanguageCode() {
-        return MinecraftClient.getInstance().getLanguageManager().getLanguage();
+        return Minecraft.getInstance().getLanguageManager().getSelected();
     }
 
     private static LanguageTranslations loadLanguage(String code) {

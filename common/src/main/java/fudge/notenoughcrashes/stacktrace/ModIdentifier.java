@@ -5,7 +5,7 @@ import fudge.notenoughcrashes.config.NecConfig;
 import fudge.notenoughcrashes.platform.CommonModMetadata;
 import fudge.notenoughcrashes.platform.ModsByLocation;
 import fudge.notenoughcrashes.platform.NecPlatform;
-import net.minecraft.util.crash.CrashReport;
+import net.minecraft.CrashReport;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfig;
@@ -31,7 +31,7 @@ public final class ModIdentifier {
     private static final Map<IMixinConfig, Set<CommonModMetadata>> mixinConfigToModsCache = new HashMap<>();
 
     public static Set<CommonModMetadata> getSuspectedModsOf(CrashReport report) {
-        return suspectedModsCache.computeIfAbsent(report, (ignored) -> identifyFromStacktrace(report.getCause()));
+        return suspectedModsCache.computeIfAbsent(report, (ignored) -> identifyFromStacktrace(report.getException()));
     }
 
     @NotNull

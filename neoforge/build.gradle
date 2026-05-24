@@ -36,8 +36,8 @@ repositories {
 dependencies {
     neoForge libs.neoforge
 
-    common(project(path: ':common', configuration: 'namedElements')) { transitive false }
-    shadowBundle project(path: ':common', configuration: 'transformProductionNeoForge')
+    common(project(':common')) { transitive false }
+    shadowBundle project(path: ':common', configuration: 'runtimeElements')
 }
 
 processResources {
@@ -53,50 +53,52 @@ shadowJar {
     archiveClassifier = 'dev-shadow'
 }
 
-remapJar {
-    inputFile.set shadowJar.archiveFile
+jar {
+    from(project(':common').sourceSets.main.output)
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 def forge_release  = "release"
 
-curseforge {
-    apiKey = project.hasProperty("curseforge_api_key") ? project.curseforge_api_key : ""
-    project {
-        id = "442354"
-        releaseType = forge_release
-        addGameVersion "NeoForge"
-        addGameVersion curseforge_mc_version
-        changelogType = "markdown"
-        changelog = rootProject.file("changelog.md")
+plugins.withId("com.matthewprenger.cursegradle") {
+    curseforge {
+        apiKey = project.hasProperty("curseforge_api_key") ? project.curseforge_api_key : ""
+        project {
+            id = "442354"
+            releaseType = forge_release
+            addGameVersion "NeoForge"
+            addGameVersion curseforge_mc_version
+            changelogType = "markdown"
+            changelog = rootProject.file("changelog.md")
 
-        mainArtifact(remapJar) {
-            displayName = "$mod_name $total_version NeoForge"
+            mainArtifact(jar) {
+                displayName = "$mod_name $total_version NeoForge"
+            }
+        }
+
+        options {
+            forgeGradleIntegration = false
         }
     }
+}
 
-    options {
-        forgeGradleIntegration = false
+plugins.withId("com.modrinth.minotaur") {
+    modrinth {
+        group = "upload"
+        token =  project.hasProperty("modrinth_api_key") ? project.modrinth_api_key : ""
+        projectId = 'yM94ont6'
+        versionNumber = total_version + "-neoforge" // Will fail if Modrinth has this version already
+        versionName = "$mod_name $total_version NeoForge"
+        uploadFile = jar
+        gameVersions = [modrinth_mc_version]
+        loaders = ["neoforge"]
+        changelog = rootProject.file("changelog.md").text
+        versionType = forge_release
     }
 }
 
-modrinth {
-    group = "upload"
-    token =  project.hasProperty("modrinth_api_key") ? project.modrinth_api_key : ""
-    projectId = 'yM94ont6'
-    versionNumber = total_version + "-neoforge" // Will fail if Modrinth has this version already
-    versionName = "$mod_name $total_version NeoForge"
-    uploadFile = remapJar
-    gameVersions = [modrinth_mc_version]
-    loaders = ["neoforge"]
-    changelog = rootProject.file("changelog.md").text
-    versionType = forge_release
-}
 
-
-task publishForge {
+tasks.register('publishForge') {
     group = "publishing"
-    afterEvaluate {
-        dependsOn(curseforge442354)
-        dependsOn(tasks.modrinth)
-    }
+    dependsOn("curseforge442354", "modrinth")
 }

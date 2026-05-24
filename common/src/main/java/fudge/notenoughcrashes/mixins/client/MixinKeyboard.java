@@ -1,13 +1,13 @@
 package fudge.notenoughcrashes.mixins.client;
 
 import fudge.notenoughcrashes.mixinhandlers.InGameCatcher;
-import net.minecraft.client.Keyboard;
+import net.minecraft.client.KeyboardHandler;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(Keyboard.class)
+@Mixin(KeyboardHandler.class)
 public class MixinKeyboard {
     /**
      * pollDebugCrash() keeps crashing the game when we display the crash screen, infinitely times over,

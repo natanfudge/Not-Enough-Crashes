@@ -1,21 +1,24 @@
 package fudge.notenoughcrashes.config;
 
 import com.google.common.collect.Lists;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.tab.GridScreenTab;
-import net.minecraft.client.gui.tab.Tab;
-import net.minecraft.client.gui.tab.TabManager;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.*;
-import net.minecraft.client.input.KeyInput;
-import net.minecraft.client.resource.language.I18n;
-import net.minecraft.screen.ScreenTexts;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableTextContent;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.components.tabs.GridLayoutTab;
+import net.minecraft.client.gui.components.tabs.Tab;
+import net.minecraft.client.gui.components.tabs.TabManager;
+import net.minecraft.client.gui.components.tabs.TabNavigationBar;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.contents.TranslatableContents;
+import net.minecraft.ChatFormatting;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Util;
 
 import javax.swing.*;
@@ -35,12 +38,12 @@ public class MidnightConfigScreen extends Screen {
     public TabManager tabManager = new TabManager(a -> {}, a -> {});
     public Map<String, Tab> tabs = new LinkedHashMap<>();
     public Tab prevTab;
-    public TabNavigationWidget tabNavigation;
-    public ButtonWidget done;
+    public TabNavigationBar tabNavigation;
+    public Button done;
     public double scrollProgress = 0d;
 
     public MidnightConfigScreen(Screen parent, String modid) {
-        super(Text.translatable(modid + ".midnightconfig.title"));
+        super(Component.translatable(modid + ".midnightconfig.title"));
         this.parent = parent;
         this.modid = modid;
         this.translationPrefix = modid + ".midnightconfig.";
@@ -50,17 +53,17 @@ public class MidnightConfigScreen extends Screen {
             if (Objects.equals(info.modid, modid)) {
                 String tabId = info.entry != null ? info.entry.category() : info.comment.category();
                 String name = translationPrefix + "category." + tabId;
-                if (!I18n.hasTranslation(name) && tabId.equals("default"))
+                if (!I18n.exists(name) && tabId.equals("default"))
                     name = translationPrefix + "title";
                 if (!tabs.containsKey(name)) {
-                    info.tab = new GridScreenTab(Text.translatable(name));
+                    info.tab = new GridLayoutTab(Component.translatable(name));
                     tabs.put(name, info.tab);
                 } else info.tab = tabs.get(name);
             }
         });
-        tabNavigation = TabNavigationWidget.builder(tabManager, this.width).tabs(tabs.values().toArray(new Tab[0])).build();
+        tabNavigation = TabNavigationBar.builder(tabManager, this.width).addTabs(tabs.values().toArray(new Tab[0])).build();
         tabNavigation.selectTab(0, false);
-        tabNavigation.init();
+        tabNavigation.arrangeElements();
         prevTab = tabManager.getCurrentTab();
     }
 
@@ -71,9 +74,9 @@ public class MidnightConfigScreen extends Screen {
         if (prevTab != null && prevTab != tabManager.getCurrentTab()) {
             prevTab = tabManager.getCurrentTab();
             updateList();
-            list.setScrollY(0);
+            list.setScrollAmount(0);
         }
-        scrollProgress = list.getScrollY();
+        scrollProgress = list.scrollAmount();
         for (EntryInfo info : MidnightConfig.entries.values())
             if (Objects.equals(modid, info.modid)) info.updateFieldValue();
         updateButtons();
@@ -88,22 +91,22 @@ public class MidnightConfigScreen extends Screen {
 
         for (ButtonEntry entry : this.list.children()) {
             if (entry.buttons != null && entry.buttons.size() > 1 && entry.info.field != null) {
-                if (entry.buttons.get(0) instanceof ClickableWidget widget)
+                if (entry.buttons.get(0) instanceof AbstractWidget widget)
                     if (widget.isFocused() || widget.isHovered())
                         widget.setTooltip(entry.info.getTooltip(true));
-                if (entry.buttons.get(1) instanceof ButtonWidget button)
+                if (entry.buttons.get(1) instanceof Button button)
                     button.active = !Objects.equals(String.valueOf(entry.info.value), String.valueOf(entry.info.defaultValue)) && entry.info.conditionsMet;
             }
         }
     }
 
     @Override
-    public boolean keyPressed(KeyInput input) {
+    public boolean keyPressed(KeyEvent input) {
         return this.tabNavigation.keyPressed(input) || super.keyPressed(input);
     }
 
     @Override
-    public void close() {
+    public void onClose() {
         instance.loadValuesFromJson();
         MidnightConfig.entries.values().forEach(info -> {
             info.error = null;
@@ -114,28 +117,28 @@ public class MidnightConfigScreen extends Screen {
             info.tab = null;
             info.inLimits = true;
         });
-        Objects.requireNonNull(client).setScreen(parent);
+        Objects.requireNonNull(minecraft).setScreen(parent);
     }
 
     @Override
     public void init() {
         super.init();
-        tabNavigation.setWidth(this.width);
-        tabNavigation.init();
+        tabNavigation.updateWidth(this.width);
+        tabNavigation.arrangeElements();
         if (tabs.size() > 1)
-            this.addDrawableChild(tabNavigation);
+            this.addRenderableWidget(tabNavigation);
 
-        this.addDrawableChild(ButtonWidget.builder(ScreenTexts.CANCEL, button -> this.close()).dimensions(this.width / 2 - 154, this.height - 26, 150, 20).build());
-        done = this.addDrawableChild(ButtonWidget.builder(ScreenTexts.DONE, (button) -> {
+        this.addRenderableWidget(Button.builder(CommonComponents.GUI_CANCEL, button -> this.onClose()).bounds(this.width / 2 - 154, this.height - 26, 150, 20).build());
+        done = this.addRenderableWidget(Button.builder(CommonComponents.GUI_DONE, (button) -> {
             for (EntryInfo info : MidnightConfig.entries.values())
                 if (info.modid.equals(modid))
                     info.updateFieldValue();
             MidnightConfig.write(modid);
-            close();
-        }).dimensions(this.width / 2 + 4, this.height - 26, 150, 20).build());
+            onClose();
+        }).bounds(this.width / 2 + 4, this.height - 26, 150, 20).build());
 
-        this.list = new MidnightConfigListWidget(this.client, this.width, this.height - 57, 24, 25);
-        this.addSelectableChild(this.list);
+        this.list = new MidnightConfigListWidget(this.minecraft, this.width, this.height - 57, 24, 25);
+        this.addWidget(this.list);
         updateList();
         if (tabs.size() > 1)
             list.renderHeaderSeparator = false;
@@ -143,8 +146,8 @@ public class MidnightConfigScreen extends Screen {
 
     public void updateList() {
         this.list.clear();
-        instance.onTabInit(prevTab.getTitle().getContent() instanceof TranslatableTextContent translatable ?
-                translatable.getKey().substring(translatable.getKey().lastIndexOf('.') + 1) : prevTab.getTitle().toString(), list, this);
+        instance.onTabInit(prevTab.getTabTitle().getContents() instanceof TranslatableContents translatable ?
+                translatable.getKey().substring(translatable.getKey().lastIndexOf('.') + 1) : prevTab.getTabTitle().toString(), list, this);
         for (EntryInfo info : MidnightConfig.entries.values()) {
             info.updateConditions();
             if (!info.conditionsMet) {
@@ -154,85 +157,85 @@ public class MidnightConfigScreen extends Screen {
                 if (!visibleButLocked) continue;
             }
             if (info.modid.equals(modid) && (info.tab == null || info.tab == tabManager.getCurrentTab())) {
-                TextIconButtonWidget resetButton = TextIconButtonWidget.builder(Text.translatable("controls.reset"), (button -> {
+                Button resetButton = Button.builder(Component.translatable("controls.reset"), (button -> {
                     info.value = info.defaultValue;
                     info.listIndex = 0;
                     info.tempValue = info.toTemporaryValue();
                     updateList();
-                }), true).texture(Identifier.of("midnightlib", "icon/reset"), 12, 12).dimension(20, 20).build();
+                })).bounds(0, 0, 20, 20).build();
                 resetButton.setPosition(width - 205 + 150 + 25, 0);
 
                 if (info.function != null) {
-                    ClickableWidget widget;
+                    AbstractWidget widget;
                     MidnightConfig.Entry e = info.entry;
                     if (info.function instanceof Map.Entry) { // Enums & booleans
-                        var values = (Map.Entry<ButtonWidget.PressAction, Function<Object, Text>>) info.function;
+                        var values = (Map.Entry<Button.OnPress, Function<Object, Component>>) info.function;
                         if (info.dataType.isEnum()) {
                             values.setValue(value -> instance.getEnumTranslatableText(value, info));
                         }
-                        widget = ButtonWidget.builder(values.getValue().apply(info.value), values.getKey()).dimensions(width - 185, 0, 150, 20).tooltip(info.getTooltip(true)).build();
+                        widget = Button.builder(values.getValue().apply(info.value), values.getKey()).bounds(width - 185, 0, 150, 20).tooltip(info.getTooltip(true)).build();
                     } else if (e.isSlider())
-                        widget = new MidnightSliderWidget(width - 185, 0, 150, 20, Text.of(info.tempValue), (Double.parseDouble(info.tempValue) - e.min()) / (e.max() - e.min()), info);
+                        widget = new MidnightSliderWidget(width - 185, 0, 150, 20, Component.literal(info.tempValue), (Double.parseDouble(info.tempValue) - e.min()) / (e.max() - e.min()), info);
                     else
-                        widget = new TextFieldWidget(textRenderer, width - 185, 0, 150, 20, Text.empty());
+                        widget = new EditBox(font, width - 185, 0, 150, 20, Component.empty());
 
-                    if (widget instanceof TextFieldWidget textField) {
+                    if (widget instanceof EditBox textField) {
                         textField.setMaxLength(e.width());
-                        textField.setText(info.tempValue);
-                        Predicate<String> processor = ((BiFunction<TextFieldWidget, ButtonWidget, Predicate<String>>) info.function).apply(textField, done);
-                        textField.setTextPredicate(processor);
+                        textField.setValue(info.tempValue);
+                        Predicate<String> processor = ((BiFunction<EditBox, Button, Predicate<String>>) info.function).apply(textField, done);
+                        textField.setResponder(processor::test);
                     }
                     widget.setTooltip(info.getTooltip(true));
 
-                    ButtonWidget cycleButton = null;
+                    Button cycleButton = null;
                     if (info.field.getType() == List.class) {
-                        cycleButton = ButtonWidget.builder(Text.literal(String.valueOf(info.listIndex)).formatted(Formatting.GOLD), (button -> {
+                        cycleButton = Button.builder(Component.literal(String.valueOf(info.listIndex)).withStyle(ChatFormatting.GOLD), (button -> {
                             var values = (List<?>) info.value;
                             values.remove("");
                             info.listIndex = info.listIndex != values.size() ? info.listIndex + 1 : 0;
                             info.tempValue = info.listIndex != values.size() ? info.toTemporaryValue() : "";
                             updateList();
-                        })).dimensions(width - 185, 0, 20, 20).tooltip(Tooltip.of(Text.translatable("midnightconfig.action.list_index", info.listIndex))).build();
+                        })).bounds(width - 185, 0, 20, 20).tooltip(Tooltip.create(Component.translatable("midnightconfig.action.list_index", info.listIndex))).build();
                     }
                     if (e.isColor()) {
-                        ButtonWidget colorButton = ButtonWidget.builder(Text.literal("⬛"),
+                        Button colorButton = Button.builder(Component.literal("⬛"),
                                 button -> new Thread(() -> {
-                                    Color newColor = JColorChooser.showDialog(null, Text.translatable("midnightconfig.colorChooser.title").getString(), Color.decode(!Objects.equals(info.tempValue, "") ? info.tempValue : "#FFFFFF"));
+                                    Color newColor = JColorChooser.showDialog(null, Component.translatable("midnightconfig.colorChooser.title").getString(), Color.decode(!Objects.equals(info.tempValue, "") ? info.tempValue : "#FFFFFF"));
                                     if (newColor != null) {
                                         info.setValue("#" + Integer.toHexString(newColor.getRGB()).substring(2));
                                         updateList();
                                     }
                                 }).start()
-                        ).dimensions(width - 185, 0, 20, 20).tooltip(Tooltip.of(Text.translatable("midnightconfig.action.color_chooser"))).build();
+                        ).bounds(width - 185, 0, 20, 20).tooltip(Tooltip.create(Component.translatable("midnightconfig.action.color_chooser"))).build();
                         try {
-                            colorButton.setMessage(Text.literal("⬛").setStyle(Style.EMPTY.withColor(Color.decode(info.tempValue).getRGB())));
+                            colorButton.setMessage(Component.literal("⬛").setStyle(Style.EMPTY.withColor(Color.decode(info.tempValue).getRGB())));
                         } catch (Exception ignored) {
                         }
                         info.actionButton = colorButton;
                     } else if (e.selectionMode() > -1) {
-                        ButtonWidget explorerButton = TextIconButtonWidget.builder(Text.empty(),
+                        Button explorerButton = Button.builder(Component.literal("..."),
                                 button -> new Thread(() -> {
                                     JFileChooser fileChooser = new JFileChooser(info.tempValue);
                                     fileChooser.setFileSelectionMode(e.selectionMode());
                                     fileChooser.setDialogType(e.fileChooserType());
-                                    fileChooser.setDialogTitle(Text.translatable(translationPrefix + info.fieldName + ".fileChooser").getString());
+                                    fileChooser.setDialogTitle(Component.translatable(translationPrefix + info.fieldName + ".fileChooser").getString());
                                     if ((e.selectionMode() == JFileChooser.FILES_ONLY || e.selectionMode() == JFileChooser.FILES_AND_DIRECTORIES) && Arrays.stream(e.fileExtensions()).noneMatch("*"::equals))
                                         fileChooser.setFileFilter(new FileNameExtensionFilter(
-                                                Text.translatable(translationPrefix + info.fieldName + ".fileFilter").getString(), e.fileExtensions()));
+                                                Component.translatable(translationPrefix + info.fieldName + ".fileFilter").getString(), e.fileExtensions()));
                                     if (fileChooser.showDialog(null, null) == JFileChooser.APPROVE_OPTION) {
                                         info.setValue(fileChooser.getSelectedFile().getAbsolutePath());
                                         updateList();
                                     }
-                                }).start(), true
-                        ).texture(Identifier.of("midnightlib", "icon/explorer"), 12, 12).dimension(20, 20).build();
-                        explorerButton.setTooltip(Tooltip.of(Text.translatable("midnightconfig.action.file_chooser")));
+                                }).start()
+                        ).bounds(0, 0, 20, 20).build();
+                        explorerButton.setTooltip(Tooltip.create(Component.translatable("midnightconfig.action.file_chooser")));
                         explorerButton.setPosition(width - 185, 0);
                         info.actionButton = explorerButton;
                     }
-                    List<ClickableWidget> widgets = Lists.newArrayList(widget, resetButton);
+                    List<AbstractWidget> widgets = Lists.newArrayList(widget, resetButton);
 
                     if (info.actionButton != null) {
-                        if (Util.getOperatingSystem() == Util.OperatingSystem.OSX) info.actionButton.active = false;
+                        if (Util.getPlatform() == Util.OS.OSX) info.actionButton.active = false;
                         widget.setWidth(widget.getWidth() - 22);
                         widget.setX(widget.getX() + 22);
                         widgets.add(info.actionButton);
@@ -244,18 +247,18 @@ public class MidnightConfigScreen extends Screen {
                         widgets.add(cycleButton);
                     }
                     if (!info.conditionsMet) widgets.forEach(w -> w.active = false);
-                    this.list.addButton(widgets, Text.translatable(info.translationKey), info);
-                } else this.list.addButton(List.of(), Text.translatable(info.translationKey), info);
+                    this.list.addButton(widgets, Component.translatable(info.translationKey), info);
+                } else this.list.addButton(List.of(), Component.translatable(info.translationKey), info);
             }
-            list.setScrollY(scrollProgress);
+            list.setScrollAmount(scrollProgress);
             updateButtons();
         }
     }
 
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        super.render(context, mouseX, mouseY, delta);
-        this.list.render(context, mouseX, mouseY, delta);
-        if (tabs.size() < 2) context.drawCenteredTextWithShadow(textRenderer, title, width / 2, 10, 0xFFFFFFFF);
+    public void extractRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
+        super.extractRenderState(context, mouseX, mouseY, delta);
+        this.list.extractRenderState(context, mouseX, mouseY, delta);
+        if (tabs.size() < 2) context.centeredText(font, title, width / 2, 10, 0xFFFFFFFF);
     }
 }

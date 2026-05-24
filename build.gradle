@@ -13,11 +13,13 @@ architectury {
 
 
 subprojects {
-    apply plugin: 'dev.architectury.loom'
+    apply plugin: 'dev.architectury.loom-no-remap'
     apply plugin: 'architectury-plugin'
     apply plugin: 'maven-publish'
-    apply plugin: "com.modrinth.minotaur"
-    apply plugin: 'com.matthewprenger.cursegradle'
+    if (gradle.startParameter.taskNames.any { it.toLowerCase(Locale.ROOT).contains("publish") || it.toLowerCase(Locale.ROOT).contains("curseforge") || it.toLowerCase(Locale.ROOT).contains("modrinth") }) {
+        apply plugin: "com.modrinth.minotaur"
+        apply plugin: 'com.matthewprenger.cursegradle'
+    }
 
 
     def modVersion = libs.versions.mod.version.get()
@@ -32,7 +34,6 @@ subprojects {
     ext.modrinth_mc_version = mr == 'mc' ? minecraftVersion : mr
     ext.release_type = libs.versions.release.type.get()
 
-    archivesBaseName = rootProject.archives_base_name
     version = ext.total_version
     group = rootProject.maven_group
 
@@ -41,18 +42,17 @@ subprojects {
         archivesName = "$rootProject.archives_base_name-$project.name"
     }
 
+    tasks.withType(Jar).configureEach { jarTask ->
+        jarTask.metaClass.getArchivePath = { -> jarTask.archiveFile.get().asFile }
+    }
+
     dependencies {
         minecraft libs.minecraft
-        mappings loom.layered {
-            it.mappings("net.fabricmc:yarn:${libs.versions.yarn.mappings.version.get()}:v2")
-            it.mappings libs.yarn.mappings.patch.neoforge
-//            it.officialMojangMappings()
-        }
     }
 
     java {
         toolchain {
-            languageVersion.set(JavaLanguageVersion.of(21))
+            languageVersion.set(JavaLanguageVersion.of(25))
         }
         withSourcesJar()
     }

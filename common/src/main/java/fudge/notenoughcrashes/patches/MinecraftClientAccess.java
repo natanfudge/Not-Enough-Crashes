@@ -1,8 +1,8 @@
 package fudge.notenoughcrashes.patches;
 
-import net.minecraft.util.profiler.Recorder;
+import net.minecraft.util.profiling.metrics.profiling.MetricsRecorder;
 
 public interface MinecraftClientAccess {
-     Recorder getRecorder();
-     void setRecorder(Recorder recorder);
+     MetricsRecorder getRecorder();
+     void setRecorder(MetricsRecorder recorder);
 }

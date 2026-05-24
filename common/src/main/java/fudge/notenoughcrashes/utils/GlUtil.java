@@ -63,7 +63,7 @@ public class GlUtil {
         GlStateManager._texParameter(GL11.GL_TEXTURE_2D, GL12.GL_TEXTURE_MIN_LOD, -1000);
         GlStateManager._texParameter(GL11.GL_TEXTURE_2D, GL14.GL_TEXTURE_LOD_BIAS, 0);
 
-        GlStateManager._colorMask(true, true, true, true);
+        GL11.glColorMask(true, true, true, true);
 //        RenderSystem.clearDepth(1.0D);
 
         GL11.glLineWidth(1.0F);

@@ -1,13 +1,13 @@
 package fudge.notenoughcrashes.config;
 
-import net.minecraft.client.gui.widget.SliderWidget;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.components.AbstractSliderButton;
+import net.minecraft.network.chat.Component;
 
-public class MidnightSliderWidget extends SliderWidget {
+public class MidnightSliderWidget extends AbstractSliderButton {
     private final EntryInfo info;
     private final MidnightConfig.Entry e;
 
-    public MidnightSliderWidget(int x, int y, int width, int height, Text text, double value, EntryInfo info) {
+    public MidnightSliderWidget(int x, int y, int width, int height, Component text, double value, EntryInfo info) {
         super(x, y, width, height, text, value);
         this.e = info.entry;
         this.info = info;
@@ -15,7 +15,7 @@ public class MidnightSliderWidget extends SliderWidget {
 
     @Override
     public void updateMessage() {
-        this.setMessage(Text.of(info.tempValue));
+        this.setMessage(Component.literal(info.tempValue));
     }
 
     @Override

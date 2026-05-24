@@ -3,9 +3,9 @@ package fudge.notenoughcrashes.stacktrace;
 import fudge.notenoughcrashes.NotEnoughCrashes;
 import fudge.notenoughcrashes.platform.NecPlatform;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.util.crash.CrashReport;
-import net.minecraft.util.crash.ReportType;
+import net.minecraft.client.Minecraft;
+import net.minecraft.CrashReport;
+import net.minecraft.ReportType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -20,7 +20,7 @@ public final class CrashUtils {
 //
 //    static {
 //        try {
-//            isClient = MinecraftClient.getInstance() != null;
+//            isClient = Minecraft.getInstance() != null;
 //        } catch (NoClassDefFoundError e) {
 //            isClient = false;
 //        }
@@ -33,23 +33,23 @@ public final class CrashUtils {
     // We don't use the Mojang printCrashReport because it calls System.exit(), lol
     public static void outputReport(CrashReport report, boolean isClient) {
         try {
-            if (report.getFile() == null) {
+            if (report.getSaveFile() == null) {
                 String reportName = "crash-";
                 reportName += new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss").format(new Date());
-                reportName += isClient && MinecraftClient.getInstance().isOnThread() ? "-client" : "-server";
+                reportName += isClient && Minecraft.getInstance().isSameThread() ? "-client" : "-server";
                 reportName += ".txt";
 
                 Path reportsDir = NecPlatform.instance().getGameDirectory().resolve("crash-reports");
                 Path reportFile = reportsDir.resolve(reportName);
 
-                report.writeToFile(reportFile, ReportType.MINECRAFT_CRASH_REPORT);
+                report.saveToFile(reportFile, ReportType.CRASH);
             }
         } catch (Throwable e) {
             NotEnoughCrashes.getLogger().fatal("Failed saving report", e);
         }
 
-        NotEnoughCrashes.getLogger().fatal("Minecraft ran into a problem! " + (report.getFile() != null ? "Report saved to: " + report.getFile() :
+        NotEnoughCrashes.getLogger().fatal("Minecraft ran into a problem! " + (report.getSaveFile() != null ? "Report saved to: " + report.getSaveFile() :
                 "Crash report could not be saved.") + "\n" +
-                report.asString(ReportType.MINECRAFT_CRASH_REPORT));
+                report.getFriendlyReport(ReportType.CRASH));
     }
 }

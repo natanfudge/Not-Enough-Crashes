@@ -38,15 +38,15 @@ repositories {
 
 
 dependencies {
-    modImplementation libs.fabric.loader
+    implementation libs.fabric.loader
     compileOnly libs.quilt.loader
-    modRuntimeOnly libs.fabric.api
+    runtimeOnly libs.fabric.api
 
-    modCompileOnly libs.modmenu
-    modRuntimeOnly libs.modmenu
+    compileOnly libs.modmenu
+    runtimeOnly libs.modmenu
 
-    common(project(path: ':common', configuration: 'namedElements')) { transitive false }
-    shadowBundle project(path: ':common', configuration: 'transformProductionFabric')
+    common(project(':common')) { transitive false }
+    shadowBundle project(path: ':common', configuration: 'runtimeElements')
 }
 
 processResources {
@@ -66,48 +66,50 @@ shadowJar {
     archiveClassifier = 'dev-shadow'
 }
 
-remapJar {
-    inputFile.set shadowJar.archiveFile
+jar {
+    from(project(':common').sourceSets.main.output)
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 
-curseforge {
-    apiKey = project.hasProperty("curseforge_api_key") ? project.curseforge_api_key : ""
-    project {
-        id = "353890"
-        releaseType = release_type
-        addGameVersion "Fabric"
-        addGameVersion curseforge_mc_version
-        changelogType = "markdown"
-        changelog = rootProject.file("changelog.md")
+plugins.withId("com.matthewprenger.cursegradle") {
+    curseforge {
+        apiKey = project.hasProperty("curseforge_api_key") ? project.curseforge_api_key : ""
+        project {
+            id = "353890"
+            releaseType = release_type
+            addGameVersion "Fabric"
+            addGameVersion curseforge_mc_version
+            changelogType = "markdown"
+            changelog = rootProject.file("changelog.md")
 
-        mainArtifact(remapJar) {
-            displayName = "$mod_name $total_version Fabric"
+            mainArtifact(jar) {
+                displayName = "$mod_name $total_version Fabric"
+            }
+        }
+
+        options {
+            forgeGradleIntegration = false
         }
     }
+}
 
-    options {
-        forgeGradleIntegration = false
+plugins.withId("com.modrinth.minotaur") {
+    modrinth {
+        group = "upload"
+        token =  project.hasProperty("modrinth_api_key") ? project.modrinth_api_key : ""
+        projectId = 'yM94ont6'
+        versionNumber = total_version + "-fabric" // Will fail if Modrinth has this version already
+        versionName = "$mod_name $total_version Fabric"
+        uploadFile = jar
+        gameVersions = [modrinth_mc_version]
+        loaders = ["fabric", "quilt"]
+        changelog = rootProject.file("changelog.md").text
+        versionType = release_type
     }
 }
-modrinth {
-    group = "upload"
-    token =  project.hasProperty("modrinth_api_key") ? project.modrinth_api_key : ""
-    projectId = 'yM94ont6'
-    versionNumber = total_version + "-fabric" // Will fail if Modrinth has this version already
-    versionName = "$mod_name $total_version Fabric"
-    uploadFile = remapJar
-    gameVersions = [modrinth_mc_version]
-    loaders = ["fabric", "quilt"]
-    changelog = rootProject.file("changelog.md").text
-    versionType = release_type
-}
 
-task publishFabric {
+tasks.register('publishFabric') {
     group = "publishing"
-    afterEvaluate {
-        dependsOn(curseforge353890)
-        dependsOn(tasks.modrinth)
-    }
+    dependsOn("curseforge353890", "modrinth")
 }
-

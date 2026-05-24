@@ -3,14 +3,14 @@ package fudge.notenoughcrashes.fabric.mixins.client;
 import fudge.notenoughcrashes.NotEnoughCrashes;
 import fudge.notenoughcrashes.fabric.mixinhandlers.ModLoaders;
 import fudge.notenoughcrashes.mixinhandlers.EntryPointCatcher;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 import java.io.File;
 
-@Mixin(MinecraftClient.class)
+@Mixin(Minecraft.class)
 @SuppressWarnings({"StaticVariableMayNotBeInitialized", "MixinAnnotationTarget", "UnresolvedMixinReference", "InvalidInjectorMethodSignature"})
 public abstract class CatchInitMinecraftClientMixin {
 
