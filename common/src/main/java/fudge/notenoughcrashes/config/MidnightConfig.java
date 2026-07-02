@@ -7,7 +7,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.resources.language.I18n;
+import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -158,7 +158,7 @@ public abstract class MidnightConfig {
 
     protected Component getEnumTranslatableText(Object value, EntryInfo info) {
         String translationKey = "%s.midnightconfig.enum.%s.%s".formatted(modid, info.dataType.getSimpleName(), info.toTemporaryValue());
-        return I18n.exists(translationKey) ? Component.translatable(translationKey) : Component.literal(info.toTemporaryValue());
+        return Language.getInstance().has(translationKey) ? Component.translatable(translationKey) : Component.literal(info.toTemporaryValue());
     }
 
     public void loadValuesFromJson() {

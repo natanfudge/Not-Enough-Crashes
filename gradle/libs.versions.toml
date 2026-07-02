@@ -22,7 +22,7 @@ cursegradle = "1.4.0" # Must be updated in settings.gradle as well!
 shadow = "8.1.1"
 
 # Minecraft
-minecraft = "26.1.2"
+minecraft = "26.2"
 
 # CurseForge & Modrinth MC overrides (or "mc" to use the main version)
 overrides_curseforge = "mc"
@@ -30,12 +30,12 @@ overrides_modrinth = "mc"
 release_type = "release"
 
 # Mods & Libraries
-fabric_loader = "0.19.2"
-fabric_api = "0.149.1+26.1.2"
-modmenu = "18.0.0-beta.1"
+fabric_loader = "0.19.3"
+fabric_api = "0.154.0+26.2"
+modmenu = "20.0.0-beta.4"
 
 quilt_loader = "0.26.0"
-forge = "26.1.2.64-beta"
+forge = "26.2.0.7-beta"
 
 [libraries]
 

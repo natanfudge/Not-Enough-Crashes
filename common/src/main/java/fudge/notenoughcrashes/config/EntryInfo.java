@@ -4,7 +4,7 @@ import fudge.notenoughcrashes.platform.NecPlatform;
 import net.minecraft.client.gui.components.tabs.Tab;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.resources.language.I18n;
+import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 
 import java.lang.reflect.Field;
@@ -99,6 +99,6 @@ public class EntryInfo {
 
     public Tooltip getTooltip(boolean isButton) {
         String key = translationKey + (!isButton ? ".label" : "") + ".tooltip";
-        return Tooltip.create(isButton && this.error != null ? this.error : I18n.exists(key) ? Component.translatable(key) : Component.empty());
+        return Tooltip.create(isButton && this.error != null ? this.error : Language.getInstance().has(key) ? Component.translatable(key) : Component.empty());
     }
 }

@@ -29,7 +29,7 @@ public class GlUtil {
         GlStateManager._depthMask(true);
 
         // Reset blend mode
-        GlStateManager._disableBlend();
+        GlStateManager._disableBlend(0);
 //        RenderSystem.blendFunc(GlStateManager.SrcFactor.ONE, GlStateManager.DstFactor.ZERO);
 //        RenderSystem.blendFuncSeparate(GlStateManager.SrcFactor.ONE, GlStateManager.DstFactor.ZERO, GlStateManager.SrcFactor.ONE, GlStateManager.DstFactor.ZERO);
 

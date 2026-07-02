@@ -28,7 +28,7 @@ public class CrashScreen extends ProblemScreen {
                         NecLocalization.translatedText("gui.toTitle"),
                         btn -> {
                             InGameCatcher.crashScreenActive = true;
-                            Minecraft.getInstance().setScreen(new TitleScreen());
+                            Minecraft.getInstance().setScreenAndShow(new TitleScreen());
                         })
                 .bounds(width / 2 - 155, height / 4 + 120 + 12, 150, 20)
                 .build();

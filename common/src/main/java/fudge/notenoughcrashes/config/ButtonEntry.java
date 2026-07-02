@@ -64,7 +64,7 @@ public class ButtonEntry extends ContainerObjectSelectionList.Entry<ButtonEntry>
     @Override
     public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
         if (this.info != null && this.info.comment != null && !this.info.comment.url().isBlank())
-            ConfirmLinkScreen.confirmLinkNow(Minecraft.getInstance().screen, this.info.comment.url(), true);
+            ConfirmLinkScreen.confirmLinkNow(null, this.info.comment.url(), true);
         return super.mouseClicked(click, doubled);
     }
 

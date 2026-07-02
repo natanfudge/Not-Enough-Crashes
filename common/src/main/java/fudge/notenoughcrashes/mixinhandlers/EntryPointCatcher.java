@@ -33,7 +33,7 @@ public class EntryPointCatcher {
 
     public static void displayInitErrorScreen() {
         try {
-            Minecraft.getInstance().setScreen(new InitErrorScreen(crashReport));
+            Minecraft.getInstance().setScreenAndShow(new InitErrorScreen(crashReport));
         } catch (Throwable t) {
             CrashReport additionalReport = CrashReport.forThrowable(t, "Displaying init error screen");
             LOGGER.error("An uncaught exception occured while displaying the init error screen, making normal report instead", t);

@@ -102,12 +102,8 @@ public class InGameCatcher {
 
             CrashUtils.outputReport(report, clientCrash);
 
-            // Vanilla does this when switching to main menu but not our custom crash screen
-            // nor the out of memory screen (see https://bugs.mojang.com/browse/MC-128953)
-            getClient().gui.getChat().clearMessages(true);
-
             // Display the crash screen
-            getClient().setScreen(new CrashScreen(report));
+            getClient().setScreenAndShow(new CrashScreen(report));
         } catch (Throwable t) {
             crashScreenActive = false;
             // The crash screen has crashed. Report it normally instead.
