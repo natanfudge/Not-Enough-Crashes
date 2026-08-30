@@ -12,7 +12,7 @@
     "depends": [
       {
         "id": "minecraft",
-        "versions": "26.2"
+        "versions": "${minecraft_version}"
       }
     ],
     "metadata": {

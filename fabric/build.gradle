@@ -1,5 +1,5 @@
 plugins {
-    alias libs.plugins.shadow
+    alias(libs.plugins.shadow)
 }
 
 architectury {
@@ -45,19 +45,20 @@ dependencies {
     compileOnly libs.modmenu
     runtimeOnly libs.modmenu
 
-    common(project(':common')) { transitive false }
+    common(project(':common')) { transitive = false }
     shadowBundle project(path: ':common', configuration: 'runtimeElements')
 }
 
 processResources {
-    inputs.property 'version', project.version
+    def resourceProperties = [
+            version              : project.version,
+            minecraft_version    : libs.versions.minecraft.get(),
+            fabric_loader_version: libs.versions.fabric.loader.get()
+    ]
+    inputs.properties resourceProperties
 
-    filesMatching('fabric.mod.json') {
-        expand version: project.version
-    }
-
-    filesMatching("quilt.mod.json") {
-        expand "version": project.version
+    filesMatching(['fabric.mod.json', 'quilt.mod.json']) {
+        expand resourceProperties
     }
 }
 
@@ -72,32 +73,29 @@ jar {
 }
 
 
-plugins.withId("com.matthewprenger.cursegradle") {
-    curseforge {
-        apiKey = project.hasProperty("curseforge_api_key") ? project.curseforge_api_key : ""
-        project {
-            id = "353890"
-            releaseType = release_type
-            addGameVersion "Fabric"
-            addGameVersion curseforge_mc_version
-            changelogType = "markdown"
-            changelog = rootProject.file("changelog.md")
+plugins.withId('net.darkhax.curseforgegradle') {
+    tasks.register('publishCurseForge', net.darkhax.curseforgegradle.TaskPublishCurseForge) {
+        group = 'upload'
+        apiToken = providers.gradleProperty('curseforge_api_key')
+                .orElse(providers.environmentVariable('CURSEFORGE_TOKEN'))
+                .getOrElse('')
 
-            mainArtifact(jar) {
-                displayName = "$mod_name $total_version Fabric"
-            }
-        }
-
-        options {
-            forgeGradleIntegration = false
-        }
+        def mainFile = upload(353890, tasks.named('jar'))
+        mainFile.releaseType = release_type
+        mainFile.addModLoader('Fabric')
+        mainFile.addGameVersion(curseforge_mc_version)
+        mainFile.addEnvironment('Client', 'Server')
+        mainFile.changelogType = 'markdown'
+        mainFile.changelog = rootProject.file('changelog.md')
+        mainFile.displayName = "$mod_name $total_version Fabric"
     }
 }
 
 plugins.withId("com.modrinth.minotaur") {
     modrinth {
         group = "upload"
-        token =  project.hasProperty("modrinth_api_key") ? project.modrinth_api_key : ""
+        token = providers.gradleProperty('modrinth_api_key')
+                .orElse(providers.environmentVariable('MODRINTH_TOKEN'))
         projectId = 'yM94ont6'
         versionNumber = total_version + "-fabric" // Will fail if Modrinth has this version already
         versionName = "$mod_name $total_version Fabric"
@@ -111,5 +109,5 @@ plugins.withId("com.modrinth.minotaur") {
 
 tasks.register('publishFabric') {
     group = "publishing"
-    dependsOn("curseforge353890", "modrinth")
+    dependsOn("publishCurseForge", "modrinth")
 }

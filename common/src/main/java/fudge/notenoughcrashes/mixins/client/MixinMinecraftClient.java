@@ -1,12 +1,10 @@
 package fudge.notenoughcrashes.mixins.client;
 
 import fudge.notenoughcrashes.NotEnoughCrashes;
-import fudge.notenoughcrashes.gui.InitErrorScreen;
 import fudge.notenoughcrashes.mixinhandlers.EntryPointCatcher;
 import fudge.notenoughcrashes.mixinhandlers.InGameCatcher;
 import fudge.notenoughcrashes.patches.MinecraftClientAccess;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.CrashReport;
 import net.minecraft.util.profiling.metrics.profiling.MetricsRecorder;
 import net.minecraft.util.thread.ReentrantBlockableEventLoop;
@@ -37,15 +35,6 @@ public abstract class MixinMinecraftClient extends ReentrantBlockableEventLoop<R
 
     public MixinMinecraftClient(String string_1) {
         super(string_1, true);
-    }
-
-    /**
-     * If the game has crashed, we set the screen to the init crash screen, but then Minecraft sets the screen back
-     * to the title screen. We want to prevent that, to keep the screen to be the InitCrashScreen
-     */
-    @Inject(method = "setScreen(Lnet/minecraft/client/gui/screens/Screen;)V", at = @At("HEAD"), cancellable = true)
-    private void setScreenDontResetCrashScreen(Screen screen, CallbackInfo ci) {
-        if (EntryPointCatcher.crashedDuringStartup() && !(screen instanceof InitErrorScreen)) ci.cancel();
     }
 
     @Inject(method = "run()V", at = @At("HEAD"))

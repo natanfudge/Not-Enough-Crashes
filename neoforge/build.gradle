@@ -1,5 +1,5 @@
 plugins {
-    alias libs.plugins.shadow
+    alias(libs.plugins.shadow)
 }
 
 architectury {
@@ -35,16 +35,23 @@ repositories {
 
 dependencies {
     neoForge libs.neoforge
+    implementation libs.mixinextras.neoforge
+    include libs.mixinextras.neoforge
 
-    common(project(':common')) { transitive false }
+    common(project(':common')) { transitive = false }
     shadowBundle project(path: ':common', configuration: 'runtimeElements')
 }
 
 processResources {
-    inputs.property 'version', project.version
+    def resourceProperties = [
+            version          : project.version,
+            minecraft_version: libs.versions.minecraft.get(),
+            neoforge_version : libs.versions.neoforge.get()
+    ]
+    inputs.properties resourceProperties
 
     filesMatching('META-INF/neoforge.mods.toml') {
-        expand version: project.version
+        expand resourceProperties
     }
 }
 
@@ -60,32 +67,29 @@ jar {
 
 def forge_release  = "release"
 
-plugins.withId("com.matthewprenger.cursegradle") {
-    curseforge {
-        apiKey = project.hasProperty("curseforge_api_key") ? project.curseforge_api_key : ""
-        project {
-            id = "442354"
-            releaseType = forge_release
-            addGameVersion "NeoForge"
-            addGameVersion curseforge_mc_version
-            changelogType = "markdown"
-            changelog = rootProject.file("changelog.md")
+plugins.withId('net.darkhax.curseforgegradle') {
+    tasks.register('publishCurseForge', net.darkhax.curseforgegradle.TaskPublishCurseForge) {
+        group = 'upload'
+        apiToken = providers.gradleProperty('curseforge_api_key')
+                .orElse(providers.environmentVariable('CURSEFORGE_TOKEN'))
+                .getOrElse('')
 
-            mainArtifact(jar) {
-                displayName = "$mod_name $total_version NeoForge"
-            }
-        }
-
-        options {
-            forgeGradleIntegration = false
-        }
+        def mainFile = upload(442354, tasks.named('jar'))
+        mainFile.releaseType = forge_release
+        mainFile.addModLoader('NeoForge')
+        mainFile.addGameVersion(curseforge_mc_version)
+        mainFile.addEnvironment('Client', 'Server')
+        mainFile.changelogType = 'markdown'
+        mainFile.changelog = rootProject.file('changelog.md')
+        mainFile.displayName = "$mod_name $total_version NeoForge"
     }
 }
 
 plugins.withId("com.modrinth.minotaur") {
     modrinth {
         group = "upload"
-        token =  project.hasProperty("modrinth_api_key") ? project.modrinth_api_key : ""
+        token = providers.gradleProperty('modrinth_api_key')
+                .orElse(providers.environmentVariable('MODRINTH_TOKEN'))
         projectId = 'yM94ont6'
         versionNumber = total_version + "-neoforge" // Will fail if Modrinth has this version already
         versionName = "$mod_name $total_version NeoForge"
@@ -98,7 +102,7 @@ plugins.withId("com.modrinth.minotaur") {
 }
 
 
-tasks.register('publishForge') {
+tasks.register('publishNeoForge') {
     group = "publishing"
-    dependsOn("curseforge442354", "modrinth")
+    dependsOn("publishCurseForge", "modrinth")
 }

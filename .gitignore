@@ -18,3 +18,5 @@ classes/
 .settings
 *.launch
 .architectury-transformer/
+crash-reports/
+logs/

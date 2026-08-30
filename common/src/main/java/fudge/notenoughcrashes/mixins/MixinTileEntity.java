@@ -13,8 +13,8 @@ public class MixinTileEntity {
     private boolean noNBT = false;
 
     @SuppressWarnings("UnreachableCode")
-    @Inject(method = "populateCrashReport", at = @At("TAIL"))
-    private void onPopulateCrashReport(CrashReportCategory section, CallbackInfo ci) {
+    @Inject(method = "fillCrashReportCategory", at = @At("TAIL"))
+    private void onFillCrashReportCategory(CrashReportCategory section, CallbackInfo ci) {
         if (!noNBT) {
             noNBT = true;
             var self = (BlockEntity) (Object) this;

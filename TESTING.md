@@ -1,12 +1,7 @@
 # Testing Not Enough Crashes
-This documents details how to test Not Enough Crashes after making changes.
+This document describes manual crash scenarios for Not Enough Crashes.
 
-- To test Fabric in dev, uncomment `runtimeOnly project(path: ":TestFabricMod", configuration: "namedElements")` 
-in `fabric/build.gradle`
-- To test Forge in dev, uncomment `runtimeOnly project(path: ":TestFabricMod", configuration: "namedElements")`
-  in `forge/build.gradle`
-
-To test in production, build the test Fabric/Forge mod and add them alongside NEC. 
+The `TestFabricMod` and `TestForgeMod` directories are legacy fixtures and are not part of the active Gradle build. They must be ported to the current Minecraft version before they can be used again; the production build currently covers the `common`, `fabric`, and `neoforge` modules.
 
 
 ## Crash Handling
