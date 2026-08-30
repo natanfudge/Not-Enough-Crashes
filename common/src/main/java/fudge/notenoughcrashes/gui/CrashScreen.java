@@ -27,7 +27,7 @@ public class CrashScreen extends ProblemScreen {
         Button mainMenuButton = Button.builder(
                         NecLocalization.translatedText("gui.toTitle"),
                         btn -> {
-                            InGameCatcher.crashScreenActive = true;
+                            InGameCatcher.crashScreenActive = false;
                             Minecraft.getInstance().setScreenAndShow(new TitleScreen());
                         })
                 .bounds(width / 2 - 155, height / 4 + 120 + 12, 150, 20)

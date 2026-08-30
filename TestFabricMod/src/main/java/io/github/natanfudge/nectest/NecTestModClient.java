@@ -2,33 +2,34 @@ package io.github.natanfudge.nectest;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.InputUtil;
+import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
+import net.minecraft.CrashReport;
+import net.minecraft.ReportedException;
+import net.minecraft.client.KeyMapping;
 import org.lwjgl.glfw.GLFW;
 
 public class NecTestModClient implements ClientModInitializer {
-    private static final KeyBinding tickKeyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-            "key.nec_test.crash", // The translation key of the keybinding's name
-            InputUtil.Type.KEYSYM, // The type of the keybinding, KEYSYM for keyboard, MOUSE for mouse.
-            GLFW.GLFW_KEY_LEFT_BRACKET, // The keycode of the key
-            "category.nec_test" // The translation key of the keybinding's category.
+    private static final KeyMapping tickKeyBinding = KeyMappingHelper.registerKeyMapping(new KeyMapping(
+            "key.nec_test.crash",
+            GLFW.GLFW_KEY_LEFT_BRACKET,
+            KeyMapping.Category.DEBUG
     ));
 
-    private static final KeyBinding localeKeyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-            "key.nec_test.crash_locale", // The translation key of the keybinding's name
-            InputUtil.Type.KEYSYM, // The type of the keybinding, KEYSYM for keyboard, MOUSE for mouse.
-            GLFW.GLFW_KEY_RIGHT_BRACKET, // The keycode of the key
-            "category.nec_test" // The translation key of the keybinding's category.
+    private static final KeyMapping localeKeyBinding = KeyMappingHelper.registerKeyMapping(new KeyMapping(
+            "key.nec_test.crash_locale",
+            GLFW.GLFW_KEY_RIGHT_BRACKET,
+            KeyMapping.Category.DEBUG
     ));
+
     @Override
     public void onInitializeClient() {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            if (tickKeyBinding.wasPressed()) {
-                throw new NecTestCrash("Test Game Loop Crash");
+            if (tickKeyBinding.consumeClick()) {
+                var cause = new NecTestCrash("Test Reported Game Loop Crash");
+                throw new ReportedException(CrashReport.forThrowable(cause, "Test reported client crash"));
             }
-            if (localeKeyBinding.wasPressed()) {
-                throw new NecTestCrash("שלום עולם");
+            if (localeKeyBinding.consumeClick()) {
+                throw new NecTestCrash("Test Unreported Game Loop Crash");
             }
         });
     }

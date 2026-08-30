@@ -78,6 +78,7 @@ public class InGameCatcher {
     public static void handleServerCrash(CrashReport report) {
         serverCrashCount++;
         addInfoToCrash(report);
+        cleanupBeforeMinecraft();
         displayCrashScreen(report, serverCrashCount, false);
     }
 

@@ -12,9 +12,20 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinMinecraftServer {
     private static boolean crashed = false;
 
-    @Inject(method = "runServer", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;endTickMetrics()V"))
+    @Inject(
+            method = "runServer",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/server/MinecraftServer;processPacketsAndTick(Z)V",
+                    shift = At.Shift.AFTER
+            )
+    )
     private void testServerCrash(CallbackInfo ci) {
-        if (!crashed && NecTestMod.getTestMode().equals("server_crash")) {
+        MinecraftServer server = (MinecraftServer) (Object) this;
+        boolean readyForTest = server.isDedicatedServer()
+                || server.isReady() && !server.getPlayerList().getPlayers().isEmpty();
+
+        if (!crashed && readyForTest && NecTestMod.getTestMode().equals("server_crash")) {
             crashed = true;
             throw new NecTestCrash("Test server crash");
         }

@@ -1,8 +1,8 @@
 plugins {
-    alias libs.plugins.architectury.loom apply false
-    alias libs.plugins.minotaur apply false
-    alias libs.plugins.architectury.plugin
-    alias libs.plugins.cursegradle
+    alias(libs.plugins.architectury.loom) apply false
+    alias(libs.plugins.minotaur) apply false
+    alias(libs.plugins.curseforgegradle) apply false
+    alias(libs.plugins.architectury.plugin)
     id 'maven-publish'
 }
 
@@ -10,7 +10,12 @@ architectury {
     minecraft = libs.versions.minecraft.get()
 }
 
-
+def modVersion = libs.versions.mod.version.get()
+def minecraftVersion = libs.versions.minecraft.get()
+def minecraftDependency = libs.minecraft
+def curseForgeMinecraftVersion = libs.versions.overrides.curseforge.get()
+def modrinthMinecraftVersion = libs.versions.overrides.modrinth.get()
+def releaseType = libs.versions.release.type.get()
 
 subprojects {
     apply plugin: 'dev.architectury.loom-no-remap'
@@ -18,21 +23,16 @@ subprojects {
     apply plugin: 'maven-publish'
     if (gradle.startParameter.taskNames.any { it.toLowerCase(Locale.ROOT).contains("publish") || it.toLowerCase(Locale.ROOT).contains("curseforge") || it.toLowerCase(Locale.ROOT).contains("modrinth") }) {
         apply plugin: "com.modrinth.minotaur"
-        apply plugin: 'com.matthewprenger.cursegradle'
+        apply plugin: 'net.darkhax.curseforgegradle'
     }
 
 
-    def modVersion = libs.versions.mod.version.get()
-    def minecraftVersion = libs.versions.minecraft.get()
     def total_version = "$modVersion+$minecraftVersion"
     ext.total_version = total_version
 
-    def cf = libs.versions.overrides.curseforge.get()
-    def mr = libs.versions.overrides.modrinth.get()
-
-    ext.curseforge_mc_version = cf == 'mc' ? minecraftVersion : cf
-    ext.modrinth_mc_version = mr == 'mc' ? minecraftVersion : mr
-    ext.release_type = libs.versions.release.type.get()
+    ext.curseforge_mc_version = curseForgeMinecraftVersion == 'mc' ? minecraftVersion : curseForgeMinecraftVersion
+    ext.modrinth_mc_version = modrinthMinecraftVersion == 'mc' ? minecraftVersion : modrinthMinecraftVersion
+    ext.release_type = releaseType
 
     version = ext.total_version
     group = rootProject.maven_group
@@ -42,41 +42,25 @@ subprojects {
         archivesName = "$rootProject.archives_base_name-$project.name"
     }
 
-    tasks.withType(Jar).configureEach { jarTask ->
-        jarTask.metaClass.getArchivePath = { -> jarTask.archiveFile.get().asFile }
+    dependencies {
+        minecraft minecraftDependency
     }
 
-    dependencies {
-        minecraft libs.minecraft
+    tasks.withType(JavaCompile).configureEach {
+        options.encoding = 'UTF-8'
     }
 
     java {
         toolchain {
-            languageVersion.set(JavaLanguageVersion.of(25))
+            languageVersion = JavaLanguageVersion.of(25)
         }
         withSourcesJar()
     }
 
 }
-task publishAll {
+
+tasks.register('publishAll') {
     group = "upload"
     dependsOn("fabric:publishFabric")
-    dependsOn("neoforge:publishForge")
+    dependsOn("neoforge:publishNeoForge")
 }
-
-//task addTestFabricMod(type: Copy) {
-//    dependsOn project(":TestFabricMod").tasks.build
-//    from "TestFabricMod/build/libs/nec_testmod-1.0.0.jar"
-//    into "fabric/run/mods"
-//}
-//
-//task addTestForgeMod(type: Copy) {
-//    dependsOn project(":TestForgeMod").tasks.build
-////   Copy dev jar because there is no support for automatic remapping
-//    from "TestForgeMod/build/libs/nec_testmod-1.0.0-dev-shadow.jar"
-//    into "forge/run/mods"
-//}
-//
-//task addTestMods {
-//    dependsOn addTestFabricMod, addTestForgeMod
-//}

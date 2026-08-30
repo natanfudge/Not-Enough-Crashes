@@ -5,8 +5,8 @@
 architectury_plugin = { id = "architectury-plugin", version.ref = "architectury_plugin" }
 architectury_loom = { id = "dev.architectury.loom-no-remap", version.ref = "architectury_loom" }
 minotaur = { id = "com.modrinth.minotaur", version.ref = "minotaur" }
-cursegradle = { id = "com.matthewprenger.cursegradle", version.ref = "cursegradle" }
-shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
+curseforgegradle = { id = "net.darkhax.curseforgegradle", version.ref = "curseforgegradle" }
+shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
 
 [versions]
 
@@ -14,12 +14,12 @@ shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
 mod_version = "4.4.9"
 
 # Gradle Plugins
-architectury_plugin = "3.5.166"
-architectury_loom = "1.14.473"
+architectury_plugin = "3.5.169"
+architectury_loom = "1.17.491"
 
-minotaur = "2.8.7"
-cursegradle = "1.4.0" # Must be updated in settings.gradle as well!
-shadow = "8.1.1"
+minotaur = "2.9.0"
+curseforgegradle = "1.3.33"
+shadow = "9.6.1"
 
 # Minecraft
 minecraft = "26.2"
@@ -30,12 +30,13 @@ overrides_modrinth = "mc"
 release_type = "release"
 
 # Mods & Libraries
-fabric_loader = "0.19.3"
-fabric_api = "0.154.0+26.2"
-modmenu = "20.0.0-beta.4"
+fabric_loader = "0.19.5"
+fabric_api = "0.158.0+26.2"
+modmenu = "20.0.1"
 
-quilt_loader = "0.26.0"
-forge = "26.2.0.7-beta"
+quilt_loader = "0.30.1"
+neoforge = "26.2.0.75"
+mixinextras = "0.5.5"
 
 [libraries]
 
@@ -44,4 +45,5 @@ fabric_loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric_l
 fabric_api = { module = "net.fabricmc.fabric-api:fabric-api", version.ref = "fabric_api" }
 quilt_loader = { module = "org.quiltmc:quilt-loader", version.ref = "quilt_loader" }
 modmenu = { module = "com.terraformersmc:modmenu", version.ref = "modmenu"}
-neoforge = { module = "net.neoforged:neoforge", version.ref = "forge" }
+neoforge = { module = "net.neoforged:neoforge", version.ref = "neoforge" }
+mixinextras_neoforge = { module = "io.github.llamalad7:mixinextras-neoforge", version.ref = "mixinextras" }

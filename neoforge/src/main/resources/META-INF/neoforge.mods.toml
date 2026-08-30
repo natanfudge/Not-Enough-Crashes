@@ -16,15 +16,15 @@ displayTest="IGNORE_ALL_VERSION"   # IGNORE_ALL_VERSION means that your mod will
 
 [[dependencies.notenoughcrashes]]
 modId = "neoforge"
-mandatory = true
-versionRange = "[20.6.1,)"
+type = "required"
+versionRange = "[${neoforge_version},)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.notenoughcrashes]]
 modId = "minecraft"
-mandatory = true
-versionRange = "[1.17.1,)"
+type = "required"
+versionRange = "[${minecraft_version}]"
 ordering = "NONE"
 side = "BOTH"
 [[mixins]]
