@@ -1,5 +1,6 @@
 package fudge.notenoughcrashes.gui;
 
+import com.mojang.blaze3d.Blaze3D;
 import fudge.notenoughcrashes.NotEnoughCrashes;
 import fudge.notenoughcrashes.platform.CommonModMetadata;
 import fudge.notenoughcrashes.stacktrace.ModIdentifier;
@@ -14,7 +15,6 @@ import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.Util;
 import net.minecraft.CrashReport;
 import net.minecraft.ReportType;
 
@@ -82,7 +82,7 @@ public abstract class ProblemScreen extends Screen {
             if (uploadedCrashLink == null) {
                 uploadedCrashLink = LegacyCrashLogUpload.upload(report.getFriendlyReport(ReportType.CRASH));
             }
-            Util.getPlatform().openUri(uploadedCrashLink);
+            Blaze3D.openUri(URI.create(uploadedCrashLink));
         } catch (Throwable e) {
             NotEnoughCrashes.getLogger().error("Exception when crash menu button clicked:", e);
             buttonWidget.setMessage(NecLocalization.translatedText("notenoughcrashes.gui.failed"));
@@ -113,7 +113,7 @@ public abstract class ProblemScreen extends Screen {
         if (x >= xLeft && x <= xRight && y >= yTop && y <= yBottom) {
             Path file = report.getSaveFile();
             if (file != null) {
-                Util.getPlatform().openPath(file);
+                Blaze3D.openPath(file);
             }
         }
         return super.mouseClicked(click, doubled);

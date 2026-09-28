@@ -4,7 +4,7 @@ This document describes the production and development crash scenarios for Not E
 ## Setup
 
 - Build Not Enough Crashes and the active Fabric test fixture with `./gradlew clean build` (`gradlew.bat clean build` on Windows).
-- For production-client tests, install both `fabric/build/libs/notenoughcrashes-fabric-4.4.9+26.2.jar` and `TestFabricMod/build/libs/nec_testmod-1.0.0.jar` in a Minecraft 26.2 Fabric Loader 0.19.5 client.
+- For production-client tests, install both `fabric/build/libs/notenoughcrashes-fabric-4.4.9+26.3.jar` and `TestFabricMod/build/libs/nec_testmod-1.0.0.jar` in a Minecraft 26.3 Fabric Loader 0.19.5 client.
 - For development tests, pass `-PincludeTestMod` to the Fabric run task, for example `./gradlew :fabric:runClient -PincludeTestMod` or `./gradlew :fabric:runServer -PincludeTestMod`.
 - Run every scenario in a fresh process. Set the scenario by writing the documented value to `config/nec_test_mode.txt`; use an empty file for key-triggered scenarios.
 - `TestForgeMod` remains a legacy Forge fixture and is not part of the active build.

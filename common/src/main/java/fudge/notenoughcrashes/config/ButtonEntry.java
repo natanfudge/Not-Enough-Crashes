@@ -15,6 +15,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 
+import java.net.URI;
 import java.util.List;
 
 public class ButtonEntry extends ContainerObjectSelectionList.Entry<ButtonEntry> {
@@ -64,7 +65,7 @@ public class ButtonEntry extends ContainerObjectSelectionList.Entry<ButtonEntry>
     @Override
     public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
         if (this.info != null && this.info.comment != null && !this.info.comment.url().isBlank())
-            ConfirmLinkScreen.confirmLinkNow(null, this.info.comment.url(), true);
+            ConfirmLinkScreen.confirmLinkNow(null, URI.create(this.info.comment.url()), true);
         return super.mouseClicked(click, doubled);
     }
 

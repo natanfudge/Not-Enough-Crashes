@@ -42,10 +42,15 @@ dependencies {
     shadowBundle project(path: ':common', configuration: 'runtimeElements')
 }
 
+def minecraftVersion = libs.versions.minecraft.get()
+def parts = minecraftVersion.tokenize('.')
+def nextMinecraftVersion = "${parts[0]}.${(parts[1] as int) + 1}"
+def minecraftVersionRange = "[${minecraftVersion},${nextMinecraftVersion})"
+
 processResources {
     def resourceProperties = [
             version          : project.version,
-            minecraft_version: libs.versions.minecraft.get(),
+            minecraft_version_range: minecraftVersionRange,
             neoforge_version : libs.versions.neoforge.get()
     ]
     inputs.properties resourceProperties

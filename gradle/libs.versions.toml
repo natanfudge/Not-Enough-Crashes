@@ -14,7 +14,7 @@ shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
 mod_version = "4.4.9"
 
 # Gradle Plugins
-architectury_plugin = "3.5.169"
+architectury_plugin = "3.5.170"
 architectury_loom = "1.17.491"
 
 minotaur = "2.9.0"
@@ -22,7 +22,7 @@ curseforgegradle = "1.3.33"
 shadow = "9.6.1"
 
 # Minecraft
-minecraft = "26.2"
+minecraft = "26.3"
 
 # CurseForge & Modrinth MC overrides (or "mc" to use the main version)
 overrides_curseforge = "mc"
@@ -31,11 +31,11 @@ release_type = "release"
 
 # Mods & Libraries
 fabric_loader = "0.19.5"
-fabric_api = "0.158.0+26.2"
-modmenu = "20.0.1"
+fabric_api = "0.161.0+26.3"
+modmenu = "21.0.0-beta.1"
 
 quilt_loader = "0.30.1"
-neoforge = "26.2.0.75"
+neoforge = "26.3.0.8-beta"
 mixinextras = "0.5.5"
 
 [libraries]

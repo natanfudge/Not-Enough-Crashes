@@ -4,10 +4,10 @@ import fudge.notenoughcrashes.NotEnoughCrashes;
 import fudge.notenoughcrashes.gui.InitErrorScreen;
 import fudge.notenoughcrashes.stacktrace.CrashUtils;
 import net.minecraft.client.Minecraft;
-import com.mojang.blaze3d.platform.Window;
 import net.minecraft.CrashReport;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.lwjgl.sdl.SDLError;
 
 public class EntryPointCatcher {
     private static CrashReport crashReport = null;
@@ -25,9 +25,8 @@ public class EntryPointCatcher {
         Minecraft.getInstance().fillReport(crashReport);
         CrashUtils.outputClientReport(crashReport);
 
-        // Make GL shuttup about any GL error that occurred
-        Window.checkGlfwError((integer, stringx) -> {
-        });
+        // Discard any SDL error that occurred during the failed initialization
+        SDLError.SDL_ClearError();
     }
 
 

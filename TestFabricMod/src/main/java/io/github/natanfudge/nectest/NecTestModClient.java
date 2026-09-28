@@ -1,23 +1,23 @@
 package io.github.natanfudge.nectest;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.minecraft.CrashReport;
 import net.minecraft.ReportedException;
 import net.minecraft.client.KeyMapping;
-import org.lwjgl.glfw.GLFW;
 
 public class NecTestModClient implements ClientModInitializer {
     private static final KeyMapping tickKeyBinding = KeyMappingHelper.registerKeyMapping(new KeyMapping(
             "key.nec_test.crash",
-            GLFW.GLFW_KEY_LEFT_BRACKET,
+            InputConstants.KEY_LBRACKET,
             KeyMapping.Category.DEBUG
     ));
 
     private static final KeyMapping localeKeyBinding = KeyMappingHelper.registerKeyMapping(new KeyMapping(
             "key.nec_test.crash_locale",
-            GLFW.GLFW_KEY_RIGHT_BRACKET,
+            InputConstants.KEY_RBRACKET,
             KeyMapping.Category.DEBUG
     ));
 

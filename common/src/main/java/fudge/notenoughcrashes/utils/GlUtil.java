@@ -1,7 +1,8 @@
 package fudge.notenoughcrashes.utils;
 
-import com.mojang.blaze3d.opengl.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.renderpearl.api.device.GpuDevice;
+import com.mojang.renderpearl.backend.opengl.GlStateManager;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GL13;
@@ -17,6 +18,10 @@ public class GlUtil {
      * Sometimes, Minecraft does disableX and then enableX. In that case we need to do enableX ourselves.
      */
     public static void resetState() {
+        // Raw GL calls abort the JVM when no GL context is current, e.g. on the Vulkan backend
+        GpuDevice device = RenderSystem.tryGetDevice();
+        if (device == null || !device.getDeviceInfo().backendName().equals("OpenGL")) return;
+
         // Method calls are in the order they are declared in the Minecraft source.
 
         // Reset texture
