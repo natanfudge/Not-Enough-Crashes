@@ -42,8 +42,7 @@ public class GlUtil {
 
         GlStateManager._enableCull();
 
-        GlStateManager._polygonMode(GL11.GL_FRONT, GL11.GL_FILL);
-        GlStateManager._polygonMode(GL11.GL_BACK, GL11.GL_FILL);
+        GlStateManager._polygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
 
         // Reset polygon offset
         GlStateManager._polygonOffset(0.0F, 0.0F);

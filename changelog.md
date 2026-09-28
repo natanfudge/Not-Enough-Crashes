@@ -1,3 +1,8 @@
+### 4.4.9+26.3
+- Ported to Minecraft 26.3 for Fabric and NeoForge.
+- Fixed repeated suspected mods in crash reports and client crash report filenames.
+- Fixed OpenGL state reset after a crash and the Quilt Minecraft version range.
+
 ### 4.4.9
 - Added Japanese Translation
 ### 4.4.8

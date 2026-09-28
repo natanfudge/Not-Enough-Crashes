@@ -3,7 +3,6 @@ package fudge.notenoughcrashes.stacktrace;
 import fudge.notenoughcrashes.NotEnoughCrashes;
 import fudge.notenoughcrashes.platform.NecPlatform;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.Minecraft;
 import net.minecraft.CrashReport;
 import net.minecraft.ReportType;
 import org.apache.logging.log4j.LogManager;
@@ -36,7 +35,7 @@ public final class CrashUtils {
             if (report.getSaveFile() == null) {
                 String reportName = "crash-";
                 reportName += new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss").format(new Date());
-                reportName += isClient && Minecraft.getInstance().isSameThread() ? "-client" : "-server";
+                reportName += isClient ? "-client" : "-server";
                 reportName += ".txt";
 
                 Path reportsDir = NecPlatform.instance().getGameDirectory().resolve("crash-reports");
