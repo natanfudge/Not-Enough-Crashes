@@ -111,3 +111,22 @@ tasks.register('publishNeoForge') {
     group = "publishing"
     dependsOn("publishCurseForge", "modrinth")
 }
+
+// Opt-in test fixture, kept separate from every published artifact.
+sourceSets {
+    testmod {
+        compileClasspath += sourceSets.main.compileClasspath + files(project(':TestFabricMod').layout.buildDirectory.dir('classes/java/main'))
+    }
+}
+tasks.named('compileTestmodJava') { dependsOn ':TestFabricMod:classes' }
+tasks.register('testmodJar', Jar) {
+    dependsOn testmodClasses, ':TestFabricMod:classes'
+    archiveBaseName = 'nec-neoforge-test-fixture'
+    archiveVersion = '1.0.0'
+    from sourceSets.testmod.output
+    from(project(':TestFabricMod').layout.buildDirectory.dir('classes/java/main')) {
+        include 'io/github/natanfudge/nectest/Maintenance*.class'
+        include 'io/github/natanfudge/nectest/NecTestCrash.class'
+        include 'io/github/natanfudge/nectest/mixin/Maintenance*.class'
+    }
+}

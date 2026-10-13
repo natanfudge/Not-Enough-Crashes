@@ -2,18 +2,16 @@
   "schemaVersion": 1,
   "id": "nec_testmod",
   "version": "${version}",
-
   "name": "Not Enough Crashes Test Mod",
   "description": "Tests Not Enough Crashes",
   "authors": [
     "Fudge"
   ],
   "contact": {
-    "sources": "https://github.com/natanfudge/Not-Enough-Crashes"
+    "sources": "https://github.com/natanfudge/Not-Enough-Crashes",
+    "issues": "https://github.com/natanfudge/Not-Enough-Crashes/issues"
   },
-
   "license": "MIT",
-
   "environment": "*",
   "entrypoints": {
     "main": [
@@ -26,7 +24,6 @@
   "mixins": [
     "nec_testmod.mixins.json"
   ],
-
   "depends": {
     "fabricloader": ">=0.19.5",
     "minecraft": "~26.3",

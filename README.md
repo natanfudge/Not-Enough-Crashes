@@ -8,10 +8,13 @@ Not Enough Crashes improves crashes in Minecraft significantly. For example, it 
 
 Features: 
 - When crashing, you can go back to the title screen and keep playing, without needing to restart.
-- A convenient way to submit syntax-highlighted crash reports via a special crash screen.
+- Crash reports stay local. Open the saved report, or explicitly upload a copy to [pastes.dev](https://pastes.dev/).
+- Export a local reproduction ZIP with mod versions and notes, plus optional configs and the crashed world. Review it before sharing.
+- Modpack authors can configure a dedicated issue-tracker button.
 - Display a list of mods that were involved in the crash, and can be clicked to go to their issue tracker.
-- More useful stack traces that are deobfuscated and include additional information such as NBT for mod developers.
-- Force crash logs to always appear (forceCrashScreen). [See the configuration guide](Configuring%20Not%20Enough%20Crashes.md).
+- Crash stack traces show Mixin source filenames and line numbers, plus additional information such as block entity NBT.
+- Command exceptions and missing loot/structure data are logged; world-generation reports identify features, structures and processors.
+- [Configure crash recovery and modpack reporting](Configuring%20Not%20Enough%20Crashes.md).
 
 # Not Enough Crashes API
 

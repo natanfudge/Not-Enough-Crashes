@@ -143,7 +143,7 @@ public class FabricPlatform implements NecPlatform {
 
     private static CommonModMetadata toCommon(ModContainer modContainer) {
         ModMetadata mod = modContainer.getMetadata();
-        return new CommonModMetadata(mod.getId(), mod.getName(), getIssuesPage(mod.getContact()),
+        return new CommonModMetadata(mod.getId(), mod.getName(), mod.getVersion().getFriendlyString(), getIssuesPage(mod.getContact()),
                 mod.getAuthors().stream().map(Person::getName).collect(Collectors.toList()), modContainer.getRootPath()
         );
     }

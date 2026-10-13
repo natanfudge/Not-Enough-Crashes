@@ -1,18 +1,29 @@
 {
   "package": "fudge.notenoughcrashes.mixins",
+  "plugin": "fudge.notenoughcrashes.stacktrace.SourceMapPlugin",
   "required": true,
   "target": "@env(DEFAULT)",
   "compatibilityLevel": "JAVA_25",
   "minVersion": "0.8",
   "mixins": [
     "MixinCrashReport",
-    "MixinTileEntity"
+    "MixinTileEntity",
+    "diagnostics.MixinCommands",
+    "diagnostics.MixinFeaturePlacer",
+    "diagnostics.MixinStructure",
+    "diagnostics.MixinStructureTemplateManager",
+    "diagnostics.MixinLootRegistry",
+    "diagnostics.MixinMobSpawnSettings"
   ],
   "client": [
     "client.MixinGui",
     "client.MixinIntegratedServer",
     "client.MixinKeyboard",
     "client.MixinMinecraftClient",
-    "client.MixinMinecraftServerClientOnly"
-  ]
+    "client.MixinMinecraftServerClientOnly",
+    "client.GpuSurfaceAccessor"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
 }

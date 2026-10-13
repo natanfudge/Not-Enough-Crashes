@@ -7,7 +7,9 @@
     "MixinMinecraftServer"
   ],
   "client": [
-    "ExampleMixin"
+    "ExampleMixin",
+    "MaintenanceRenderMixin",
+    "MaintenanceEntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1

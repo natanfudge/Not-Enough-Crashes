@@ -14,8 +14,10 @@ public class CrashScreen extends ProblemScreen {
 
     private static final int BODY_TEXT_COLOR = 0xD0D0D0;
 
-    public CrashScreen(CrashReport report) {
-        super(report);
+    public CrashScreen(CrashReport report) { this(report, null); }
+
+    public CrashScreen(CrashReport report, java.nio.file.Path world) {
+        super(report, world);
     }
 
 
@@ -58,12 +60,12 @@ public class CrashScreen extends ProblemScreen {
         y = addBodyLine(paragraphStartX, y,        9, "notenoughcrashes.crashscreen.paragraph2.line2");
 
         /* crash‑report file path */
-        String fileName = getFileNameString();   // helper in ProblemScreen
-        y = addBodyLine(paragraphStartX, y,       11, fileName, 0x00FF00);
+        y += 11;
+        addReportLink(paragraphStartX, y);
 
-        y = addBodyLine(paragraphStartX, y,       12, "notenoughcrashes.crashscreen.paragraph3.line1");
-        y = addBodyLine(paragraphStartX, y,        9, "notenoughcrashes.crashscreen.paragraph3.line2");
-        y = addBodyLine(paragraphStartX, y,        9, "notenoughcrashes.crashscreen.paragraph3.line3");
+        y = addBodyLine(paragraphStartX, y,       12, "notenoughcrashes.sharing.line1");
+        y = addBodyLine(paragraphStartX, y,        9, "notenoughcrashes.sharing.line2");
+        y = addBodyLine(paragraphStartX, y,        9, "notenoughcrashes.sharing.line3");
         addBodyLine(paragraphStartX, y,            9, "notenoughcrashes.crashscreen.paragraph3.line4");
     }
 
@@ -82,7 +84,7 @@ public class CrashScreen extends ProblemScreen {
 
     /** Overload for translation keys. */
     private StringWidget centeredText(int centreX, int y, String translationKey, int color) {
-        return centeredText(centreX, y, Component.translatable(translationKey), color);
+        return centeredText(centreX, y, NecLocalization.translatedText(translationKey), color);
     }
 
     /**

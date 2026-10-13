@@ -1,23 +1,28 @@
 # Configuring Not Enough Crashes
 
-1. Open your minecraft instance at `C:\Users\<your-name>\AppData\Roaming\.minecraft`
+Use the mod configuration screen, or edit `config/notenoughcrashes.json` in your Minecraft instance while the game is closed. Your launcher can open the instance folder.
 
-   - Multimc and Curse launcher use different paths. Use the launcher GUI to open it. 
+| Setting | Default | Effect |
+| --- | --- | --- |
+| `disableReturnToMainMenu` | `false` | Disable returning to the title screen after a crash. |
+| `catchInitializationCrashes` | `true` | Show the startup error screen on supported Fabric configurations. |
+| `catchGameloop` | `true` | Attempt recovery from gameplay crashes. Automatically disabled with Iris. |
+| `crashLimit` | `20` | Maximum recovery attempts in a session. |
+| `debugModIdentification` | `false` | Log additional suspected-mod diagnostics. |
+| `modpackIssueTracker` | `""` | HTTP(S) issue-tracker URL for the modpack. Empty hides the button. |
 
-2. Open `config`.
+## Modpack reports
 
-   ![image-20210820081450197](pics/image-20210820081450197.png)
+Set `modpackIssueTracker` to your pack's issue list or report form, for example `https://github.com/your-team/your-pack/issues`.
 
-3. Open `notenoughcrashes.json`. 
+**Report to modpack** copies the shared paste link (if uploaded) or the crash report to the clipboard, then asks before opening the tracker. Players can check existing issues and describe what happened before submitting. NEC does not post issues or require a GitHub token.
 
-   ![image-20210820081729931](pics/image-20210820081729931.png)
+## Local reports and sharing
 
-4. Edit the configuration as you wish. For example, to enable `forceCrashScreen`, edit this text:
+Reports are saved under `crash-reports`. **Show crash log** and the green report filename open that local file. **Upload to pastes.dev** uploads only when clicked; it copies the resulting link and offers to open it. Failed uploads can be retried.
 
-   ![image-20210820081838324](pics/image-20210820081838324.png)
+**Export reproduction ZIP** creates a local `crash-reports/instance-*.zip` containing the report, mod IDs and versions, and the player's reproduction notes. Configs and the crashed singleplayer world are separate opt-ins, both off by default. No world is offered for multiplayer or startup crashes. Mod binaries, account files, and server lists are not collected. Symbolic links and world session locks are skipped.
 
-   To this text:
+Reports, configs and worlds can contain private information. Review the archive before attaching it to an issue. No archive is uploaded automatically.
 
-   ![image-20210820081954347](pics/image-20210820081954347.png)
-
-5. Save the file.
+Legacy `forceCrashScreen`, `deobfuscateStackTrace`, and `crashlogUpload` settings are obsolete.

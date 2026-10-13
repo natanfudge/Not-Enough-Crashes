@@ -5,7 +5,8 @@
   "minVersion": "0.8",
   "compatibilityLevel": "JAVA_25",
   "mixins": [
-    "MixinMain"
+    "MixinMain",
+    "MixinStructureTemplateDiagnostics"
   ],
   "client": [
     "client.CatchInitMinecraftClientMixin",

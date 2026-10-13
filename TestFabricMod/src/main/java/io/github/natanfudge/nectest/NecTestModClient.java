@@ -23,7 +23,10 @@ public class NecTestModClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+        MaintenanceScenario.register(NecTestMod.getTestMode());
+        net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents.CLIENT_STARTED.register(client -> MaintenanceScenario.recordStart());
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            MaintenanceScenario.tick(client);
             if (tickKeyBinding.consumeClick()) {
                 var cause = new NecTestCrash("Test Reported Game Loop Crash");
                 throw new ReportedException(CrashReport.forThrowable(cause, "Test reported client crash"));

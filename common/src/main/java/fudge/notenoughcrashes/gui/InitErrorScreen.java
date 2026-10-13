@@ -11,7 +11,7 @@ public class InitErrorScreen extends ProblemScreen {
     private static final int BODY_TEXT_COLOR = 0xD0D0D0;
 
     public InitErrorScreen(CrashReport report) {
-        super(report);
+        super(report, null);
     }
 
     /* ------------------------------------------------------------------ */
@@ -45,12 +45,12 @@ public class InitErrorScreen extends ProblemScreen {
         y = addBodyLine(paragraphStartX, y,        9, "notenoughcrashes.crashscreen.paragraph2.line2");
 
         /* crash‑report file path */
-        String fileName = getFileNameString();           // helper in ProblemScreen
-        y = addBodyLine(paragraphStartX, y,       11, fileName, 0x00FF00);
+        y += 11;
+        addReportLink(paragraphStartX, y);
 
-        y = addBodyLine(paragraphStartX, y,       12, "notenoughcrashes.initerrorscreen.paragraph3.line1");
-        y = addBodyLine(paragraphStartX, y,        9, "notenoughcrashes.initerrorscreen.paragraph3.line2");
-        y = addBodyLine(paragraphStartX, y,        9, "notenoughcrashes.initerrorscreen.paragraph3.line3");
+        y = addBodyLine(paragraphStartX, y,       12, "notenoughcrashes.sharing.line1");
+        y = addBodyLine(paragraphStartX, y,        9, "notenoughcrashes.sharing.line2");
+        y = addBodyLine(paragraphStartX, y,        9, "notenoughcrashes.sharing.line3");
         addBodyLine(paragraphStartX, y,            9, "notenoughcrashes.initerrorscreen.paragraph3.line4");
     }
 

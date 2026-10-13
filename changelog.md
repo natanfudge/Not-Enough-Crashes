@@ -1,3 +1,12 @@
+### 4.5.0+26.3
+- Crash reports stay local until the player explicitly uploads to pastes.dev. Removed the legacy Gist uploader and embedded credential.
+- Added local reproduction ZIP exports with mod versions, notes, and optional configs/world saves.
+- Added configurable modpack reporting and fixed clickable suspected-mod and local-report links.
+- Recover within the existing game loop, without repeating mod startup events. Close the old screen and connection, release interrupted GPU frames, and reset input before recovery.
+- Show Mixin source filenames and line numbers in exception stack traces; safely handle cyclic throwable chains.
+- Added command exception logging, missing loot/structure warnings, invalid biome spawn diagnostics, and feature/structure/processor crash context.
+- Added Polish translations from PR #215 and updated NeoForge icon metadata.
+
 ### 4.4.9+26.3
 - Ported to Minecraft 26.3 for Fabric and NeoForge.
 - Fixed repeated suspected mods in crash reports and client crash report filenames.
