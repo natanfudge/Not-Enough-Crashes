@@ -26,9 +26,9 @@ import java.util.function.Supplier;
 
 public final class ModIdentifier {
 
-    private static final Map<CrashReport, Set<CommonModMetadata>> suspectedModsCache = new HashMap<>();
+    private static final Map<CrashReport, Set<CommonModMetadata>> suspectedModsCache = Collections.synchronizedMap(new WeakHashMap<>());
 
-    private static final Map<IMixinConfig, Set<CommonModMetadata>> mixinConfigToModsCache = new HashMap<>();
+    private static final Map<IMixinConfig, Set<CommonModMetadata>> mixinConfigToModsCache = new java.util.concurrent.ConcurrentHashMap<>();
 
     public static Set<CommonModMetadata> getSuspectedModsOf(CrashReport report) {
         return suspectedModsCache.computeIfAbsent(report, (ignored) -> identifyFromStacktrace(report.getException()));
@@ -49,8 +49,16 @@ public final class ModIdentifier {
     }
 
     private static void visitChildrenThrowables(Throwable e, Consumer<Throwable> visitor) {
-        visitor.accept(e);
-        for (Throwable child : e.getSuppressed()) visitChildrenThrowables(child, visitor);
+        Set<Throwable> seen = Collections.newSetFromMap(new IdentityHashMap<>());
+        Deque<Throwable> pending = new ArrayDeque<>();
+        pending.add(e);
+        while (!pending.isEmpty()) {
+            Throwable current = pending.remove();
+            if (!seen.add(current)) continue;
+            visitor.accept(current);
+            if (current.getCause() != null) pending.add(current.getCause());
+            Collections.addAll(pending, current.getSuppressed());
+        }
     }
 
     private static Set<CommonModMetadata> identifyFromThrowable(Throwable e) {
@@ -58,13 +66,10 @@ public final class ModIdentifier {
 
         Set<String> involvedClasses = new LinkedHashSet<>();
         Set<IMixinInfo> involvedMixins = new LinkedHashSet<>();
-        while (e != null) {
-            for (StackTraceElement element : e.getStackTrace()) {
-                involvedClasses.add(element.getClassName());
-                IMixinInfo mixinInfo = getMixinInfo(element);
-                if (mixinInfo != null) involvedMixins.add(mixinInfo);
-            }
-            e = e.getCause();
+        for (StackTraceElement element : e.getStackTrace()) {
+            involvedClasses.add(element.getClassName());
+            IMixinInfo mixinInfo = getMixinInfo(element);
+            if (mixinInfo != null) involvedMixins.add(mixinInfo);
         }
 
         Set<CommonModMetadata> mods = new LinkedHashSet<>();
@@ -96,7 +101,7 @@ public final class ModIdentifier {
 
         try {
             // Get the URL of the class
-            Class<?> clazz = Class.forName(className);
+            Class<?> clazz = Class.forName(className, false, ModIdentifier.class.getClassLoader());
             CodeSource codeSource = clazz.getProtectionDomain().getCodeSource();
             if (codeSource == null) {
                 debug(() -> "Ignoring class " + className + " for identification because the code source could not be found");
@@ -128,7 +133,7 @@ public final class ModIdentifier {
     @Nullable
     private static MixinMerged findMixinMerged(StackTraceElement element) {
         try {
-            Class<?> clazz = Class.forName(element.getClassName());
+            Class<?> clazz = Class.forName(element.getClassName(), false, ModIdentifier.class.getClassLoader());
             // Walk through methods because we don't know parameter types
             Method[] methods = clazz.getDeclaredMethods();
             for (Method method : methods) {

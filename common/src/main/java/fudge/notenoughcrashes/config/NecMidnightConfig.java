@@ -2,6 +2,8 @@ package fudge.notenoughcrashes.config;
 
 
 public class NecMidnightConfig extends MidnightConfig {
+    @Entry
+    public static String modpackIssueTracker = "";
     @Comment
     public static Comment disableReturnToMainMenuComment1;
     @Comment

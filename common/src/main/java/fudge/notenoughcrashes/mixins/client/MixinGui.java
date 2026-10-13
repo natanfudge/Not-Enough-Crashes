@@ -17,6 +17,8 @@ public class MixinGui {
      */
     @Inject(method = "setScreen(Lnet/minecraft/client/gui/screens/Screen;)V", at = @At("HEAD"), cancellable = true)
     private void setScreenDontResetCrashScreen(Screen screen, CallbackInfo ci) {
-        if (EntryPointCatcher.crashedDuringStartup() && !(screen instanceof InitErrorScreen)) ci.cancel();
+        if (EntryPointCatcher.crashedDuringStartup() && !(screen instanceof InitErrorScreen)
+                && !(screen instanceof fudge.notenoughcrashes.gui.InstanceExportScreen)
+                && !(screen instanceof net.minecraft.client.gui.screens.ConfirmLinkScreen)) ci.cancel();
     }
 }

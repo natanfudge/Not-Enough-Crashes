@@ -1,6 +1,7 @@
 package fudge.notenoughcrashes.mixins;
 
 import fudge.notenoughcrashes.stacktrace.ModIdentifier;
+import fudge.notenoughcrashes.stacktrace.MixinSourceMap;
 import net.minecraft.SystemReport;
 import net.minecraft.CrashReport;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -26,6 +27,11 @@ public abstract class MixinCrashReport {
 
     private CrashReport getThis() {
         return (CrashReport) (Object) this;
+    }
+
+    @Inject(method = "<init>", at = @At("RETURN"))
+    private void translateMixinSources(CallbackInfo ci) {
+        MixinSourceMap.translate(getThis().getException());
     }
 
     /**

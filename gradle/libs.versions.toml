@@ -11,7 +11,7 @@ shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
 [versions]
 
 # This Mod Version
-mod_version = "4.4.9"
+mod_version = "4.5.0"
 
 # Gradle Plugins
 architectury_plugin = "3.5.170"

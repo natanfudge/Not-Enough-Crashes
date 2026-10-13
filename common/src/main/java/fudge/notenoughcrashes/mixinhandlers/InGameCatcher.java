@@ -8,6 +8,7 @@ import fudge.notenoughcrashes.stacktrace.CrashUtils;
 import fudge.notenoughcrashes.utils.GlUtil;
 import fudge.notenoughcrashes.utils.NecLocalization;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.screens.GenericMessageScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.CrashReport;
@@ -28,18 +29,19 @@ public class InGameCatcher {
         clientCrashCount++;
         addInfoToCrash(report);
 
+        var world = crashingWorld();
         resetStates();
-//        boolean reported = report.getCause() instanceof CrashException;
-//        LOGGER.fatal(reported ? "Reported" : "Unreported" + " exception thrown!", report.getCause());
-        displayCrashScreen(report, clientCrashCount, true);
-        // Continue game loop
-        getClient().run();
+        displayCrashScreen(report, clientCrashCount, true, world);
     }
 
     private static void resetStates() {
+        // Custom overlays may render during frame presentation, so discard the failed screen first.
+        getClient().mouseHandler.releaseMouse();
+        KeyMapping.releaseAll();
+        getClient().gui.setScreen(null);
+        ((MinecraftClientAccess) getClient()).releaseCrashedFrame();
         GlUtil.resetState();
-//        StateManager.resetStates();
-        resetModState();
+        cleanupBeforeMinecraft();
         resetCriticalGameState();
     }
 
@@ -69,17 +71,17 @@ public class InGameCatcher {
         if (server != null) server.halt(true);
     }
 
-    private static void resetModState() {
-//        NotEnoughCrashesApi.permanentDisposers.forEach(Runnable::run);
-//        NotEnoughCrashesApi.oneTimeDisposers.forEach(Runnable::run);
-//        NotEnoughCrashesApi.oneTimeDisposers.clear();
+    private static java.nio.file.Path crashingWorld() {
+        var server = getClient().getSingleplayerServer();
+        return server == null ? null : server.getWorldPath(net.minecraft.world.level.storage.LevelResource.ROOT).toAbsolutePath().normalize();
     }
 
     public static void handleServerCrash(CrashReport report) {
         serverCrashCount++;
         addInfoToCrash(report);
-        cleanupBeforeMinecraft();
-        displayCrashScreen(report, serverCrashCount, false);
+        var world = crashingWorld();
+        resetStates();
+        displayCrashScreen(report, serverCrashCount, false, world);
     }
 
     private static Minecraft getClient() {
@@ -92,6 +94,10 @@ public class InGameCatcher {
     }
 
     public static void displayCrashScreen(CrashReport report, int crashCount, boolean clientCrash) {
+        displayCrashScreen(report, crashCount, clientCrash, null);
+    }
+
+    private static void displayCrashScreen(CrashReport report, int crashCount, boolean clientCrash, java.nio.file.Path world) {
         crashScreenActive = true;
         try {
             if (EntryPointCatcher.crashedDuringStartup()) {
@@ -104,7 +110,7 @@ public class InGameCatcher {
             CrashUtils.outputReport(report, clientCrash);
 
             // Display the crash screen
-            getClient().setScreenAndShow(new CrashScreen(report));
+            getClient().setScreenAndShow(new CrashScreen(report, world));
         } catch (Throwable t) {
             crashScreenActive = false;
             // The crash screen has crashed. Report it normally instead.

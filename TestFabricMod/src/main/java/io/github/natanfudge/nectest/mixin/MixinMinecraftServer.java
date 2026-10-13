@@ -25,7 +25,7 @@ public class MixinMinecraftServer {
         boolean readyForTest = server.isDedicatedServer()
                 || server.isReady() && !server.getPlayerList().getPlayers().isEmpty();
 
-        if (!crashed && readyForTest && NecTestMod.getTestMode().equals("server_crash")) {
+        if (!crashed && readyForTest && (NecTestMod.getTestMode().equals("server_crash") || io.github.natanfudge.nectest.MaintenanceScenario.consumeCrash("maintenance_server"))) {
             crashed = true;
             throw new NecTestCrash("Test server crash");
         }

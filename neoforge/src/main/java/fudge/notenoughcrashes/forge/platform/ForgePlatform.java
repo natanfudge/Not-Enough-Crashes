@@ -110,6 +110,7 @@ public class ForgePlatform implements NecPlatform {
         List<String> authors = authorsObj instanceof String ? Collections.singletonList((String) authorsObj) : (List<String>) authorsObj;
         return new CommonModMetadata(imod.getModId(),
                 imod.getDisplayName(),
+                imod.getVersion().toString(),
                 issueUrl.orElse(null),
                 authors,
                 imod.getOwningFile().getFile().getFilePath()

@@ -1,40 +1,46 @@
 package fudge.notenoughcrashes.mixins.client;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.mojang.renderpearl.api.device.GpuSurface;
+import com.mojang.blaze3d.systems.RenderSystem;
 import fudge.notenoughcrashes.NotEnoughCrashes;
 import fudge.notenoughcrashes.mixinhandlers.EntryPointCatcher;
 import fudge.notenoughcrashes.mixinhandlers.InGameCatcher;
 import fudge.notenoughcrashes.patches.MinecraftClientAccess;
 import net.minecraft.client.Minecraft;
 import net.minecraft.CrashReport;
+import net.minecraft.ReportedException;
 import net.minecraft.util.profiling.metrics.profiling.MetricsRecorder;
-import net.minecraft.util.thread.ReentrantBlockableEventLoop;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-//TODO: infinite repeating crashes in different cases, need to go over the crash cases and solve them one by one.
-
-
 @Mixin(Minecraft.class)
-public abstract class MixinMinecraftClient extends ReentrantBlockableEventLoop<Runnable> implements MinecraftClientAccess {
-    @Shadow
-    private MetricsRecorder metricsRecorder;
+public abstract class MixinMinecraftClient implements MinecraftClientAccess {
+    @Shadow private MetricsRecorder metricsRecorder;
+    @Shadow private GpuSurface windowSurface;
+    @Shadow private com.mojang.blaze3d.systems.TimerQuery timerQuery;
 
-    @Override
-    public MetricsRecorder getRecorder() {
-        return metricsRecorder;
-    }
+    @Override public MetricsRecorder getRecorder() { return metricsRecorder; }
+    @Override public void setRecorder(MetricsRecorder recorder) { metricsRecorder = recorder; }
 
-    @Override
-    public void setRecorder(MetricsRecorder recorder) {
-        this.metricsRecorder = recorder;
-    }
-
-    public MixinMinecraftClient(String string_1) {
-        super(string_1, true);
+    @Override public void releaseCrashedFrame() {
+        if (timerQuery != null && timerQuery.getStatus() == com.mojang.blaze3d.systems.TimerQuery.Status.STARTED) {
+            timerQuery.endProfile();
+        }
+        // renderFrame refuses to render again while an interrupted frame owns the surface.
+        if (windowSurface.isAcquired()) {
+            if (!((GpuSurfaceAccessor) windowSurface).nec$hasBlittedTexture()) {
+                var color = ((Minecraft) (Object) this).gameRenderer.mainRenderTarget().getColorTextureView();
+                if (color != null) windowSurface.blitFromTexture(RenderSystem.getDevice().createCommandEncoder(), color);
+            }
+            RenderSystem.getDevice().createCommandEncoder().submit();
+            windowSurface.present();
+            RenderSystem.getDynamicUniforms().reset();
+        }
     }
 
     @Inject(method = "run()V", at = @At("HEAD"))
@@ -42,32 +48,22 @@ public abstract class MixinMinecraftClient extends ReentrantBlockableEventLoop<R
         if (EntryPointCatcher.crashedDuringStartup()) EntryPointCatcher.displayInitErrorScreen();
     }
 
-    // Can't capture arg in inject so captured here
-    @ModifyArg(method = "run()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;emergencySaveAndCrash(Lnet/minecraft/CrashReport;)V", ordinal = 0))
-    private CrashReport atTheEndOfFirstCatchBeforePrintingCrashReport(CrashReport report) {
-        if (!NotEnoughCrashes.enableGameloopCatching()) return report;
-
-        NotEnoughCrashes.logDebug("Handling client game loop try/catch crash in first catch block");
-        // we MUST use the report passed as parameter, because the field one only gets assigned in integrated server crashes.
-        InGameCatcher.handleClientCrash(report);
-        return report;
-    }
-
-    // Can't capture arg in inject so captured here
-    @ModifyArg(method = "run()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;emergencySaveAndCrash(Lnet/minecraft/CrashReport;)V", ordinal = 1))
-    private CrashReport atTheEndOfSecondCatchBeforePrintingCrashReport(CrashReport report) {
-        if (!NotEnoughCrashes.enableGameloopCatching()) return report;
-
-        NotEnoughCrashes.logDebug("Handling client game loop try/catch crash in second catch block");
-        // we MUST use the report passed as parameter, because the field one only gets assigned in integrated server crashes.
-        InGameCatcher.handleClientCrash(report);
-        return report;
-    }
-
-    @Inject(method = "emergencySaveAndCrash(Lnet/minecraft/CrashReport;)V", at = @At("HEAD"))
-    private void beforeEmergencySaveAndCrash(CrashReport report, CallbackInfo info) {
-        if (NotEnoughCrashes.enableGameloopCatching()) {
-            InGameCatcher.cleanupBeforeMinecraft();
+    @WrapOperation(method = "run()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;runTick(Z)V"))
+    private void recoverTick(Minecraft client, boolean advanceGameTime, Operation<Void> original) throws Throwable {
+        try {
+            original.call(client, advanceGameTime);
+        } catch (Throwable failure) {
+            // Preserve vanilla's memory recovery and configured fatal-crash behavior.
+            if (failure instanceof OutOfMemoryError || !NotEnoughCrashes.enableGameloopCatching()) throw failure;
+            CrashReport report = failure instanceof ReportedException reported
+                    ? reported.getReport() : CrashReport.forThrowable(failure, "Unexpected error");
+            try {
+                InGameCatcher.handleClientCrash(client.fillReport(report));
+            } catch (Throwable recoveryFailure) {
+                NotEnoughCrashes.getLogger().error("Crash recovery failed", recoveryFailure);
+                if (recoveryFailure != report.getException()) report.getException().addSuppressed(recoveryFailure);
+                throw new ReportedException(report);
+            }
         }
     }
 }

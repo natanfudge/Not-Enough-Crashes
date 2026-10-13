@@ -1,0 +1,10 @@
+modLoader="javafml"
+loaderVersion="[3,)"
+license="MIT"
+issueTrackerURL="https://github.com/natanfudge/Not-Enough-Crashes/issues"
+[[mods]]
+modId="nec_testmod"
+version="1.0.0"
+displayName="Not Enough Crashes Test Mod"
+[[mixins]]
+config="nec_neotest.mixins.json"
