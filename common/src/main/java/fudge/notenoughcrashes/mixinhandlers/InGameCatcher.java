@@ -4,6 +4,7 @@ import fudge.notenoughcrashes.NotEnoughCrashes;
 import fudge.notenoughcrashes.config.NecConfig;
 import fudge.notenoughcrashes.gui.CrashScreen;
 import fudge.notenoughcrashes.patches.MinecraftClientAccess;
+import fudge.notenoughcrashes.patches.CrashReportResetter;
 import fudge.notenoughcrashes.stacktrace.CrashUtils;
 import fudge.notenoughcrashes.utils.GlUtil;
 import fudge.notenoughcrashes.utils.NecLocalization;
@@ -30,11 +31,12 @@ public class InGameCatcher {
         addInfoToCrash(report);
 
         var world = crashingWorld();
-        resetStates();
+        resetStates(report);
         displayCrashScreen(report, clientCrashCount, true, world);
     }
 
-    private static void resetStates() {
+    private static void resetStates(CrashReport report) {
+        ((CrashReportResetter) getClient()).nec$clearHandledCrash(report);
         // Custom overlays may render during frame presentation, so discard the failed screen first.
         getClient().mouseHandler.releaseMouse();
         KeyMapping.releaseAll();
@@ -80,7 +82,7 @@ public class InGameCatcher {
         serverCrashCount++;
         addInfoToCrash(report);
         var world = crashingWorld();
-        resetStates();
+        resetStates(report);
         displayCrashScreen(report, serverCrashCount, false, world);
     }
 
