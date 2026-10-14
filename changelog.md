@@ -1,3 +1,7 @@
+### 4.5.1+26.3
+- Clear handled delayed crash reports before disconnecting, so server or worker crashes (including update-suppression stack overflows) do not crash recovery again.
+- Preserve different pending crash reports and continue in the existing game loop without repeating startup events.
+
 ### 4.5.0+26.3
 - Crash reports stay local until the player explicitly uploads to pastes.dev. Removed the legacy Gist uploader and embedded credential.
 - Added local reproduction ZIP exports with mod versions, notes, and optional configs/world saves.

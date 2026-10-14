@@ -1,1 +1,1 @@
-{"required":true,"package":"io.github.natanfudge.nectest.mixin","compatibilityLevel":"JAVA_25","client":["NeoMaintenanceClientMixin","MaintenanceRenderMixin","MaintenanceEntityMixin"],"injectors":{"defaultRequire":1}}
+{"required":true,"package":"io.github.natanfudge.nectest.mixin","compatibilityLevel":"JAVA_25","client":["NeoMaintenanceClientMixin","MaintenanceRenderMixin","MaintenanceEntityMixin","MaintenanceLevelAccessor","MaintenanceServerRelayMixin"],"injectors":{"defaultRequire":1}}

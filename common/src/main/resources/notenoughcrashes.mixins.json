@@ -16,6 +16,7 @@
     "diagnostics.MixinMobSpawnSettings"
   ],
   "client": [
+    "client.MixinBlockableEventLoop",
     "client.MixinGui",
     "client.MixinIntegratedServer",
     "client.MixinKeyboard",

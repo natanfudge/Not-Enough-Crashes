@@ -112,6 +112,10 @@ Build with `gradlew.bat :common:test :fabric:build :neoforge:build :TestFabricMo
 | `maintenance_entity` | Recover from a server-player ticking exception and rejoin. |
 | `maintenance_server` | Recover from an integrated-server exception and rejoin. |
 | `maintenance_stack` | Recover from a simulated `StackOverflowError` and rejoin. |
+| `maintenance_updates` | Scheduled repeater tick drives 2,304 powered rails through the instant neighbor updater until the real thread stack is exhausted; recover and rejoin. |
+| `maintenance_updates_delayed` | Same real rail overflow, routed through vanilla's shared delayed-crash relay; recover and rejoin. |
+| `maintenance_delayed` | Exhaust the server thread stack recursively, relay the report, recover and rejoin. |
+| `maintenance_delayed_checks` | Preserve a different pending report; clear only the handled report; recover from two actual client stack overflows via `delayCrash`, reopening the world after each. |
 | `maintenance_export` | Exercise the export screen; opt into configs/world; inspect ZIP entries; rejoin. |
 | `maintenance_links` | With `modpackIssueTracker` set, exercise modpack and suspected-mod link confirmation screens. |
 | `maintenance_diagnostics` | Exercise command failure, missing loot/template, invalid spawn, feature, structure, processor and finalizer diagnostics. |
@@ -142,3 +146,19 @@ For a multiplayer test, use a separate 26.3 server bound to loopback with port 2
 - Final 4.5.0 build and seven unit tests passed. Both release jars were checked for valid translations, declared Mixin classes, and absence of test fixtures and legacy upload code.
 - The exact resource-pack attachment from #135 is a RAR archive named .zip. Minecraft 26.3 rejects it as an invalid ZIP and removes it from the selected packs; render recovery still passed.
 - BisectHosting Menu 3.0.0: manually opened Multiplayer, clicked the hosting entry, waited for its player-count screen, and returned successfully.
+
+### 2026-10-14 update-suppression regression
+
+Report: https://mclo.gs/SyZrAuG (Minecraft 26.2, NEC 4.4.9, AntiShadowPatch and Carpet).
+
+Only Minecraft 26.3 was tested. AntiShadowPatch has no published 26.3 build as of this test. The fixture restores vanilla's `InstantNeighborUpdater` using the same delegation pattern as AntiShadowPatch, then schedules a repeater beside a 48-by-48 area of powered rails. The resulting `StackOverflowError` comes from actual recursive neighbor updates, rather than an explicitly constructed error. The original modpack and the reporter's world were not tested.
+
+The direct integrated-server callback already recovers this overflow in 4.5.0. A separate test hook routes the same real report through vanilla's `BlockableEventLoop.relayDelayCrash` to exercise the shared server/worker crash path. In 4.5.0, disconnecting drains tasks and immediately throws the retained report again, producing `Crash recovery failed` and process exit -1. Clearing the handled report before disconnecting fixes that failure. A different pending report is retained; both delayed-crash writers share the same lock.
+
+- Fabric 4.5.0 baseline: direct rail overflow/rejoin passed; relayed rail overflow and relayed recursive overflow both exited -1 during cleanup.
+- Fabric 4.5.1: relayed rail overflow recovered, returned to the title screen, reopened the same world and exited 0. Screenshots show the crash screen and a visible player after rejoin.
+- Fabric 4.5.1: pending-report identity checks and two consecutive real client stack overflows passed, with successful world reloads and only one `CLIENT_STARTED` event.
+- NeoForge 26.3.0.8-beta with packaged NEC 4.5.1: the relayed rail overflow recovered, returned to title, reopened the same world with a visible player and exited 0 (`build/update-neo-rails-relay-fixed.log`).
+- Full build and seven existing unit tests passed. Both packaged release jars contain all declared mixins and no test fixtures.
+
+Local evidence: `build/update-rails-relay-baseline-2.log`, `build/update-delayed-baseline.log`, `build/update-rails-relay-fixed.log`, `build/update-delayed-checks-fixed.log`, and screenshots in the isolated clients' `screenshots` directories.

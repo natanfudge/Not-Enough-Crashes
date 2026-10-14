@@ -27,6 +27,8 @@ public final class MaintenanceScenario {
     private static int starts;
     private static int phase;
     private static int ticks;
+    private static int recoveries;
+    public static volatile boolean delayedUpdateRelayed;
     private static final String WORLD = "NEC-maintenance";
 
     public static void register(String selectedMode) {
@@ -52,6 +54,7 @@ public final class MaintenanceScenario {
         if (mode == null || !mode.startsWith("maintenance_")) return;
         ticks++;
         if (phase == 0 && client.gui.screen() instanceof TitleScreen && client.gui.overlay() == null && ticks > 60) {
+            if (mode.equals("maintenance_delayed_checks")) MaintenanceDelayedCrash.verifyMatchingReport(client);
             if (mode.equals("maintenance_quit")) { finish(client, "PASS startup without a crash"); return; }
             phase = 1;
             ticks = 0;
@@ -60,6 +63,22 @@ public final class MaintenanceScenario {
             phase = 2;
             ticks = 0;
             System.out.println("NEC_TEST triggering " + mode);
+            if (mode.equals("maintenance_updates") || mode.equals("maintenance_updates_delayed")) {
+                armed = true;
+                client.getSingleplayerServer().execute(() -> MaintenanceUpdateSuppression.prepare(client.getSingleplayerServer()));
+                return;
+            }
+            if (mode.equals("maintenance_delayed")) {
+                client.getSingleplayerServer().execute(() -> {
+                    try { exhaustStack(); }
+                    catch (StackOverflowError overflow) {
+                        System.out.println("NEC_TEST actual stack exhaustion; relaying report to client");
+                        net.minecraft.util.thread.BlockableEventLoop.relayDelayCrash(net.minecraft.CrashReport.forThrowable(overflow, "NEC delayed stack overflow"));
+                    }
+                });
+                return;
+            }
+            if (mode.equals("maintenance_delayed_checks")) { delayClientOverflow(client); return; }
             if (mode.equals("maintenance_diagnostics")) {
                 phase = 8;
                 diagnostics = java.util.concurrent.CompletableFuture.runAsync(() -> MaintenanceDiagnostics.run(client.getSingleplayerServer()), client.getSingleplayerServer());
@@ -86,6 +105,10 @@ public final class MaintenanceScenario {
                     + " server=" + (client.getSingleplayerServer() != null));
             Screenshot.grab(client.gameDirectory, mode + "-crash.png", client.gameRenderer.mainRenderTarget(), 1, msg -> {});
             if (!screen.equals("CrashScreen")) { finish(client, "FAIL missing crash screen"); return; }
+            if (mode.equals("maintenance_updates_delayed") && !delayedUpdateRelayed) {
+                finish(client, "FAIL server crash was not relayed"); return;
+            }
+            recoveries++;
             if (starts != 1) { finish(client, "FAIL repeated CLIENT_STARTED"); return; }
             if (client.getConnection() != null || client.level != null || client.getSingleplayerServer() != null) {
                 finish(client, "FAIL stale world or connection"); return;
@@ -155,6 +178,12 @@ public final class MaintenanceScenario {
             ticks = 0;
             openWorld(client);
         } else if (phase == 4 && ticks > 100 && client.player != null && client.gui.screen() == null) {
+            if (mode.equals("maintenance_delayed_checks") && recoveries < 2) {
+                phase = 2;
+                ticks = 0;
+                delayClientOverflow(client);
+                return;
+            }
             client.options.setCameraType(CameraType.THIRD_PERSON_BACK);
             phase = 7;
             ticks = 0;
@@ -175,6 +204,16 @@ public final class MaintenanceScenario {
             }
         }
         throw new IllegalStateException("Button missing: " + key);
+    }
+
+    private static long exhaustStack() { return 1 + exhaustStack(); }
+
+    private static void delayClientOverflow(Minecraft client) {
+        try { exhaustStack(); }
+        catch (StackOverflowError overflow) {
+            System.out.println("NEC_TEST actual stack exhaustion; client delayCrash, recovery=" + recoveries);
+            client.delayCrash(net.minecraft.CrashReport.forThrowable(overflow, "NEC client delayed stack overflow"));
+        }
     }
 
     private static void openWorld(Minecraft client) {
