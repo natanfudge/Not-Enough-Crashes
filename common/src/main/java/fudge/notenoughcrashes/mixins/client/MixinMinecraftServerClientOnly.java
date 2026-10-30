@@ -1,6 +1,7 @@
 package fudge.notenoughcrashes.mixins.client;
 
 import fudge.notenoughcrashes.NotEnoughCrashes;
+import fudge.notenoughcrashes.mixinhandlers.RecoveryExclusions;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.CrashReport;
 import net.minecraft.ReportType;
@@ -22,7 +23,8 @@ public class MixinMinecraftServerClientOnly {
      */
     @Redirect(method = "runServer()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/CrashReport;saveToFile(Ljava/nio/file/Path;Lnet/minecraft/ReportType;)Z"))
     private boolean disableIntegratedServerWriteToFileOnCrash(CrashReport instance, Path path, ReportType type) {
-        if (NotEnoughCrashes.enableGameloopCatching()) return true;
+        // Excluded crashes are left to vanilla, which needs its own crash file.
+        if (NotEnoughCrashes.enableGameloopCatching() && !RecoveryExclusions.isExcluded(instance.getException())) return true;
         else return instance.saveToFile(path, type);
     }
 }
