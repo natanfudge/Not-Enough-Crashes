@@ -98,6 +98,18 @@ This document describes the production and development crash scenarios for Not E
 - Click 'Back to title screen' and re-enter the world.
 - Verify the game is working fine.
 
+### Recovery Exclusions
+- In the game config folder, have the file named `nec_test_mode.txt` be empty or non-existent.
+- In `config/notenoughcrashes.json`, set `"recoveryExclusions": ["io.github.natanfudge.nectest.NecTestCrash:Test Unreported Game Loop Crash"]`.
+- Open a Minecraft world.
+- Press the right square bracket key.
+- Verify:
+  - The game closes with Minecraft's normal crash handling, and no NEC crash screen appears.
+  - The log contains `Not recovering from` naming the matching `recoveryExclusions` entry.
+- Restart, open a world and press the left square bracket key.
+- Verify NEC's crash screen still appears, since the reported crash's message doesn't match.
+- Set `nec_test_mode.txt` to `server_crash` and the entry to `io.github.natanfudge.nectest.NecTestCrash:Test server crash`, then open a world.
+- Verify the game closes with Minecraft's normal crash handling and a `-server` crash report is written by Minecraft.
 
 ## Automated 26.3 maintenance scenarios
 
@@ -130,7 +142,7 @@ For a multiplayer test, use a separate 26.3 server bound to loopback with port 2
 
 ### Unit tests
 
-`:common:test` checks UTF-8 upload bodies, response/error handling, Mixin source-map ranges and throwable cycles, ZIP opt-in boundaries and symbolic-link exclusion. Upload tests use a local HTTP server; they do not create public pastes.
+`:common:test` checks recovery-exclusion matching, UTF-8 upload bodies, response/error handling, Mixin source-map ranges and throwable cycles, ZIP opt-in boundaries and symbolic-link exclusion. Upload tests use a local HTTP server; they do not create public pastes.
 
 ### 2026-10-13 verification
 

@@ -1,5 +1,8 @@
 package fudge.notenoughcrashes.config;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class NecMidnightConfig extends MidnightConfig {
     @Entry
@@ -36,5 +39,12 @@ public class NecMidnightConfig extends MidnightConfig {
     public static Comment catchGameloopComment2;
     @Entry
     public static boolean catchGameloop = true;
+
+    @Comment
+    public static Comment recoveryExclusionsComment1;
+    @Comment
+    public static Comment recoveryExclusionsComment2;
+    @Entry
+    public static List<String> recoveryExclusions = new ArrayList<>();
 
 }

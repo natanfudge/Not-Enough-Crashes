@@ -7,6 +7,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import fudge.notenoughcrashes.NotEnoughCrashes;
 import fudge.notenoughcrashes.mixinhandlers.EntryPointCatcher;
 import fudge.notenoughcrashes.mixinhandlers.InGameCatcher;
+import fudge.notenoughcrashes.mixinhandlers.RecoveryExclusions;
 import fudge.notenoughcrashes.patches.MinecraftClientAccess;
 import net.minecraft.client.Minecraft;
 import net.minecraft.CrashReport;
@@ -54,7 +55,8 @@ public abstract class MixinMinecraftClient implements MinecraftClientAccess {
             original.call(client, advanceGameTime);
         } catch (Throwable failure) {
             // Preserve vanilla's memory recovery and configured fatal-crash behavior.
-            if (failure instanceof OutOfMemoryError || !NotEnoughCrashes.enableGameloopCatching()) throw failure;
+            if (failure instanceof OutOfMemoryError || !NotEnoughCrashes.enableGameloopCatching()
+                    || RecoveryExclusions.isExcluded(failure)) throw failure;
             CrashReport report = failure instanceof ReportedException reported
                     ? reported.getReport() : CrashReport.forThrowable(failure, "Unexpected error");
             try {
